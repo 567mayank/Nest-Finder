@@ -4,12 +4,13 @@ const login = async(req,res) => {
   const {email,userName,password} = req.body
   if(!password || (!email && !userName) ) {
     return res.status(400).json({
-      message : "Credentials Requires"
+      message : "All Credentials are required"
     })
   } 
+
   if(typeof password === String) password = String(password)
   try {
-    const user = await User.findOne({
+    let user = await User.findOne({
       $or : [{ userName },{ email }]
     })
     .select(" -__v")
@@ -35,17 +36,24 @@ const login = async(req,res) => {
       })
     }
 
+
+    user = user.toObject();  
+    delete user.password;
+
+
     const options = {
       httpOnly : true,
-      secure : false
+      secure: false, 
     }
 
-    return res.
-    status(200).
-    cookie("token",token,options).
-    json({
-      message : "SuccessFully LoggedIn",
-      user 
+
+    return res
+    .status(200)
+    .cookie("token",token,options)
+    .json({
+      message : "Successfully Loggedin",
+      user ,
+      token
     })
 
   } catch (error) {
@@ -71,7 +79,7 @@ const registerUser = async(req,res) => {
     })
     if(existingUser){
       return res.status(400).json({
-        message : "User with same userName/Email already Exist"
+        message : "User with same username/Email already Exist"
       })
     } 
     const user = await User.create({

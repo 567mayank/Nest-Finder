@@ -40,7 +40,7 @@ function Login() {
   },[userName,password])
 
   return (
-    <section className="bg-gray-50 dark:bg-gray-900 mt-20">
+    <section className="bg-gray-50 dark:bg-gray-900 md:ml-64">
       <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 grid lg:grid-cols-2 gap-8 lg:gap-16">
         {/* Left Section */}
         <div className="flex flex-col justify-center">

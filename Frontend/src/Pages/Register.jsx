@@ -46,7 +46,7 @@ function Register() {
 
   return (
     <form
-      className="max-w-sm mx-auto mt-40 border rounded-lg border-blue-700 p-4 px-5"
+      className="max-w-sm mx-auto mt-2 border rounded-lg border-blue-700 p-4 px-5"
       onSubmit={handleSubmit}
     >
       <div className="mb-5">

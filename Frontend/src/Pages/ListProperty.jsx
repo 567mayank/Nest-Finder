@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Basic from '../Components/ListProperty/Basic';
 import Details from '../Components/ListProperty/Details';
 import Media from '../Components/ListProperty/Media';
@@ -7,11 +7,60 @@ import Confirmation from '../Components/ListProperty/Confirmation';
 
 const StepNavigation = () => {
   const [activeStep, setActiveStep] = useState(1);
+  const [property, setProperty] = useState({
+    title: '',
+    propType: '',
+    listingType: 'sale', // Default listing type
+    price: '',
+    address: '',
+    neighborhood : '',
+    city: '',
+    state: '',
+    zipCode: '',
+    zip: '',
+    area: '',
+    bedrooms: '',
+    floor: '',
+    parkingAvailable: false,
+    furnishingStatus: '',
+    propAge: '',
+    description: '',
+  });
+
+  useEffect(()=>{
+    const local = JSON.parse(localStorage.getItem("ListItem"))
+    if(local) setProperty(local)
+  },[])
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    if (type === 'checkbox') {
+      setProperty((prevState) => ({
+        ...prevState,
+        [name]: checked,
+      }));
+    } else {
+      setProperty((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
+  };
+
+  useEffect(() => {
+    if(!property.title) return
+    localStorage.setItem("ListItem", JSON.stringify(property));
+  }, [property]);
   
   // Handle step click
   const handleStepClick = (step) => {
     setActiveStep(step);
-    console.log(step);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setActiveStep(activeStep+1); // Move to the next step
   };
 
   const steps = [
@@ -82,19 +131,19 @@ const StepNavigation = () => {
         </ol>
       </div>
       {
-        activeStep===1 && <Basic/>
+        activeStep===1 && <Basic property={property} handleChange={handleChange} handleSubmit={handleSubmit} />
       }
       {
-        activeStep===2 && <Details/>
+        activeStep===2 && <Details property={property} handleChange={handleChange} handleSubmit={handleSubmit} />
       }
       {
-        activeStep===3 && <Media/>
+        activeStep===3 && <Media property={property} handleChange={handleChange} handleSubmit={handleSubmit}/>
       }
       {
-        activeStep===4 && <Pricing/>
+        activeStep===4 && <Pricing property={property} handleChange={handleChange} handleSubmit={handleSubmit}/>
       }
       {
-        activeStep===5 && <Confirmation/>
+        activeStep===5 && <Confirmation property={property} handleChange={handleChange} handleSubmit={handleSubmit} />
       }
     </>
   );

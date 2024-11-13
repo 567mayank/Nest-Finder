@@ -25,33 +25,60 @@ const StepNavigation = () => {
     furnishingStatus: '',
     propAge: '',
     description: '',
+    paymentTerms:'Monthly',
+    amount:'',
+    securityDeposit: '',
+    negotiability:true,
+    currency:'USD',
+    msgThroughApp:true,
+    msgThroughPhone:false,
+    msgThroughEmail:false,
+    phone:'',
+    email:''
   });
 
   useEffect(()=>{
     const local = JSON.parse(localStorage.getItem("ListItem"))
     if(local) setProperty(local)
+    const curPage = JSON.parse(localStorage.getItem("ListItemCurPage"))
+    if(curPage) setActiveStep(curPage) 
   },[])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-
+  
+    // If the input is a checkbox, update the state with the checked value (true or false)
     if (type === 'checkbox') {
       setProperty((prevState) => ({
         ...prevState,
         [name]: checked,
       }));
-    } else {
+    }
+    
+    // If the input is a radio button, handle the change accordingly
+    else if (type === 'radio') {
+      // Convert the value to a boolean (true or false) for radio buttons
+      setProperty((prevState) => ({
+        ...prevState,
+        [name]: value === 'true', // 'true' string becomes true, 'false' becomes false
+      }));
+    }
+  
+    // For other input types like text, select, etc.
+    else {
       setProperty((prevState) => ({
         ...prevState,
         [name]: value,
       }));
     }
   };
+  
 
   useEffect(() => {
     if(!property.title) return
     localStorage.setItem("ListItem", JSON.stringify(property));
-  }, [property]);
+    localStorage.setItem("ListItemCurPage",JSON.stringify(activeStep))
+  }, [property,activeStep]);
   
   // Handle step click
   const handleStepClick = (step) => {

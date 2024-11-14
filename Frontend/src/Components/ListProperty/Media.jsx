@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 function Media({ handleSubmit,setProperty,property }) {
-  const [loading, setLoading] = useState(false); // To manage loading state while uploading
+  const [loading, setLoading] = useState(false); 
 
-  // Cloudinary upload preset and API URL
-  const cloudinaryUploadUrl = 'https://api.cloudinary.com/v1_1/dxpg55uck/image/upload'; // Replace with your Cloudinary URL
-  const uploadPreset = 'RealEstate'; // Replace with your upload preset
+  const cloudinaryUploadUrl = `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`; 
+  const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET_NAME
 
   // Handle file input change
   const handleFileChange = async (e) => {
@@ -26,15 +25,13 @@ function Media({ handleSubmit,setProperty,property }) {
             },
           });
 
-          return res.data.secure_url; // Cloudinary URL for the uploaded file
+          return res.data.secure_url; 
         })
       );
 
-      // Add the uploaded file URLs to the `files` state
-      console.log(uploadedFiles)
       setProperty((prevProperty) => ({
         ...prevProperty,
-        media: uploadedFiles[0], 
+        media: uploadedFiles, 
       }));
     } catch (err) {
       console.error('Error uploading file:', err);
@@ -68,7 +65,7 @@ function Media({ handleSubmit,setProperty,property }) {
           <h3 className="text-lg font-semibold">Selected File</h3>
           <div className="flex justify-center mt-4">
             <img
-              src={property.media} // Only show the first file preview
+              src={property.media} 
               alt="Preview"
               className="w-48 h-48 object-cover rounded-md border"
             />

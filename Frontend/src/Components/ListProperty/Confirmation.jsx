@@ -5,24 +5,10 @@ function Confirmation({
   handleChange,
   handleSubmit
 }) {
-  // const [contactMethods, setContactMethods] = useState({
-  //   inApp: false,
-  //   phone: false,
-  //   email: false,
-  // });
-
-  // const handleChange = (e) => {
-  //   const { name, checked } = e.target;
-  //   setContactMethods((prevState) => ({
-  //     ...prevState,
-  //     [name]: checked,
-  //   }));
-  // };
-
   return (
     <div className='px-20 py-10 h-screen md:ml-64 sm:m-auto'>
       <h2 className="text-2xl font-semibold mb-4">How would you like to be contacted?</h2>
-      <form className="space-y-6">
+      <form className="space-y-6" onSubmit={handleSubmit}>
         {/* Checkboxes for contact methods */}
         <div className="flex flex-col space-y-2">
           <label className="flex items-center">

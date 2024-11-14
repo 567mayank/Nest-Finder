@@ -43,13 +43,17 @@ const PropertySchema = new Schema(
       required: true,
       min: 0, 
     },
+    floor : {
+      type : Number,
+      default : 0
+    },
     parkingAvailable: {
       type: Boolean,
       default: false, 
     },
     furnishingStatus: {
       type: String,
-      enum: ['Furnished', 'Unfurnished', 'Semi-Furnished'], // Example furnishing statuses
+      // enum: ['Furnished', 'Unfurnished', 'Semi-Furnished'], // Example furnishing statuses
     },
     propAge: {
       type: Number,
@@ -59,6 +63,10 @@ const PropertySchema = new Schema(
       type: String,
       maxlength: 1000, // Max length for description (optional)
     },
+    media : [{
+      type : String,
+      default : []
+    }],
     paymentTerms: {
       type: String,
     },
@@ -69,46 +77,46 @@ const PropertySchema = new Schema(
     },
     securityDeposit: {
       type: Number,
-      min: 0, // Security deposit can't be negative
+      min: 0, 
     },
     negotiability: {
       type: Boolean,
-      default: false, // Default to false if not specified
+      default: false, 
     },
     currency: {
       type: String,
-      enum: ['USD', 'INR'], // Only USD and INR supported
+      enum: ['USD', 'INR'], 
       required: true,
     },
     msgThroughApp: {
       type: Boolean,
-      default: true, // Default to true
+      default: true, 
     },
     msgThroughPhone: {
       type: Boolean,
-      default: false, // Default to false
+      default: false, 
     },
     msgThroughEmail: {
       type: Boolean,
-      default: false, // Default to false
+      default: false, 
     },
     phone: {
       type: String,
-      validate: {
-        validator: function (v) {
-          return /\d{10}/.test(v); // Validate phone number with 10 digits
-        },
-        message: 'Phone number must be a valid 10-digit number.',
-      },
+      // validate: {
+      //   validator: function (v) {
+      //     return /\d{10}/.test(v); // Validate phone number with 10 digits
+      //   },
+      //   message: 'Phone number must be a valid 10-digit number.',
+      // },
     },
     email: {
       type: String,
-      validate: {
-        validator: function (v) {
-          return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v); // Basic email validation
-        },
-        message: 'Invalid email address.',
-      },
+      // validate: {
+      //   validator: function (v) {
+      //     return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v); // Basic email validation
+      //   },
+      //   message: 'Invalid email address.',
+      // },
     },
   },
   { timestamps: true }

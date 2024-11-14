@@ -4,19 +4,18 @@ import Details from '../Components/ListProperty/Details';
 import Media from '../Components/ListProperty/Media';
 import Pricing from '../Components/ListProperty/Pricing';
 import Confirmation from '../Components/ListProperty/Confirmation';
+import axios from 'axios';
 
 const StepNavigation = () => {
   const [activeStep, setActiveStep] = useState(1);
   const [property, setProperty] = useState({
     title: '',
     propType: '',
-    listingType: 'sale', // Default listing type
-    price: '',
+    listingType: 'sale',
     address: '',
     neighborhood : '',
     city: '',
     state: '',
-    zipCode: '',
     zip: '',
     area: '',
     bedrooms: '',
@@ -34,7 +33,8 @@ const StepNavigation = () => {
     msgThroughPhone:false,
     msgThroughEmail:false,
     phone:'',
-    email:''
+    email:'',
+    media:''
   });
 
   useEffect(()=>{
@@ -85,9 +85,20 @@ const StepNavigation = () => {
     setActiveStep(step);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setActiveStep(activeStep+1); // Move to the next step
+    if(activeStep===5){
+      console.log("hi")
+      try {
+        const response = await axios.post(`http://localhost:${8000}/user/listProperty`,property,{withCredentials:true})
+        console.log(response.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    else{
+      setActiveStep(activeStep+1); // Move to the next step
+    }
   };
 
   const steps = [
@@ -164,7 +175,7 @@ const StepNavigation = () => {
         activeStep===2 && <Details property={property} handleChange={handleChange} handleSubmit={handleSubmit} />
       }
       {
-        activeStep===3 && <Media property={property} handleChange={handleChange} handleSubmit={handleSubmit}/>
+        activeStep===3 && <Media property={property} handleChange={handleChange} handleSubmit={handleSubmit} setProperty={setProperty} />
       }
       {
         activeStep===4 && <Pricing property={property} handleChange={handleChange} handleSubmit={handleSubmit}/>

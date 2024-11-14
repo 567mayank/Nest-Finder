@@ -35,7 +35,7 @@ const PropertySchema = new Schema(
     },
     area: {
       type: Number,
-      required: true, // Assuming area is required
+      required: true, 
       min: 1, // Area can't be less than 1
     },
     bedrooms: {
@@ -72,8 +72,8 @@ const PropertySchema = new Schema(
     },
     amount: {
       type: Number,
-      required: true, // Required field for property price or rent
-      min: 0, // Amount can't be negative
+      required: true, 
+      min: 0, 
     },
     securityDeposit: {
       type: Number,

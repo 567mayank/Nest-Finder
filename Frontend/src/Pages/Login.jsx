@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from "axios"
 import { Context } from '../Context/Context';
 
@@ -7,7 +7,8 @@ function Login() {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [message,setMessage] = useState("")
-  const {checkUser} = useContext(Context)
+  const location = useLocation();
+  const {checkUser,isLoggedin} = useContext(Context)
   const navigate = useNavigate()
 
   // Correct the handleSubmit to handle the form submission
@@ -40,6 +41,21 @@ function Login() {
   useEffect(()=>{
     setMessage("")
   },[userName,password])
+
+  useEffect(()=>{
+    console.log(isLoggedin)
+    console.log(location)
+    if(isLoggedin===2) {
+      if (location.state?.from === "/login") {
+        navigate("/profile");
+      }
+      else if(location.state?.from) {
+        navigate(location.state.from)
+      } else {
+        navigate(-1); 
+      }
+    }
+  },[isLoggedin,checkUser])
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900 md:ml-64">

@@ -4,8 +4,8 @@ import axios from 'axios';
 function Media({ handleSubmit,setProperty,property }) {
   const [loading, setLoading] = useState(false); 
 
-  const cloudinaryUploadUrl = `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`; 
-  const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET_NAME
+  const cloudinaryUploadUrl = `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`; 
+  const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET_NAME
 
   // Handle file input change
   const handleFileChange = async (e) => {

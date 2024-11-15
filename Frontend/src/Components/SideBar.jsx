@@ -1,14 +1,26 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useState } from 'react';
-import {Link} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
+import { Context } from '../Context/Context';
+import axios from 'axios';
 
 function Sidebar() {
+  const navigate = useNavigate()
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectOpen,setSelectOpen] = useState(false)
+  const {isLoggedin,checkUser} = useContext(Context)
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
+  const handleLogout = async() => {
+    localStorage.clear()
+    await axios.post(`http://localhost:${8000}/user/logout`,{},{withCredentials:true})
+    checkUser()
+    navigate("/")
+  }
+  
   return (
     <div>
       <button
@@ -167,6 +179,7 @@ function Sidebar() {
               </li>
                             
               {/* Account */}
+              { !isLoggedin &&
               <li>
                   <Link to="/login" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                     <svg className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
@@ -174,7 +187,30 @@ function Sidebar() {
                     </svg>
                     <span className="flex-1 ms-3 whitespace-nowrap">Account</span>
                   </Link>
-              </li>
+              </li>}
+
+              {/* Log Out Button */}
+              { isLoggedin && 
+              <li onClick={handleLogout}>
+                  <div  className=" cursor-pointer flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                  <svg
+                    className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M10 9V3m0 0l4 4m-4-4H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-4"
+                    />
+                  </svg>
+                  <span className="flex-1 ms-3 whitespace-nowrap">Log Out</span>
+                  </div>
+              </li>}
               
             </ul>
         </div>

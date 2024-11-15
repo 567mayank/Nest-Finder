@@ -6,6 +6,7 @@ function Profile() {
   const [email, setEmail] = useState("m@gmail.com");
   const [phone, setPhone] = useState("+1 (123) 456-7890");
   const [dob, setDob] = useState("January 1, 1990");
+  const samplePhoto = "https://images.pexels.com/photos/761115/pexels-photo-761115.jpeg?auto=compress&cs=tinysrgb&w=600"
 
   // Toggle edit mode
   const handleEditClick = () => {
@@ -21,7 +22,7 @@ function Profile() {
           
           {/* Profile Image */}
           <img
-            src="https://images.pexels.com/photos/761115/pexels-photo-761115.jpeg?auto=compress&cs=tinysrgb&w=600"
+            src={samplePhoto}
             alt="Man Image"
             className="h-48 md:h-64 w-48 md:w-64 object-cover rounded-full border-4 border-gray-200 shadow-md"
           />
@@ -95,6 +96,69 @@ function Profile() {
 
           </div>
         </div>
+
+
+        {/* My Listing Section */}
+        <div className="py-8">
+          <div className="max-w-4xl mx-auto bg-white border border-gray-300 rounded-xl shadow-lg p-6">
+            {/*  Section Title  */}
+            <h2 className="text-2xl font-semibold text-gray-800">My Property Listings</h2>
+
+            {/*  Properties for Sale  */}
+            <div className="mt-6 border border-black p-2 rounded-md">
+              <div className="text-lg font-semibold text-gray-700">Properties Listed For Sale</div>
+              <div className="mt-2 text-gray-600">Total: 4</div>
+              <div className="flex mt-4 space-x-6">
+                <div className="flex-1">
+                  <div className="font-medium text-gray-700">Recent Listing</div>
+                  <div className="flex items-center mt-2 space-x-4">
+                    <img className="w-16 h-16 object-cover rounded-lg" src={samplePhoto} alt="Property Image" />
+                    <div>
+                      <div className="font-semibold text-gray-800">NameOfProperty</div>
+                      <div className="text-sm text-gray-600">Description of the property or location.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                View All
+              </button>
+            </div>
+
+            {/*  Properties for Rent  */}
+            <div className="mt-6 border border-black p-2 rounded-md">
+              <div className="text-lg font-semibold text-gray-700">Properties Listed For Rent</div>
+              <div className="mt-2 text-gray-600">Total: 2</div>
+              <div className="flex mt-4 space-x-6">
+                <div className="flex-1">
+                  <div className="font-medium text-gray-700">Recent Listing</div>
+                  <div className="flex items-center mt-2 space-x-4">
+                    <img className="w-16 h-16 object-cover rounded-lg" src={samplePhoto} alt="Property Image" />
+                    <div>
+                      <div className="font-semibold text-gray-800">NameOfProperty</div>
+                      <div className="text-sm text-gray-600">Description of the property or location.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                View All
+              </button>
+            </div>
+            
+          </div>
+        </div>
+
+        {/* Setting Section */}
+        {/* <div className="py-8">
+          <div className="max-w-4xl mx-auto bg-white border border-gray-300 rounded-xl shadow-lg p-6">
+            <h2 className="text-2xl font-semibold text-gray-800">Settings</h2>
+
+          </div>
+        </div> */}
+
+
+
       </div>
     </div>
   );

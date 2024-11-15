@@ -1,5 +1,6 @@
 import Property from "../Models/Property.model.js"
 import User from "../Models/User.model.js"
+import jwt from "jsonwebtoken"
 
 const login = async(req,res) => {
   const {email,userName,password} = req.body
@@ -202,10 +203,49 @@ const listProperty = async (req, res) => {
   }
 };
 
+const isLoggedin = async(req,res) => {
+  const token = req?.cookies.token
+  if(!token) {
+    return res.status(200).json(
+      {
+        message : "User is not Logged In",
+        isLoggedin : false,
+      }
+    ) 
+  }
+  try {
+    const decodedToken = jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
+    const user = await User.findById(decodedToken._id).select("-password")
+    if(!user){
+      return res.status(200).json(
+        {
+          message : "User is not Logged In",
+          isLoggedin : false,
+        }
+      ) 
+    }
+    return res.status(200).json(
+      {
+        message : "User is Logged In",
+        isLoggedin : true,
+        user
+      }
+    )
+  } catch (error) {
+    return res.status(200).json(
+      {
+        message : "User is not Logged In",
+        isLoggedin : false,
+      }
+    ) 
+  }
+}
+
 
 export {
   login,
   registerUser,
   logout,
-  listProperty
+  listProperty,
+  isLoggedin
 }

@@ -25,6 +25,18 @@ const userSchema = mongoose.Schema({
     type : String,
     required : true
   },
+  Phone : {
+    type : Number,
+  },
+  dob : {
+    type : String
+  },
+  avatar : {
+    type : String
+  },
+  location : {
+    type :  String
+  },
   listedProperty : [{
     type : Schema.Types.ObjectId,
     ref : "Property"

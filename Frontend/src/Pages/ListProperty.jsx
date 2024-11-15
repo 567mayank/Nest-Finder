@@ -47,7 +47,6 @@ const StepNavigation = () => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
   
-    // If the input is a checkbox, update the state with the checked value (true or false)
     if (type === 'checkbox') {
       setProperty((prevState) => ({
         ...prevState,
@@ -55,16 +54,13 @@ const StepNavigation = () => {
       }));
     }
     
-    // If the input is a radio button, handle the change accordingly
     else if (type === 'radio') {
-      // Convert the value to a boolean (true or false) for radio buttons
       setProperty((prevState) => ({
         ...prevState,
-        [name]: value === 'true', // 'true' string becomes true, 'false' becomes false
+        [name]: value === 'true', 
       }));
     }
   
-    // For other input types like text, select, etc.
     else {
       setProperty((prevState) => ({
         ...prevState,
@@ -80,7 +76,6 @@ const StepNavigation = () => {
     localStorage.setItem("ListItemCurPage",JSON.stringify(activeStep))
   }, [property,activeStep]);
   
-  // Handle step click
   const handleStepClick = (step) => {
     setActiveStep(step);
   };
@@ -97,7 +92,7 @@ const StepNavigation = () => {
       }
     }
     else{
-      setActiveStep(activeStep+1); // Move to the next step
+      setActiveStep(activeStep+1); 
     }
   };
 
@@ -119,7 +114,7 @@ const StepNavigation = () => {
 
             return (
               <li
-                key={step.number} // Assign key directly to the <li> element
+                key={step.number}
                 className={`flex md:w-full items-center ${
                   isActive
                     ? 'text-blue-600 dark:text-blue-500'

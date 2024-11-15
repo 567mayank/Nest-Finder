@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios"
+import { Context } from '../Context/Context';
 
 function Login() {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [message,setMessage] = useState("")
+  const {checkUser} = useContext(Context)
   const navigate = useNavigate()
 
   // Correct the handleSubmit to handle the form submission
@@ -26,8 +28,8 @@ function Login() {
           withCredentials : true
         }
       )
-      console.log(response.data)
       setMessage(response.data.message)
+      checkUser()
       navigate("/profile")
     } catch (error) {
       console.log(error.response.data)

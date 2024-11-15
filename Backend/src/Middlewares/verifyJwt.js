@@ -6,7 +6,7 @@ const verifyJwt = async(req,res,next) => {
     return res.status(401).json({ message: "Access Denied: No Token Provided" });
   }
   try {
-    const decodedValue = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const decodedValue = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     const user = await User.findById(decodedValue._id).select("-password")
     if (user) {
       req.user = user;  

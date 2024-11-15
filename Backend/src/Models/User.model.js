@@ -25,28 +25,35 @@ const userSchema = mongoose.Schema({
     type : String,
     required : true
   },
-  Phone : {
+  phone : {
     type : Number,
+    default : ""
   },
   dob : {
-    type : String
+    type : String,
+    default : ""
   },
   avatar : {
-    type : String
+    type : String,
+    default : ""
   },
   location : {
-    type :  String
+    type :  String,
+    default : ""
   },
-  listedProperty : [{
+  listedPropertyForRent : [{
+    type : Schema.Types.ObjectId,
+    ref : "Property"
+  }],
+  listedPropertyForSale : [{
     type : Schema.Types.ObjectId,
     ref : "Property"
   }]
 })
 
-userSchema.pre("save", async function (next){
+userSchema.pre("save", async function (next) {
   if(!this.isModified("password")) return next();
-
-  this.password = bcrypt.hash(this.password, 10)
+  this.password = await bcrypt.hash(this.password, 10)
   next()
 })
 

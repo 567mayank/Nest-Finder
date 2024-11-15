@@ -15,12 +15,7 @@ export const ContextProvider = ({children}) => {
     try {
       const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/user/isLoggedin`, { withCredentials: true });
       if(response.data.isLoggedin) localStorage.setItem("User",JSON.stringify(response.data.user))
-      if(response.data.isLoggedin) {
-        setIsLoggedin(2)
-      }
-      else{
-        setIsLoggedin(1)
-      }
+      setIsLoggedin(response.data.isLoggedin)
     } catch (error) {
       setIsLoggedin(1)
       console.error(error)

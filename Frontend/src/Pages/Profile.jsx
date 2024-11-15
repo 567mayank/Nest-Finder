@@ -1,14 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../Context/Context';
 import {useNavigate} from 'react-router-dom'
+import axios from 'axios';
 
 function Profile() {
   const navigate = useNavigate()
   const [data,setData] = useState(null)
   const [isEditing, setIsEditing] = useState(false);
-  const [email, setEmail] = useState("m@gmail.com");
-  const [phone, setPhone] = useState("+1 (123) 456-7890");
-  const [dob, setDob] = useState("January 1, 1990");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [dob, setDob] = useState("");
+  const [message,setMessage] = useState("")
   const samplePhoto = "https://images.pexels.com/photos/761115/pexels-photo-761115.jpeg?auto=compress&cs=tinysrgb&w=600"
   const {isLoggedin,checkUser,isLoading} = useContext(Context)
 
@@ -16,19 +18,42 @@ function Profile() {
     const local = JSON.parse(localStorage.getItem("User"))
       if(local){
         setData(local)
+        if(local.email) setEmail(local.email)
+        if(local.dob) setDob(local?.dob)
+        if(local.phone) setPhone(local.phone)
       } else {
         checkUser()
       }
   }
 
-  const handleEditClick = () => {
+  const handleEditClick = async () => {
+    if(isEditing){
+      if(!dob || !email || !phone){
+        setMessage("All Field Required")
+        return
+      }
+      try {
+        const response = await axios.patch(
+          `http://localhost:${import.meta.env.VITE_APP_PORT}/user/updatePersonalInfo`,
+          {
+            email,phone,dob
+          },
+          {
+            withCredentials : true
+          }
+        )
+        localStorage.setItem("User",JSON.stringify(response.data.user))
+        setMessage(response.data.message)
+      } catch (error) {
+        setMessage(error.response.data.message)
+        console.error(error.response.data.message,error)
+      }
+    }
     setIsEditing(!isEditing);
   };
 
   useEffect(()=>{
-    if(!isLoading && isLoggedin===1) {
-      console.log(isLoading,isLoggedin)
-      // navigate("/login")
+    if(!isLoading && !isLoggedin) {
       navigate('/login', { state: { from: location.pathname } });
     } else {
       dataRetriever()
@@ -85,7 +110,7 @@ function Profile() {
                     className="text-gray-900 border border-gray-300 rounded-md p-2"
                   />
                 ) : (
-                  <div className="text-xl text-gray-900">{data.email}</div>
+                  <div className="text-xl text-gray-900">{email}</div>
                 )}
               </div>
               
@@ -100,7 +125,7 @@ function Profile() {
                     className=" text-gray-900 border border-gray-300 rounded-md p-2"
                   />
                 ) : (
-                  <div className="text-xl text-gray-900">{data.phone || "Not Set"}</div>
+                  <div className="text-xl text-gray-900">{phone }</div>
                 )}
               </div>
               
@@ -115,10 +140,16 @@ function Profile() {
                     className=" text-gray-900 border border-gray-300 rounded-md p-2"
                   />
                 ) : (
-                  <div className="text-xl text-gray-900">{data?.dob||"Not Set"}</div>
+                  <div className="text-xl text-gray-900">{dob}</div>
                 )}
               </div>
-  
+            
+              {
+                message && 
+                <div className='flex justify-center'>
+                  <div className='text-blue-600 font-medium'>{message}</div>
+                </div>
+              }    
             </div>
           </div>
   

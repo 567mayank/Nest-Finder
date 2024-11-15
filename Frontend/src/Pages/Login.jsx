@@ -42,10 +42,9 @@ function Login() {
     setMessage("")
   },[userName,password])
 
+  // for redirecting back to previous page
   useEffect(()=>{
-    console.log(isLoggedin)
-    console.log(location)
-    if(isLoggedin===2) {
+    if(isLoggedin) {
       if (location.state?.from === "/login") {
         navigate("/profile");
       }

@@ -4,7 +4,8 @@ import {
   registerUser,
   logout,
   listProperty,
-  isLoggedin
+  isLoggedin,
+  updatePersonalInfo
 } from "../Controllers/user.contoller.js"
 import verifyJwt from "../Middlewares/verifyJwt.js";
 const router = Router()
@@ -14,5 +15,6 @@ router.route("/register").post(registerUser)
 router.route("/logout").post(verifyJwt,logout)
 router.route("/listProperty").post(verifyJwt,listProperty)
 router.route("/isLoggedin").get(isLoggedin)
+router.route("/updatePersonalInfo").patch(verifyJwt,updatePersonalInfo)
 
 export default router

@@ -241,11 +241,52 @@ const isLoggedin = async(req,res) => {
   }
 }
 
+const updatePersonalInfo = async(req,res) => {
+  const userId = req.user?._id
+  if(!userId){
+    return res.status(400).json({message:"Unathorized Access"})
+  }
+  try {
+    const {phone,email,dob} = req.body
+    if(!phone || !email || !dob){
+      return res.status(400).json({message:"All Field/Data Required"})
+    }
+    const user = await User.findOneAndUpdate(
+      {
+        _id : userId
+      },
+      {
+        $set : {
+          phone,
+          email,
+          dob
+        }
+      },
+      {
+        new : true
+      }
+    ).select("-password -__v -listedProperty")
+
+    if(!user){
+      return res.status(404).json({message:"Internal Server Error in Updating User Personal Info"})
+    }
+    return res.status(200).json(
+      {
+        message : "User Personal Info Updated Successfully",
+        user
+      }
+    )
+  } catch (error) {
+    console.error("Error in Updating personalInfo",error)
+    return res.status(500).json({message:"Internal Server Error"})
+  }
+}
 
 export {
   login,
   registerUser,
   logout,
   listProperty,
-  isLoggedin
+  isLoggedin,
+  updatePersonalInfo
 }

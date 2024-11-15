@@ -3,7 +3,7 @@ import {
   login,
   registerUser,
   logout,
-  listProperty,
+  // listProperty,
   isLoggedin,
   updatePersonalInfo
 } from "../Controllers/user.contoller.js"
@@ -13,7 +13,7 @@ const router = Router()
 router.route("/login").post(login)
 router.route("/register").post(registerUser)
 router.route("/logout").post(verifyJwt,logout)
-router.route("/listProperty").post(verifyJwt,listProperty)
+// router.route("/listProperty").post(verifyJwt,listProperty)
 router.route("/isLoggedin").get(isLoggedin)
 router.route("/updatePersonalInfo").patch(verifyJwt,updatePersonalInfo)
 

@@ -116,92 +116,92 @@ const logout = async(req,res) => {
   return res.status(200).clearCookie("token").json({message:"Succeffully logout"})
 }
 
-const listProperty = async (req, res) => {
-  const userId = req?.user?._id;
-  if (!userId) {
-    return res.status(400).json({ message: "Unauthorized Access" });
-  }
+// const listProperty = async (req, res) => {
+//   const userId = req?.user?._id;
+//   if (!userId) {
+//     return res.status(400).json({ message: "Unauthorized Access" });
+//   }
 
-  try {
-    const {
-      title,
-      propType,
-      listingType,
-      address,
-      neighborhood,
-      city,
-      state,
-      zip,
-      area,
-      bedrooms,
-      floor,
-      parkingAvailable,
-      furnishingStatus,
-      propAge,
-      description,
-      media,
-      paymentTerms,
-      amount,
-      securityDeposit,
-      negotiability,
-      currency,
-      msgThroughApp,
-      msgThroughPhone,
-      msgThroughEmail,
-      phone,
-      email,
-    } = req.body;
+//   try {
+//     const {
+//       title,
+//       propType,
+//       listingType,
+//       address,
+//       neighborhood,
+//       city,
+//       state,
+//       zip,
+//       area,
+//       bedrooms,
+//       floor,
+//       parkingAvailable,
+//       furnishingStatus,
+//       propAge,
+//       description,
+//       media,
+//       paymentTerms,
+//       amount,
+//       securityDeposit,
+//       negotiability,
+//       currency,
+//       msgThroughApp,
+//       msgThroughPhone,
+//       msgThroughEmail,
+//       phone,
+//       email,
+//     } = req.body;
 
-    const newProperty = await Property.create({
-      title,
-      propType,
-      listingType,
-      address,
-      neighborhood,
-      city,
-      state,
-      zip,
-      area,
-      bedrooms,
-      floor,
-      parkingAvailable,
-      furnishingStatus,
-      propAge,
-      description,
-      media, 
-      paymentTerms,
-      amount,
-      securityDeposit,
-      negotiability,
-      currency,
-      msgThroughApp,
-      msgThroughPhone,
-      msgThroughEmail,
-      phone,
-      email,
-    });
+//     const newProperty = await Property.create({
+//       title,
+//       propType,
+//       listingType,
+//       address,
+//       neighborhood,
+//       city,
+//       state,
+//       zip,
+//       area,
+//       bedrooms,
+//       floor,
+//       parkingAvailable,
+//       furnishingStatus,
+//       propAge,
+//       description,
+//       media, 
+//       paymentTerms,
+//       amount,
+//       securityDeposit,
+//       negotiability,
+//       currency,
+//       msgThroughApp,
+//       msgThroughPhone,
+//       msgThroughEmail,
+//       phone,
+//       email,
+//     });
 
-    if (!newProperty) {
-      return res.status(400).json({ message: "Failed to create property" });
-    }
+//     if (!newProperty) {
+//       return res.status(400).json({ message: "Failed to create property" });
+//     }
 
-    await User.findOneAndUpdate(
-      { _id: userId },
-      {
-        $push: { listedProperty: newProperty._id },
-      },
-      { new: true } 
-    );
+//     await User.findOneAndUpdate(
+//       { _id: userId },
+//       {
+//         $push: { listedProperty: newProperty._id },
+//       },
+//       { new: true } 
+//     );
 
-    return res.status(201).json({
-      message: "Property listed successfully",
-      property: newProperty,
-    });
-  } catch (error) {
-    console.error("Error creating property:", error);
-    return res.status(500).json({ message: "Server error", error: error.message });
-  }
-};
+//     return res.status(201).json({
+//       message: "Property listed successfully",
+//       property: newProperty,
+//     });
+//   } catch (error) {
+//     console.error("Error creating property:", error);
+//     return res.status(500).json({ message: "Server error", error: error.message });
+//   }
+// };
 
 const isLoggedin = async(req,res) => {
   const token = req?.cookies.token
@@ -286,7 +286,7 @@ export {
   login,
   registerUser,
   logout,
-  listProperty,
+  // listProperty,
   isLoggedin,
   updatePersonalInfo
 }

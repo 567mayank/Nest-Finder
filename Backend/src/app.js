@@ -22,8 +22,10 @@ app.get("/",(req,res)=>{
 })
 
 import router from "./Routes/user.route.js"
+import propertyRouter from "./Routes/property.route.js"
 
 app.use("/user",router)
+app.use("/property",propertyRouter)
 
 
 

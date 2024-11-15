@@ -85,7 +85,7 @@ const StepNavigation = () => {
     if(activeStep===5){
       console.log("hi")
       try {
-        const response = await axios.post(`http://localhost:${8000}/user/listProperty`,property,{withCredentials:true})
+        const response = await axios.post(`http://localhost:${8000}/property/listProperty`,property,{withCredentials:true})
         console.log(response.data)
       } catch (error) {
         console.log(error)

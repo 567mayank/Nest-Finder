@@ -11,7 +11,8 @@ function Profile() {
   const [phone, setPhone] = useState("");
   const [dob, setDob] = useState("");
   const [message,setMessage] = useState("")
-  const samplePhoto = "https://images.pexels.com/photos/761115/pexels-photo-761115.jpeg?auto=compress&cs=tinysrgb&w=600"
+  // const samplePhoto = "https://i.pinimg.com/236x/c1/01/27/c10127cfeefd05a9bc1c337b421395c7.jpg"
+  const samplePhoto = "https://i.pinimg.com/736x/d2/4d/3f/d24d3fe31d365d1008bfcfff8de50a8d.jpg"
   const {isLoggedin,checkUser,isLoading} = useContext(Context)
 
   const dataRetriever = () => {
@@ -163,7 +164,7 @@ function Profile() {
               {/*  Properties for Sale  */}
               <div className="mt-6 border border-black p-2 rounded-md">
                 <div className="text-lg font-semibold text-gray-700">Properties Listed For Sale</div>
-                <div className="mt-2 text-gray-600">Total: 4</div>
+                <div className="mt-2 text-gray-600">Total: {data?.listedPropertyForSale?.length}</div>
                 <div className="flex mt-4 space-x-6">
                   <div className="flex-1">
                     <div className="font-medium text-gray-700">Recent Listing</div>
@@ -184,7 +185,7 @@ function Profile() {
               {/*  Properties for Rent  */}
               <div className="mt-6 border border-black p-2 rounded-md">
                 <div className="text-lg font-semibold text-gray-700">Properties Listed For Rent</div>
-                <div className="mt-2 text-gray-600">Total: 2</div>
+                <div className="mt-2 text-gray-600">Total: {data?.listedPropertyForRent?.length}</div>
                 <div className="flex mt-4 space-x-6">
                   <div className="flex-1">
                     <div className="font-medium text-gray-700">Recent Listing</div>

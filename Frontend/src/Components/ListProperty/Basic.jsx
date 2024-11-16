@@ -37,11 +37,12 @@ function Basic({
             required
           >
             <option value="" disabled>Select a property type</option>
-            <option value="apartment">Apartment</option>
-            <option value="house">House</option>
-            <option value="condo">Condo</option>
-            <option value="townhouse">Townhouse</option>
-            <option value="studio">Studio</option>
+            <option value="Apartment">Apartment</option>
+            <option value="House">House</option>
+            <option value="Condo">Condo</option>
+            <option value="Townhouse">Townhouse</option>
+            <option value="Studio">Studio</option>
+            <option value="Other">Other</option>
           </select>
         </div>
 

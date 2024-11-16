@@ -5,6 +5,7 @@ import Login from '../Pages/Login';
 import Register from '../Pages/Register';
 import Profile from '../Pages/Profile';
 import ListProperty from '../Pages/ListProperty';
+import PropertyDetails from '../Pages/PropertyDetails';
 const router = createBrowserRouter([
   {
     path: "",
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path:"/list-property",
         element:<ListProperty/>,
+      },
+      {
+        path:"/:propertyId",
+        element : <PropertyDetails/>
       }
     ],
   },

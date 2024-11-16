@@ -1,11 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropertyCard from '../Components/PropertyCard';
+import axios from "axios"
 
 function Home() {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [propType,setPropType] = useState("All Categories")
+  const [data,setData] = useState(null)
+
+  // Fetching Properties Data
+  useEffect(()=>{
+    const retrieveProperties = async () => {
+      try {
+        const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/property/listAllProperty`)
+        setData(response.data.properties)
+      } catch (error) {
+        console.error("error in fetching properties data",error)
+      }
+    }
+    retrieveProperties()
+  },[])
 
   // Close dropdown when clicking outside
   const dropdownRef = useRef(null);
@@ -24,9 +39,7 @@ function Home() {
   }, []);
 
   // Toggle dropdown visibility
-  const toggleDropdown = () => {
-    setIsDropdownOpen((prev) => !prev);
-  };
+  const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
 
   // Filters --->
   
@@ -35,27 +48,6 @@ function Home() {
     setPropType(str)
     setIsDropdownOpen(false)
   }
-
-  const property = {
-    title: 'Spacious 2BHK in Downtown',
-    price: '$250,000',
-    location: 'Downtown, New York',
-    type: 'For Sale',
-    beds: 2,
-    baths: 2,
-    size: '1,200 sqft',
-    imageUrl: 'https://via.placeholder.com/400x250',
-    features: {
-      parking: true,
-      pool: true,
-      balcony: true,
-    },
-    status: 'Negotiable Price',
-    agent: {
-      name: 'John Doe',
-      image: 'https://via.placeholder.com/50x50',
-    },
-  };
 
   return (
     <div className='md:ml-64 px-2 md:px-20 py-5 flex flex-col gap-y-5'>
@@ -142,8 +134,12 @@ function Home() {
 
       {/* Cards  */}
 
-      <div className='bg-blue-50'>
-        <PropertyCard property={property} />
+      <div className='flex flex-col gap-y-5'>
+        { data &&
+          data.map((property,index)=>(
+            <PropertyCard key={property._id} property={property} />
+          ))
+        }
       </div>
     </div>
   );

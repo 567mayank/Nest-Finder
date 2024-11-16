@@ -1,100 +1,210 @@
-import React from 'react';
-import { FaHeart, FaPhoneAlt } from 'react-icons/fa'; // For Heart and Phone icons
+import React, { useState } from 'react';
+import { FaHeart, FaPhoneAlt, FaRegEnvelope, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 function PropertyCard({ property }) {
+  const navigate = useNavigate();
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Function to handle next image
+  const nextImage = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % property.media.length);
+  };
+
+  // Function to handle previous image
+  const prevImage = () => {
+    setCurrentIndex(
+      (prevIndex) => (prevIndex - 1 + property.media.length) % property.media.length
+    );
+  };
+
   return (
-    <div className="max-w-full w-full bg-white shadow-md rounded-lg overflow-hidden border border-gray-300">
-      <div className="lg:grid lg:grid-cols-2 lg:gap-6 p-4">
+    <div className="max-w-full w-full bg-white shadow-md rounded-md overflow-hidden border border-gray-300">
+      <div className="lg:grid lg:grid-cols-2 p-4">
         {/* Image Section */}
-        <div className="relative w-full h-full">
-          <img 
-            src={property.imageUrl} 
-            alt={property.title} 
-            className="w-full h-56 lg:h-full object-cover rounded-lg" 
-          />
+        <div className="relative w-full lg:w-11/12 h-60 lg:h-80 overflow-hidden group">  
+          <div
+            className="flex transition-transform duration-500 ease-in-out"
+            style={{
+              transform: `translateX(-${currentIndex * 100}%)`,
+            }}
+          >
+            {property.media.map((image, index) => (
+              <img
+                key={index}
+                src={image}
+                alt={property.title}
+                className="w-full h-full object-cover rounded-md"
+              />
+            ))}
+          </div>
+
+          {/* Left Arrow */}
+          <button
+            onClick={prevImage}
+            className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700 transition-colors z-10 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
+          >
+            <FaChevronLeft size={20} />
+          </button>
+
+          {/* Right Arrow */}
+          <button
+            onClick={nextImage}
+            className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700 transition-colors z-10 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
+          >
+            <FaChevronRight size={20} />
+          </button>
+
+          {/* Listing Type */}
           <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 text-xs font-semibold rounded-full">
-            {property.type}
+            For {property.listingType.toUpperCase()}
           </div>
         </div>
 
         {/* Details Section */}
-        <div className="flex flex-col justify-between py-3 pl-4 pr-0 lg:pl-6">
+        <div className="flex flex-col justify-between py-3 ">
           <h3 className="text-lg font-semibold text-gray-900">{property.title}</h3>
-          <p className="text-xl font-bold text-gray-800">{property.price}</p>
-          <p className="text-sm text-gray-600">{property.location}</p>
-          
-          <p className="mt-2 text-sm text-gray-500">{property.beds} Beds | {property.baths} Baths | {property.size} sqft</p>
-          
+          <p className="text-xl font-bold text-gray-800">
+            {property.currency.toUpperCase()} {property.amount}{' '}
+            {property.listingType === 'rent' && property.paymentTerms}
+          </p>
+          <p className="text-sm text-gray-600">
+            {property.address} | {property.neighborhood} | {property.city} |{' '}
+            {property.state}
+          </p>
+
+          <p className="mt-2 text-sm text-gray-500">
+            {property.bedrooms} Beds | {property.propAge} Age | {property.area} sqft
+          </p>
+
           {/* Additional Info */}
           <div className="mt-2 flex space-x-4">
-            {property.features.parking && (
+            {property?.parkingAvailable && (
               <span className="inline-flex items-center text-sm text-gray-500">
-                <svg className="w-5 h-5 mr-1 text-blue-500" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v18h14V3H5zm12 14H7V5h10v12z" />
+                <svg
+                  className="w-5 h-5 mr-1 text-blue-500"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 3v18h14V3H5zm12 14H7V5h10v12z"
+                  />
                 </svg>
                 Parking
               </span>
             )}
-            {property.features.pool && (
+            <span className="inline-flex items-center text-sm text-gray-500">
+              <svg
+                className="w-5 h-5 mr-1 text-blue-500"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M5 3v18h14V3H5zm12 14H7V5h10v12z"
+                />
+              </svg>
+              {property.furnishingStatus.charAt(0).toUpperCase() +
+                property.furnishingStatus.slice(1)}
+            </span>
+            {property?.pool && (
               <span className="inline-flex items-center text-sm text-gray-500">
-                <svg className="w-5 h-5 mr-1 text-blue-500" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v18h14V3H5zm12 14H7V5h10v12z" />
+                <svg
+                  className="w-5 h-5 mr-1 text-blue-500"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 3v18h14V3H5zm12 14H7V5h10v12z"
+                  />
                 </svg>
                 Pool
               </span>
             )}
-            {property.features.balcony && (
+            {property?.balcony && (
               <span className="inline-flex items-center text-sm text-gray-500">
-                <svg className="w-5 h-5 mr-1 text-blue-500" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v18h14V3H5zm12 14H7V5h10v12z" />
+                <svg
+                  className="w-5 h-5 mr-1 text-blue-500"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 3v18h14V3H5zm12 14H7V5h10v12z"
+                  />
                 </svg>
                 Balcony
               </span>
             )}
           </div>
 
-          {property.status && (
-            <div className="mt-2 text-sm text-gray-500">{property.status}</div>
-          )}
+          {/* Negotiability */}
+          <div className="mt-2 text-sm text-gray-500">
+            {property.negotiability
+              ? 'Negotiable Price'
+              : 'Non Negotiable Price'}
+          </div>
+
+          {/* User Information */}
+          <div className="mt-4 flex items-center">
+            <img
+              src={property.owner.avatar}
+              alt={property.title}
+              className="w-8 h-8 rounded-full mr-2"
+            />
+            <span className="text-sm text-gray-700">{property.owner.fullName} | Owner</span>
+          </div>
 
           {/* Action Buttons */}
           <div className="flex items-center justify-between mt-4">
             <button
-              onClick={() => alert('View Details clicked')}
+              onClick={() => navigate(`/${property._id}`)}
               className="text-sm text-blue-600 hover:text-blue-800 font-semibold"
             >
               View Details
             </button>
 
-            <div className="flex items-center space-x-2">
-              <button 
+            <div className="flex items-center justify-end gap-x-10">
+              <button
                 onClick={() => alert('Saved')}
                 className="text-red-500 hover:text-red-700"
               >
                 <FaHeart size={20} />
               </button>
-              <button 
+              <button
                 onClick={() => alert('Contact clicked')}
                 className="text-blue-600 hover:text-blue-800"
               >
                 <FaPhoneAlt size={20} />
               </button>
+              <button
+                onClick={() => alert('Message clicked')}
+                className="text-blue-600 hover:text-blue-800"
+              >
+                <FaRegEnvelope size={20} />
+              </button>
             </div>
           </div>
-
-          {/* User Information (Optional) */}
-          {property.agent && (
-            <div className="mt-4 flex items-center">
-              <img 
-                src={property.agent.image} 
-                alt={property.agent.name} 
-                className="w-8 h-8 rounded-full mr-2"
-              />
-              <span className="text-sm text-gray-700">{property.agent.name}</span>
-            </div>
-          )}
         </div>
-      </div>      
+      </div>
     </div>
   );
 }

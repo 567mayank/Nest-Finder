@@ -8,7 +8,7 @@ const PropertySchema = new Schema(
     },
     propType: {
       type: String,
-      // enum: ['House', 'Apartment', 'Condo', 'Land', 'Commercial'], // Example property types
+      enum: ['House', 'Apartment', 'Condo', 'Townhouse', 'Studio', 'Other'],
     },
     listingType: {
       type: String,
@@ -36,7 +36,7 @@ const PropertySchema = new Schema(
     area: {
       type: Number,
       required: true, 
-      min: 1, // Area can't be less than 1
+      min: 1, 
     },
     bedrooms: {
       type: Number,
@@ -53,15 +53,15 @@ const PropertySchema = new Schema(
     },
     furnishingStatus: {
       type: String,
-      // enum: ['Furnished', 'Unfurnished', 'Semi-Furnished'], // Example furnishing statuses
+      enum: ['Fully-Furnished', 'Unfurnished', 'Semi-Furnished'], 
     },
     propAge: {
       type: Number,
-      min: 0, // Age of property can't be negative
+      min: 0, 
     },
     description: {
       type: String,
-      maxlength: 1000, // Max length for description (optional)
+      maxlength: 1000, 
     },
     media : [{
       type : String,
@@ -118,6 +118,11 @@ const PropertySchema = new Schema(
       //   message: 'Invalid email address.',
       // },
     },
+    owner : {
+      type : Schema.Types.ObjectId,
+      ref : "User",
+      required : true
+    }
   },
   { timestamps: true }
 );

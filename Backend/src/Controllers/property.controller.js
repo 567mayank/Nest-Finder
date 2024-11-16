@@ -64,6 +64,7 @@ const listProperty = async (req, res) => {
       msgThroughEmail,
       phone,
       email,
+      owner : userId
     });
 
     if (!newProperty) {
@@ -101,7 +102,13 @@ const listProperty = async (req, res) => {
 
 const listAllProperty = async (req, res) => {
   try {
-    const properties = await Property.find().select("_id title propType listingType media amount currency paymentTerms address negotiability securityDeposit furnishingStatus neighborhood city state zip");
+    const properties = await Property.
+                      find().
+                      select("-zip -msgThroughPhone -msgThroughEmail -msgThroughApp -email -phone -description -createdAt -updatedAt -__v").
+                      populate({
+                        path : "owner",
+                        select : "avatar fullName userName"
+                      })
 
     if (!properties || properties.length === 0) {
       return res.status(404).json({ message: "No properties found" });
@@ -116,7 +123,6 @@ const listAllProperty = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 
 const listRentedProperty = async (req,res) => {
   const userId = req?.user?._id

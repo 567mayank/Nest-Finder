@@ -18,6 +18,7 @@ function Details({
             name="area"
             value={property.area || ''}
             onChange={handleChange}
+            min="1"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="e.g. 1200"
             required
@@ -79,9 +80,9 @@ function Details({
             required
           >
             <option value="" disabled>Select Furnishing Status</option>
-            <option value="furnished">Furnished</option>
-            <option value="semi-furnished">Semi-Furnished</option>
-            <option value="unfurnished">Unfurnished</option>
+            <option value="Fully-Furnished">Furnished</option>
+            <option value="Semi-Furnished">Semi-Furnished</option>
+            <option value="Unfurnished">Unfurnished</option>
           </select>
         </div>
 

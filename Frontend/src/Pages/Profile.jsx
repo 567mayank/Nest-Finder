@@ -13,6 +13,8 @@ function Profile() {
   const [message,setMessage] = useState("")
   // const samplePhoto = "https://i.pinimg.com/236x/c1/01/27/c10127cfeefd05a9bc1c337b421395c7.jpg"
   const samplePhoto = "https://i.pinimg.com/736x/d2/4d/3f/d24d3fe31d365d1008bfcfff8de50a8d.jpg"
+  const [rentedProperty,setRentedProperty] = useState(null)
+  const [saleProperty,setSaleProperty] = useState(null)
   const {isLoggedin,checkUser,isLoading} = useContext(Context)
 
   const dataRetriever = () => {
@@ -61,6 +63,31 @@ function Profile() {
     }
   },[checkUser,isLoggedin])
 
+  // for fetching Rented Properties
+  useEffect(()=>{
+    const retrieveListedRentedProperty = async() => {
+      try {
+        const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/property/listRentedProperty`,{withCredentials : true})
+        setRentedProperty(response.data.rentedProperties)
+      } catch (error) {
+        console.error(error.response.data.message,error)
+      }
+    }
+    retrieveListedRentedProperty()
+  },[])
+
+  // for fetching Sale Properties
+  useEffect(()=>{
+    const retrieveListedSaleProperty = async() => {
+      try {
+        const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/property/listSaleProperty`,{withCredentials : true})
+        setSaleProperty(response.data.saleProperties)
+      } catch (error) {
+        console.error(error.response.data.message,error)
+      }
+    }
+    retrieveListedSaleProperty()
+  },[])
 
   return (
     <div>
@@ -162,46 +189,59 @@ function Profile() {
               <h2 className="text-2xl font-semibold text-gray-800">My Property Listings</h2>
   
               {/*  Properties for Sale  */}
-              <div className="mt-6 border border-black p-2 rounded-md">
+              { saleProperty && saleProperty.length>0 &&
+                <div className="mt-6 border border-black p-2 rounded-md">
                 <div className="text-lg font-semibold text-gray-700">Properties Listed For Sale</div>
-                <div className="mt-2 text-gray-600">Total: {data?.listedPropertyForSale?.length}</div>
+                <div className="mt-2 text-gray-600">Total: {saleProperty.length}</div>
                 <div className="flex mt-4 space-x-6">
                   <div className="flex-1">
                     <div className="font-medium text-gray-700">Recent Listing</div>
                     <div className="flex items-center mt-2 space-x-4">
-                      <img className="w-16 h-16 object-cover rounded-lg" src={samplePhoto} alt="Property Image" />
+                      <img className="w-16 h-16 object-cover rounded-lg" src={saleProperty[saleProperty.length-1]?.media[0]} alt="Property Image" />
                       <div>
-                        <div className="font-semibold text-gray-800">NameOfProperty</div>
-                        <div className="text-sm text-gray-600">Description of the property or location.</div>
+                        <div className="font-semibold text-gray-800">{saleProperty[saleProperty.length-1]?.title}</div>
+                        <div className="text-sm text-gray-600">Price : {saleProperty[saleProperty.length-1]?.currency} {saleProperty[saleProperty.length-1]?.amount}</div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <button className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500" onClick={()=>navigate("/list-sale")}>
                   View All
                 </button>
-              </div>
+              </div>}
   
               {/*  Properties for Rent  */}
-              <div className="mt-6 border border-black p-2 rounded-md">
+              { rentedProperty && rentedProperty.length>0 &&
+                <div className="mt-6 border border-black p-2 rounded-md">
                 <div className="text-lg font-semibold text-gray-700">Properties Listed For Rent</div>
-                <div className="mt-2 text-gray-600">Total: {data?.listedPropertyForRent?.length}</div>
+                <div className="mt-2 text-gray-600">Total: {rentedProperty?.length}</div>
                 <div className="flex mt-4 space-x-6">
                   <div className="flex-1">
                     <div className="font-medium text-gray-700">Recent Listing</div>
                     <div className="flex items-center mt-2 space-x-4">
-                      <img className="w-16 h-16 object-cover rounded-lg" src={samplePhoto} alt="Property Image" />
+                      <img className="w-16 h-16 object-cover rounded-lg" src={rentedProperty[rentedProperty.length-1]?.media[0]} alt="Property Image" />
                       <div>
-                        <div className="font-semibold text-gray-800">NameOfProperty</div>
-                        <div className="text-sm text-gray-600">Description of the property or location.</div>
+                        <div className="font-semibold text-gray-800">{rentedProperty[rentedProperty.length-1]?.title}</div>
+                        <div className="text-sm text-gray-600">Rent : {rentedProperty[rentedProperty.length-1]?.currency} {rentedProperty[rentedProperty.length-1]?.amount} {rentedProperty[rentedProperty.length-1]?.paymentTerms}</div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <button className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500" onClick={()=>navigate("/list-rent")}>
                   View All
                 </button>
-              </div>
+              </div>}
+
+              {/* If No Property is Listed */}
+              {
+                (!saleProperty || saleProperty.length===0) && (!rentedProperty || rentedProperty.length===0) &&
+                <div className='flex flex-col justify-center items-center mt-4 space-y-4'>
+                  <div className='text-lg font-semibold text-gray-700'>You haven't listed any properties yet.</div>
+                  <button className='px-6 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 transition duration-200' onClick={()=>navigate("/list-property")}>
+                    List Your Property
+                  </button>
+                </div>
+              }
               
             </div>
           </div>

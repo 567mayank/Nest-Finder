@@ -99,6 +99,84 @@ const listProperty = async (req, res) => {
   }
 };
 
+const listAllProperty = async (req, res) => {
+  try {
+    const properties = await Property.find().select("_id title propType listingType media amount currency paymentTerms address negotiability securityDeposit furnishingStatus neighborhood city state zip");
+
+    if (!properties || properties.length === 0) {
+      return res.status(404).json({ message: "No properties found" });
+    }
+
+    return res.status(200).json({
+      message: "Properties fetched successfully",
+      properties
+    });
+  } catch (error) {
+    console.error("Error fetching properties:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+const listRentedProperty = async (req,res) => {
+  const userId = req?.user?._id
+  if(!userId){
+    return res.status(401).json({message : "Unathorized Access"})
+  }
+  try {
+    const userRentedProperty = await User.findById(userId)
+    .select("listedPropertyForRent")
+    .populate({
+      path: "listedPropertyForRent",
+      select: "title listingType currency amount media paymentTerms" // Limit the populated fields
+    });
+
+    if(!userRentedProperty){
+      return res.status(404).json({message : "No Rented Property Found"})
+    }
+    return res.status(200).json(
+      {
+        message : "User Rented Property Fetched Successfully",
+        rentedProperties : userRentedProperty.listedPropertyForRent
+      }
+    )
+  } catch (error) {
+    console.error("Error in fetching rentedProperty Data",error)
+    return res.status(500).json({message : "Internal Server Error in Fetcing Rented Property Data"})
+  }
+}
+
+const listSaleProperty = async (req,res) => {
+  const userId = req?.user?._id
+  if(!userId){
+    return res.status(401).json({message : "Unathorized Access"})
+  }
+  try {
+    const userSaleProperty = await User.findById(userId)
+    .select("listedPropertyForSale")
+    .populate({
+      path: "listedPropertyForSale",
+      select: "title listingType currency amount media" 
+    });
+
+    if(!userSaleProperty){
+      return res.status(404).json({message : "No sale Property Found"})
+    }
+    return res.status(200).json(
+      {
+        message : "User Sale Property Fetched Successfully",
+        saleProperties : userSaleProperty.listedPropertyForSale
+      }
+    )
+  } catch (error) {
+    console.error("Error in fetching saleProperty Data",error)
+    return res.status(500).json({message : "Internal Server Error in Fetcing Sale Property Data"})
+  }
+}
+
 export {
-  listProperty
+  listProperty,
+  listAllProperty,
+  listRentedProperty,
+  listSaleProperty
 }

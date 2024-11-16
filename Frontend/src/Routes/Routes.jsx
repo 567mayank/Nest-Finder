@@ -5,7 +5,7 @@ import Login from '../Pages/Login';
 import Register from '../Pages/Register';
 import Profile from '../Pages/Profile';
 import ListProperty from '../Pages/ListProperty';
-import PropertyDetails from '../Pages/PropertyDetails';
+import PropertyDetail from '../Pages/PropertyDetail';
 const router = createBrowserRouter([
   {
     path: "",
@@ -32,8 +32,8 @@ const router = createBrowserRouter([
         element:<ListProperty/>,
       },
       {
-        path:"/:propertyId",
-        element : <PropertyDetails/>
+        path:"/property/:propertyId",
+        element : <PropertyDetail/>
       }
     ],
   },

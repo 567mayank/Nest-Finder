@@ -26,7 +26,7 @@ function Pricing({ property, handleChange, handleSubmit }) {
     <div className='px-20 py-10 h-screen md:ml-64 sm:m-auto'>
       <form onSubmit={handleSubmit}>
         <div className="w-full mx-auto mb-10">
-          {property.listingType === "sale" ? (
+          {property.listingType === "Sale" ? (
             // For Sale
             <div className="flex flex-col space-y-4">
 

@@ -124,6 +124,28 @@ const listAllProperty = async (req, res) => {
   }
 };
 
+const listSingleProperty = async (req,res) => {
+  const propertyId = req.params.propertyId
+  if(!propertyId){
+    return res.status(400).json({message : "CourseId not Provided"})
+  }
+  try {
+    const property = await Property.findById(propertyId).select("-__v -updatedAt -createdAt ").populate({
+      path : "owner",
+      select : "avatar fullName userName"
+    })
+    if(!property){
+      return res.status(404).json({message : "Property Not Found"})
+    }
+    return res.status(200).json({
+      message : "Property Data Fetched Successfully",
+      property
+    })
+  } catch (error) {
+    console.error("Internal Server Error in Fetching Single Property data",error)
+  }
+};
+
 const listRentedProperty = async (req,res) => {
   const userId = req?.user?._id
   if(!userId){
@@ -134,7 +156,7 @@ const listRentedProperty = async (req,res) => {
     .select("listedPropertyForRent")
     .populate({
       path: "listedPropertyForRent",
-      select: "title listingType currency amount media paymentTerms" // Limit the populated fields
+      select: "title listingType currency amount media paymentTerms"
     });
 
     if(!userRentedProperty){
@@ -150,7 +172,7 @@ const listRentedProperty = async (req,res) => {
     console.error("Error in fetching rentedProperty Data",error)
     return res.status(500).json({message : "Internal Server Error in Fetcing Rented Property Data"})
   }
-}
+};
 
 const listSaleProperty = async (req,res) => {
   const userId = req?.user?._id
@@ -178,11 +200,12 @@ const listSaleProperty = async (req,res) => {
     console.error("Error in fetching saleProperty Data",error)
     return res.status(500).json({message : "Internal Server Error in Fetcing Sale Property Data"})
   }
-}
+};
 
 export {
   listProperty,
   listAllProperty,
   listRentedProperty,
-  listSaleProperty
+  listSaleProperty,
+  listSingleProperty
 }

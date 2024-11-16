@@ -11,7 +11,7 @@ const StepNavigation = () => {
   const [property, setProperty] = useState({
     title: '',
     propType: '',
-    listingType: 'sale',
+    listingType: 'Sale',
     address: '',
     neighborhood : '',
     city: '',

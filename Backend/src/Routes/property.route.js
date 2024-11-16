@@ -4,12 +4,14 @@ import {
   listAllProperty, 
   listProperty, 
   listRentedProperty, 
-  listSaleProperty } from "../Controllers/property.controller.js";
+  listSaleProperty, 
+  listSingleProperty} from "../Controllers/property.controller.js";
 
 const router = Router()
 
 router.route("/listProperty").post(verifyJwt,listProperty)
 router.route("/listAllProperty").get(listAllProperty)
+router.route("/listSingleProperty/:propertyId").get(listSingleProperty)
 router.route("/listRentedProperty").get(verifyJwt,listRentedProperty)
 router.route("/listSaleProperty").get(verifyJwt,listSaleProperty)
 

@@ -13,6 +13,7 @@ const PropertySchema = new Schema(
     listingType: {
       type: String,
       required: true,
+      enum : ["Sale","Rent"]
     },
     address: {
       type: String,
@@ -69,6 +70,7 @@ const PropertySchema = new Schema(
     }],
     paymentTerms: {
       type: String,
+      enum : ["Monthly","Quarterly","Yearly"]
     },
     amount: {
       type: Number,

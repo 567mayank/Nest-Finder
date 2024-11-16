@@ -65,6 +65,7 @@ function Profile() {
 
   // for fetching Rented Properties
   useEffect(()=>{
+    if(!isLoggedin) return
     const retrieveListedRentedProperty = async() => {
       try {
         const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/property/listRentedProperty`,{withCredentials : true})
@@ -74,10 +75,11 @@ function Profile() {
       }
     }
     retrieveListedRentedProperty()
-  },[])
+  },[isLoggedin])
 
   // for fetching Sale Properties
   useEffect(()=>{
+    if(!isLoggedin) return
     const retrieveListedSaleProperty = async() => {
       try {
         const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/property/listSaleProperty`,{withCredentials : true})
@@ -87,7 +89,7 @@ function Profile() {
       }
     }
     retrieveListedSaleProperty()
-  },[])
+  },[isLoggedin])
 
   return (
     <div>
@@ -205,7 +207,7 @@ function Profile() {
                     </div>
                   </div>
                 </div>
-                <button className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500" onClick={()=>navigate("/list-sale")}>
+                <button className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500" onClick={()=>navigate("/lisSale")}>
                   View All
                 </button>
               </div>}
@@ -227,7 +229,7 @@ function Profile() {
                     </div>
                   </div>
                 </div>
-                <button className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500" onClick={()=>navigate("/list-rent")}>
+                <button className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500" onClick={()=>navigate("/listRent")}>
                   View All
                 </button>
               </div>}

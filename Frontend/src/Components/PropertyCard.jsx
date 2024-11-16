@@ -176,7 +176,7 @@ function PropertyCard({ property }) {
           {/* Action Buttons */}
           <div className="flex items-center justify-between mt-4">
             <button
-              onClick={() => navigate(`/${property._id}`)}
+              onClick={() => navigate(`/property/${property._id}`)}
               className="text-sm text-blue-600 hover:text-blue-800 font-semibold"
             >
               View Details

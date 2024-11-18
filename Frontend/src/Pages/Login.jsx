@@ -42,20 +42,6 @@ function Login() {
     setMessage("")
   },[userName,password])
 
-  // for redirecting back to previous page
-  useEffect(()=>{
-    if(isLoggedin) {
-      if (location.state?.from === "/login") {
-        navigate("/profile");
-      }
-      else if(location.state?.from) {
-        navigate(location.state.from)
-      } else {
-        navigate(-1); 
-      }
-    }
-  },[isLoggedin,checkUser])
-
   return (
     <section className="bg-gray-50 dark:bg-gray-900 md:ml-64">
       <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 grid lg:grid-cols-2 gap-8 lg:gap-16">

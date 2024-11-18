@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FaHeart, FaPhoneAlt, FaRegEnvelope } from 'react-icons/fa'; // Icons for heart and contact
+import { FaHeart, FaPhoneAlt, FaRegEnvelope, FaEnvelope, FaComment } from 'react-icons/fa'; // Icons for heart and contact
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
@@ -26,7 +26,6 @@ function PropertyDetail() {
       try {
         const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/property/listSingleProperty/${propertyId}`)
         setProperty(response.data.property)
-        console.log(response.data)
       } catch (error) {
         console.error(error)
       }
@@ -41,8 +40,8 @@ function PropertyDetail() {
         {/* Hero Section */}
         <div className="relative 2xl:flex">
 
+          {/* Image Section */}
           <div className='2xl:w-1/2'>
-            {/* Image Section */}
             <div className="carousel w-full  lg:h-[50vh] relative">
               <img
                 src={property?.media[currentIndex]}
@@ -70,7 +69,7 @@ function PropertyDetail() {
                   key={index}
                   src={image}
                   alt="Thumbnail"
-                  className="w-20 h-20 object-cover rounded-lg cursor-pointer mx-2"
+                  className={`w-20 h-20 object-cover rounded-lg cursor-pointer mx-2 ${index===currentIndex?"scale-110":""}`}
                   onClick={() => setCurrentIndex(index)}
                 />
               ))}
@@ -112,48 +111,98 @@ function PropertyDetail() {
           </div>
 
         </div>
-
+        
+        {/* Sticky Section */}
         <div className="w-full border border-blue-300 bg-gray-100 text-black py-6 px-4 sm:px-6 lg:px-8 rounded-xl shadow-lg sticky top-20 mt-4 z-10">
           {/* Title */}
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4">Price & Payment Details</h2>
+          <h2 className="text-xl sm:text-2xl font-semibold mb-0">Price & Payment Details</h2>
 
           {/* Conditional Display for Sale vs Rent */}
           {property?.listingType.toLowerCase() === "sale" ? (
-            <div className="space-y-3">
-              <div className="flex justify-between text-base sm:text-lg">
+            <div className="space-y-3 2xl:flex 2xl:items-center 2xl:justify-start 2xl:gap-x-32">
+              <div className="flex justify-between text-base sm:text-lg hidden">
                 <span className="font-medium">Amount:</span>
                 <span>{property?.currency} {property?.amount}</span>
               </div>
-              <div className="flex justify-between text-base sm:text-lg">
+              <div className="flex justify-between text-base sm:text-lg gap-x-2">
+                <span className="font-medium">Amount:</span>
+                <span>{property?.currency} {property?.amount}</span>
+              </div>
+              <div className="flex justify-between text-base sm:text-lg gap-x-2">
                 <span className="font-medium">Negotiable:</span>
                 <span>{property?.negotiability ? "YES" : "NO"}</span>
               </div>
             </div>
           ) : (
-            <div className="space-y-3">
-              <div className="flex justify-between text-base sm:text-lg">
+            <div className="space-y-3 2xl:flex 2xl:items-center 2xl:justify-between">
+              {/* Rent */}
+              <div className="flex justify-between items-center text-base sm:text-lg hidden">
                 <span className="font-medium">Rent:</span>
-                <span>{property?.currency} {property?.amount}/month</span>
+                <span>{property?.currency} {property?.amount}</span>
               </div>
-              <div className="flex justify-between text-base sm:text-lg">
-                <span className="font-medium">Security Deposit:</span>
+              
+              {/* Rent (duplicate, adjust accordingly) */}
+              <div className="flex justify-between items-center text-base sm:text-lg gap-x-2">
+                <span className="font-medium">Rent :</span>
+                <span>{property?.currency} {property?.amount}</span>
+              </div>
+              
+              {/* Security Deposit */}
+              <div className="flex justify-between items-center text-base sm:text-lg gap-x-2">
+                <span className="font-medium">Security Deposit :</span>
                 <span>{property?.currency} {property?.securityDeposit}</span>
               </div>
-              <div className="flex justify-between text-base sm:text-lg">
-                <span className="font-medium">Payment Terms:</span>
+
+              {/* Payment Terms */}
+              <div className="flex justify-between items-center text-base sm:text-lg gap-x-2">
+                <span className="font-medium">Payment Terms :</span>
                 <span>{property?.paymentTerms}</span>
               </div>
-              <div className="flex justify-between text-base sm:text-lg">
-                <span className="font-medium">Negotiable:</span>
+
+              {/* Negotiable */}
+              <div className="flex justify-between items-center text-base sm:text-lg gap-x-2">
+                <span className="font-medium">Negotiable :</span>
                 <span>{property?.negotiability ? "Yes" : "No"}</span>
               </div>
             </div>
           )}
+
+          {/* Contact Details */}
+          <h2 className="text-xl sm:text-2xl font-semibold mb-2 text-gray-800 mt-2">Contact Details</h2>
+
+          {/* Contact Options */}
+          <div className="space-y-2 2xl:flex 2xl:items-center 2xl:gap-x-7">
+            {property.msgThroughApp && (
+              <div className="flex items-center space-x-2 text-sm sm:text-base text-gray-700 hidden">
+                <FaComment className="text-blue-500" />
+                <span>Msg Through App</span>
+              </div>
+            )}
+
+            <div className="flex items-center space-x-2 text-sm sm:text-base text-gray-700 cursor-pointer">
+              <FaComment className="text-blue-500" />
+              <span>Msg Through App &rarr;</span>
+            </div>
+
+            {property.msgThroughPhone && (
+              <div className="flex items-center space-x-2 text-sm sm:text-base text-gray-700">
+                <FaPhoneAlt className="text-green-500" />
+                <span>{property.phone}</span>
+              </div>
+            )}
+
+            {property.msgThroughEmail && (
+              <div className="flex items-center space-x-2 text-sm sm:text-base text-gray-700">
+                <FaEnvelope className="text-red-500" />
+                <span>{property.email}</span>
+              </div>
+            )}
+          </div>
+
         </div>
 
-
         {/* Key Property Information */}
-        <div className="lg:grid lg:grid-cols-3 gap-8 mt-8 px-4 sm:px-6 lg:px-8">
+        <div className="lg:grid lg:grid-cols-2 lg:w-2/3 m-auto gap-8 mt-8 px-4 sm:px-6 lg:px-8">
           <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-lg">
             {/* Title */}
             <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-6">
@@ -173,10 +222,6 @@ function PropertyDetail() {
               <li className="flex justify-between">
                 <span className="font-medium">Floor:</span>
                 <span>{property?.floor}</span>
-              </li>
-              <li className="flex justify-between">
-                <span className="font-medium">Neighborhood:</span>
-                <span>{property?.neighborhood}</span>
               </li>
               <li className="flex justify-between">
                 <span className="font-medium">Property Age:</span>
@@ -202,17 +247,34 @@ function PropertyDetail() {
           </div>
         </div>
 
-
         {/* Amenities and Features */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-semibold text-gray-800">Amenities & Features</h2>
-          <ul className="mt-4 text-gray-600">
-            <li>Furnishing: {property?.furnishingStatus}</li>
-            <li>Parking: {property?.parkingAvailable ? 'Available' : 'Not Available'}</li>
-            <li>Floor: {property?.floor}</li>
-            <li>Neighborhood: {property?.neighborhood}</li>
-            <li>Property Age: {property?.propAge} years</li>
-          </ul>
+        <div className="lg:grid lg:grid-cols-2 lg:w-2/3 m-auto gap-8 mt-8 px-4 sm:px-6 lg:px-8">
+          <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-lg">
+            {/* Title */}
+            <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-6">
+              Amenities & Features
+            </h2>
+
+            {/* Amenities List */}
+            <ul className="space-y-4 text-gray-700">
+              <li className="flex justify-between">
+                <span className="font-medium">Furnishing:</span>
+                <span>{property?.furnishingStatus}</span>
+              </li>
+              <li className="flex justify-between">
+                <span className="font-medium">Parking:</span>
+                <span>{property?.parkingAvailable ? 'Available' : 'Not Available'}</span>
+              </li>
+              <li className="flex justify-between">
+                <span className="font-medium">Neighborhood:</span>
+                <span>{property?.neighborhood}</span>
+              </li>
+              <li className="flex justify-between">
+                <span className="font-medium">Property Age:</span>
+                <span>{property?.propAge} years</span>
+              </li>
+            </ul>
+          </div>
         </div>
 
         {/* Map and Location */}

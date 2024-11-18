@@ -15,7 +15,7 @@ function Profile() {
   const samplePhoto = "https://i.pinimg.com/736x/d2/4d/3f/d24d3fe31d365d1008bfcfff8de50a8d.jpg"
   const [rentedProperty,setRentedProperty] = useState(null)
   const [saleProperty,setSaleProperty] = useState(null)
-  const {isLoggedin,checkUser,isLoading} = useContext(Context)
+  const {isLoggedin,checkUser,isLoading,changeCurPage} = useContext(Context)
 
   const dataRetriever = () => {
     const local = JSON.parse(localStorage.getItem("User"))
@@ -56,8 +56,9 @@ function Profile() {
   };
 
   useEffect(()=>{
+    changeCurPage("/profile")
     if(!isLoading && !isLoggedin) {
-      navigate('/login', { state: { from: location.pathname } });
+      navigate("/login")
     } else {
       dataRetriever()
     }
@@ -207,7 +208,7 @@ function Profile() {
                     </div>
                   </div>
                 </div>
-                <button className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500" onClick={()=>navigate("/lisSale")}>
+                <button className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500" onClick={()=>navigate("/listSale")}>
                   View All
                 </button>
               </div>}

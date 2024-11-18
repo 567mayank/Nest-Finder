@@ -153,11 +153,16 @@ const listRentedProperty = async (req,res) => {
   }
   try {
     const userRentedProperty = await User.findById(userId)
-    .select("listedPropertyForRent")
-    .populate({
-      path: "listedPropertyForRent",
-      select: "title listingType currency amount media paymentTerms"
-    });
+  .select("listedPropertyForRent")
+  .populate({
+    path: "listedPropertyForRent",
+    select: "-zip -msgThroughPhone -msgThroughEmail -msgThroughApp -email -phone -description -createdAt -updatedAt -__v",
+    populate: {
+      path: "owner", // This is the field inside listedPropertyForRent you want to populate
+      select: "fullName avatar" // The fields you want from the owner
+    }
+  });
+
 
     if(!userRentedProperty){
       return res.status(404).json({message : "No Rented Property Found"})
@@ -184,7 +189,7 @@ const listSaleProperty = async (req,res) => {
     .select("listedPropertyForSale")
     .populate({
       path: "listedPropertyForSale",
-      select: "title listingType currency amount media" 
+      select : "-zip -msgThroughPhone -msgThroughEmail -msgThroughApp -email -phone -description -createdAt -updatedAt -__v"
     });
 
     if(!userSaleProperty){
@@ -202,10 +207,76 @@ const listSaleProperty = async (req,res) => {
   }
 };
 
+const editBasicProperty = async (req,res) => {
+  const userId = req?.user?._id
+  const propertyId = req?.params?.propertyId
+  if(!userId) {
+    return res.status(401).json({message : "Unauthorized Access"})
+  }
+  if(!propertyId) {
+    return res.status(400).json({message : "Property Id not Provided"})
+  }
+  try {
+    const {formData} = req.body
+    const basicPropertyInfo = await Property.findOneAndUpdate(
+      {
+        _id : propertyId
+      },
+      {
+        title : formData.title,
+        listingType : formData.listingType,
+        propType : formData.propType,
+        address : formData.address,
+        neighborhood : formData.neighborhood,
+        city : formData.city,
+        state : formData.state,
+        zip : formData.zip
+      },
+      { new: true }
+    )
+
+    
+    await User.findOneAndUpdate(
+      { _id: userId },
+      {
+        $pull: {
+          listedPropertyForRent: propertyId,  
+          listedPropertyForSale: propertyId,  
+        }
+      }
+    );
+    
+    const arrayToPush = formData.listingType === 'Sale' ? 'listedPropertyForSale' : 'listedPropertyForRent';
+
+    await User.findOneAndUpdate(
+      { _id: userId },
+      {
+        $push: {
+          [arrayToPush]: propertyId  
+        }
+      }
+    );
+
+    if(!basicPropertyInfo){
+      return res.status(400).json({message : "Error in Upadting Basic Property Info"})
+    }
+    return res.status(200).json(
+      {
+        message : "Basic Property Info Updated SuccessFully",
+        basicPropertyInfo
+      }
+    )
+  } catch (error) {
+    console.error("error in updating Basic Property Info",error) 
+    return res.status(500).json({message : "Internal Server Error in Updating Basic Property Info"})
+  }
+}
+
 export {
   listProperty,
   listAllProperty,
   listRentedProperty,
   listSaleProperty,
-  listSingleProperty
+  listSingleProperty,
+  editBasicProperty
 }

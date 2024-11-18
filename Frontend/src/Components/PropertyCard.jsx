@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaHeart, FaPhoneAlt, FaRegEnvelope, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
-function PropertyCard({ property }) {
+function PropertyCard({ property, Edit=false }) {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -174,7 +174,8 @@ function PropertyCard({ property }) {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-between mt-4">
+          { !Edit &&
+            <div className="flex items-center justify-between mt-4">
             <button
               onClick={() => navigate(`/property/${property._id}`)}
               className="text-sm text-blue-600 hover:text-blue-800 font-semibold"
@@ -202,7 +203,22 @@ function PropertyCard({ property }) {
                 <FaRegEnvelope size={20} />
               </button>
             </div>
-          </div>
+          </div>}
+
+          {/*  Edit */}
+          { Edit &&
+            <div className="flex flex-row gap-6 items-center justify-start mt-3">
+              <button className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all duration-300" onClick={()=>(navigate(`/property/${property._id}`))}>
+                Preview
+              </button>
+              <button className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-all duration-300" onClick={()=>(navigate(`/edit/${property._id}`))}>
+                Edit
+              </button>
+              <button className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all duration-300">
+                Delete
+              </button>
+            </div>
+          }
         </div>
       </div>
     </div>

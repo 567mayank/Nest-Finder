@@ -1,15 +1,21 @@
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 import Loading from "../Components/Loading";
+import { useNavigate } from "react-router-dom";
 export const Context = createContext({
   isLoggedin : 0,
   checkUser : () => {},
-  isLoading : true
+  isLoading : true,
+  curPage : "/",
+  changeCurPage : () => {}
 })
 
 export const ContextProvider = ({children}) => {
   const [isLoggedin,setIsLoggedin] = useState(0)
   const [isLoading,setIsLoading] = useState(true)
+  const [curPage,setCurPage] = useState("/")
+  const navigate = useNavigate()
+
   const checkUser = async() => {
     setIsLoading(true)
     try {
@@ -25,12 +31,20 @@ export const ContextProvider = ({children}) => {
   }
 
   useEffect(()=>{
+    if(isLoggedin) navigate(curPage)
+  },[isLoggedin])
+
+  const changeCurPage = (path) => {
+    setCurPage(path)
+  }
+
+  useEffect(()=>{
     checkUser()
   },[])
 
 
   return (
-    <Context.Provider value={{isLoggedin,checkUser,isLoading}}>
+    <Context.Provider value={{isLoggedin,checkUser,isLoading,changeCurPage}}>
       {isLoading && <Loading/>}
       {children}
     </Context.Provider>

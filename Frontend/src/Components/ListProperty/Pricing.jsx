@@ -138,8 +138,7 @@ function Pricing({ property, handleChange, handleSubmit }) {
                     <input
                       type="number"
                       placeholder="Enter Amount"
-                      value={formatNumber
-                        (property.amount)}
+                      value={(property.amount)}
                       min="0"
                       name='amount'
                       onChange={handleChange}

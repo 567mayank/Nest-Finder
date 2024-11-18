@@ -6,6 +6,9 @@ import Register from '../Pages/Register';
 import Profile from '../Pages/Profile';
 import ListProperty from '../Pages/ListProperty';
 import PropertyDetail from '../Pages/PropertyDetail';
+import UserRentedProperties from "../Pages/UserRentedProperties"
+import UserSaleProperties from "../Pages/UserSaleProperties"
+import Edit from '../Pages/Edit';
 const router = createBrowserRouter([
   {
     path: "",
@@ -34,6 +37,18 @@ const router = createBrowserRouter([
       {
         path:"/property/:propertyId",
         element : <PropertyDetail/>
+      },
+      {
+        path:"/listRent",
+        element:<UserRentedProperties/>
+      },
+      {
+        path:"/listSale",
+        element:<UserSaleProperties/>
+      },
+      {
+        path:"/edit/:propertyId",
+        element:<Edit/>
       }
     ],
   },

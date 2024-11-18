@@ -1,6 +1,7 @@
 import { Router } from "express";
 import verifyJwt from "../Middlewares/verifyJwt.js"
 import { 
+  editBasicProperty,
   listAllProperty, 
   listProperty, 
   listRentedProperty, 
@@ -14,5 +15,7 @@ router.route("/listAllProperty").get(listAllProperty)
 router.route("/listSingleProperty/:propertyId").get(listSingleProperty)
 router.route("/listRentedProperty").get(verifyJwt,listRentedProperty)
 router.route("/listSaleProperty").get(verifyJwt,listSaleProperty)
+
+router.route("/editBasicInfo/:propertyId").patch(verifyJwt,editBasicProperty)
 
 export default router

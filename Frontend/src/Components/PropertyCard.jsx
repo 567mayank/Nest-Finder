@@ -23,8 +23,8 @@ function PropertyCard({ property, Edit=false, userFav=null }) {
   };
 
   const handleFavChange = async() => {
-    if(isFav) setIsFavChanged(-1);
-    else setIsFavChanged(1)
+    if(isFav) setIsFavChanged(isFavChanged - 1);
+    else setIsFavChanged(isFavChanged + 1);
     setIsFav(!isFav)
     try {
       const response = await axios.put(`http://localhost:${import.meta.env.VITE_APP_PORT}/favourite/update/${property._id}`,{},{ withCredentials: true })

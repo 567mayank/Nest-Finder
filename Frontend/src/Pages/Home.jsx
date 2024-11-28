@@ -1,13 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropertyCard from '../Components/PropertyCard';
 import axios from "axios"
+import {Context} from "../Context/Context"
 
 function Home() {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [propType,setPropType] = useState("All Categories")
   const [data,setData] = useState(null)
+  const [userFav,setUserFav] = useState(null)
+  const {isLoggedin} = useContext(Context)
 
   // Fetching Properties Data
   useEffect(()=>{
@@ -40,6 +43,21 @@ function Home() {
 
   // Toggle dropdown visibility
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
+
+
+  // fetching user fav Properties
+  useEffect(() => {
+    const retrieveUserFav = async() => {
+      try {
+        const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/favourite/getUserFav`,{withCredentials : true})
+        console.log(response.data)
+        setUserFav(response.data.favProperty)
+      } catch (error) {
+        console.error("error in fetching user favourite Properties",error)
+      }
+    }
+    if(isLoggedin) retrieveUserFav();
+  },[isLoggedin])
 
   // Filters --->
   
@@ -137,7 +155,7 @@ function Home() {
       <div className='flex flex-col gap-y-5'>
         { data &&
           data.map((property,index)=>(
-            <PropertyCard key={property._id} property={property} />
+            <PropertyCard key={property._id} property={property} userFav={userFav} />
           ))
         }
       </div>

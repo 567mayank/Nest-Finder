@@ -1,22 +1,45 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaHeart, FaPhoneAlt, FaRegEnvelope, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { CiHeart } from "react-icons/ci";
+import { FaParking } from "react-icons/fa";
+import { GiSofa } from "react-icons/gi";
 import { useNavigate } from 'react-router-dom';
+import axios from "axios"
 
-function PropertyCard({ property, Edit=false }) {
+function PropertyCard({ property, Edit=false, userFav=null }) {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFav,setIsFav] = useState(false)
+  const [isFavChanged,setIsFavChanged] = useState(0)
 
-  // Function to handle next image
   const nextImage = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % property.media.length);
   };
 
-  // Function to handle previous image
   const prevImage = () => {
     setCurrentIndex(
       (prevIndex) => (prevIndex - 1 + property.media.length) % property.media.length
     );
   };
+
+  const handleFavChange = async() => {
+    if(isFav) setIsFavChanged(-1);
+    else setIsFavChanged(1)
+    setIsFav(!isFav)
+    try {
+      const response = await axios.put(`http://localhost:${import.meta.env.VITE_APP_PORT}/favourite/update/${property._id}`,{},{ withCredentials: true })
+    } catch (error) {
+      console.error("error in updating favourite",error)
+    }
+  }
+
+  useEffect(()=>{
+    if(!userFav) return
+    userFav.map((prop) => {
+      if(prop.property === property._id) setIsFav(true)
+    })
+  },[userFav])
+
 
   return (
     <div className="max-w-full w-full bg-white shadow-md rounded-md overflow-hidden border border-gray-300">
@@ -24,7 +47,7 @@ function PropertyCard({ property, Edit=false }) {
         {/* Image Section */}
         <div className="relative w-full lg:w-11/12 h-60 lg:h-80 overflow-hidden group">  
           <div
-            className="flex transition-transform duration-500 ease-in-out"
+            className="flex items-center transition-transform duration-500 ease-in-out"
             style={{
               transform: `translateX(-${currentIndex * 100}%)`,
             }}
@@ -81,38 +104,12 @@ function PropertyCard({ property, Edit=false }) {
           <div className="mt-2 flex space-x-4">
             {property?.parkingAvailable && (
               <span className="inline-flex items-center text-sm text-gray-500">
-                <svg
-                  className="w-5 h-5 mr-1 text-blue-500"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 3v18h14V3H5zm12 14H7V5h10v12z"
-                  />
-                </svg>
+                <FaParking size={20} className='mr-1 text-blue-500'/>
                 Parking
               </span>
             )}
             <span className="inline-flex items-center text-sm text-gray-500">
-              <svg
-                className="w-5 h-5 mr-1 text-blue-500"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M5 3v18h14V3H5zm12 14H7V5h10v12z"
-                />
-              </svg>
+            <GiSofa size={20} className='mr-1 text-blue-500'/>
               {property.furnishingStatus.charAt(0).toUpperCase() +
                 property.furnishingStatus.slice(1)}
             </span>
@@ -184,12 +181,25 @@ function PropertyCard({ property, Edit=false }) {
             </button>
 
             <div className="flex items-center justify-end gap-x-10">
-              <button
-                onClick={() => alert('Saved')}
-                className="text-red-500 hover:text-red-700"
-              >
-                <FaHeart size={20} />
-              </button>
+              <div className='flex items-center justify-center gap-x-1 '>
+                <div className='mt-2'>
+                  {!isFav && <button
+                    onClick={handleFavChange}
+                    className="text-black hover:text-red-700 "
+                  >
+                    <CiHeart size={20} />
+                  </button> }
+                  {isFav && <button
+                    onClick={handleFavChange}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <FaHeart size={20} /> 
+                  </button> }
+                </div>
+                <div>{property.favourite + isFavChanged}</div>
+              </div>
+
+              
               <button
                 onClick={() => alert('Contact clicked')}
                 className="text-blue-600 hover:text-blue-800"

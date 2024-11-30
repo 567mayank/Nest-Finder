@@ -42,7 +42,7 @@ function PropertyDetail() {
 
           {/* Image Section */}
           <div className='2xl:w-1/2'>
-            <div className="carousel w-full  lg:h-[50vh] relative">
+            <div className="carousel w-full lg:h-[50vh] relative">
               <img
                 src={property?.media[currentIndex]}
                 alt={property?.title}
@@ -85,7 +85,7 @@ function PropertyDetail() {
 
             {/* Property Details */}
             <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 mt-3">
-              {property?.furnishingStatus} {property?.propType} for {property?.listingType} in 
+              {property?.furnishingStatus} {property?.propType} for <span className='text-red-700'>{property?.listingType}</span> in 
               <br/>
               <span className="font-semibold text-gray-800">{property?.neighborhood}</span>, 
               <span className="font-semibold text-gray-800">{property?.city}</span>, 

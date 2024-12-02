@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import PropertyCard from '../Components/PropertyCard';
 import axios from "axios"
-import { backend, isLoggedin } from '../helper';
+import { backend, isLoggedin } from '../Helper';
 
 function Home() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

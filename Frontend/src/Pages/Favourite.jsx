@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import {backend} from "../Helper"
 import PropertyCard from '../Components/PropertyCard'
 
 function Favourite() {
@@ -7,7 +8,7 @@ function Favourite() {
   useEffect(()=>{
     const retrieveData = async() => {
       try {
-        const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/favourite/getUserFav`,{withCredentials : true})
+        const response = await axios.get(`${backend}/favourite/getFavPropDetails`,{withCredentials : true})
         setData(response.data.favProperty)
       } catch (error) {
         console.error("error in fetching user favourite Properties",error)
@@ -16,15 +17,19 @@ function Favourite() {
     retrieveData()
   },[])
 
-  console.log(data)
   return (
-    <div className='md:ml-64 px-10 py-5'>
-      <h1>Favourites</h1>
-      {/* {
-        data && data.map((prop)=>(
-          <PropertyCard property={prop}/>
-        ))
-      } */}
+    <div className='md:ml-64 px-2 md:px-20 py-5 flex flex-col gap-y-5'>
+      <h1 className=' text-4xl font-bold dark:text-white'>
+        Favourites &rarr;
+      </h1>
+
+      <div className='flex flex-col gap-y-5'>
+        {
+          data && [...data].reverse().map((prop)=>(
+            <PropertyCard key={prop._id} property={prop.property} isFv={true}/>
+          ))
+        }
+      </div>
     </div>
   )
 }

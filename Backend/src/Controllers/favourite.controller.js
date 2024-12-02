@@ -1,5 +1,6 @@
 import Favourite from '../Models/Favourite.model.js' 
 import Property from '../Models/Property.model.js';
+import User from '../Models/User.model.js';
 
 const updateFav = async (req, res) => {
   const userId = req?.user?._id;
@@ -76,7 +77,38 @@ const userFavourite = async(req,res) => {
   }
 }
 
+const userFavDetail = async (req, res) => {
+  const userId = req?.user?._id;
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized Access" });
+  }
+
+  try {
+    const favProperty = await Favourite.find({ user: userId })
+      .populate({
+        path: "property", // Populating the 'property' field in Favourite model
+        select: "-zip -msgThroughPhone -msgThroughEmail -msgThroughApp -email -phone -description -createdAt -updatedAt -__v", // Excluding unnecessary fields
+        populate: {
+          path: "owner", // Now we populate the 'owner' field inside 'property'
+          select: "avatar fullName userName", // Select only the fields you need from the owner
+        },
+      });
+
+    return res.status(200).json({
+      message: "Fetched Successfully",
+      favProperty : favProperty,
+    });
+  } catch (error) {
+    console.error(error); // Log the error to debug
+    return res.status(500).json({
+      message: "Internal Server Error in Fetching User Favourite Properties",
+    });
+  }
+};
+
+
 export { 
   updateFav,
-  userFavourite
+  userFavourite,
+  userFavDetail
 };

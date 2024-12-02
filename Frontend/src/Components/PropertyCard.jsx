@@ -6,10 +6,10 @@ import { GiSofa } from "react-icons/gi";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
 
-function PropertyCard({ property, Edit=false, userFav=null }) {
+function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isFav,setIsFav] = useState(false)
+  const [isFav,setIsFav] = useState(isFv)
   const [isFavChanged,setIsFavChanged] = useState(0)
 
   const nextImage = () => {
@@ -28,6 +28,7 @@ function PropertyCard({ property, Edit=false, userFav=null }) {
     setIsFav(!isFav)
     try {
       const response = await axios.put(`http://localhost:${import.meta.env.VITE_APP_PORT}/favourite/update/${property._id}`,{},{ withCredentials: true })
+      if(isFv) window.location.reload()
     } catch (error) {
       console.error("error in updating favourite",error)
     }

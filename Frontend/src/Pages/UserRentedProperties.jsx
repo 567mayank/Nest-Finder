@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import {useNavigate} from "react-router-dom"
 import PropertyCard from '../Components/PropertyCard.jsx'
-import {isLoggedin} from "../Helper.jsx"
+import {backend, isLoggedin} from "../Helper.jsx"
 import axios from 'axios'
 
 function UserRentedProperties() {
@@ -17,7 +17,7 @@ function UserRentedProperties() {
     
     const retrieveListedRentedProperty = async() => {
       try {
-        const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/property/listRentedProperty`,{withCredentials : true})
+        const response = await axios.get(`${backend}/property/listRentedProperty`,{withCredentials : true})
         setData(response.data.rentedProperties)
       } catch (error) {
         console.error(error.response.data.message,error)

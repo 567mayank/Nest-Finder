@@ -1,17 +1,19 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { isLoggedin } from '../helper';
 import axios from "axios"
-import { Context } from '../Context/Context';
 
 function Login() {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [message,setMessage] = useState("")
-  const location = useLocation();
-  const {checkUser,isLoggedin} = useContext(Context)
   const navigate = useNavigate()
 
-  // Correct the handleSubmit to handle the form submission
+  useEffect(()=>{
+    if(isLoggedin()) navigate("/")
+  },[])
+
+
   const handleSubmit = async(e) => {
     e.preventDefault();
     if(!userName.trim() || !password.trim()) {
@@ -29,8 +31,8 @@ function Login() {
           withCredentials : true
         }
       )
+      localStorage.setItem("email",JSON.stringify(response.data.user.email))
       setMessage(response.data.message)
-      checkUser()
       navigate("/profile")
     } catch (error) {
       console.log(error.response.data)

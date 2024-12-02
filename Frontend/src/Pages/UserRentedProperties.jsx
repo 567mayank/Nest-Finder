@@ -1,21 +1,20 @@
-import React, { useState, useEffect, useContext } from 'react'
-import {Context} from "../Context/Context.jsx"
+import React, { useState, useEffect } from 'react'
 import {useNavigate} from "react-router-dom"
 import PropertyCard from '../Components/PropertyCard.jsx'
+import {isLoggedin} from "../Helper.jsx"
 import axios from 'axios'
 
 function UserRentedProperties() {
   const [data,setData] = useState(null)
-  const {isLoggedin,changeCurPage} = useContext(Context)
   const navigate = useNavigate()
+  
   // for fetching Rented Properties
   useEffect(()=>{
-    if(!isLoggedin) {
-      changeCurPage("/listRent")
+    if(!isLoggedin()) {
       navigate("/login")
       return
     }
-    navigate("/listRent")
+    
     const retrieveListedRentedProperty = async() => {
       try {
         const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/property/listRentedProperty`,{withCredentials : true})
@@ -24,7 +23,9 @@ function UserRentedProperties() {
         console.error(error.response.data.message,error)
       }
     }
+
     retrieveListedRentedProperty()
+
   },[])
 
   return (

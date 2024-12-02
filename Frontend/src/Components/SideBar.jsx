@@ -1,14 +1,13 @@
-import React, { useContext } from 'react'
+import React, {  } from 'react'
 import { useState } from 'react';
 import {Link, useNavigate} from "react-router-dom"
-import { Context } from '../Context/Context';
 import axios from 'axios';
+import { isLoggedin } from '../helper';
 
 function Sidebar() {
   const navigate = useNavigate()
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectOpen,setSelectOpen] = useState(false)
-  const {isLoggedin,checkUser} = useContext(Context)
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -17,7 +16,7 @@ function Sidebar() {
   const handleLogout = async() => {
     localStorage.clear()
     await axios.post(`http://localhost:${8000}/user/logout`,{},{withCredentials:true})
-    checkUser()
+    // checkUser()
     navigate("/")
   }
   
@@ -133,7 +132,7 @@ function Sidebar() {
 
               {/* Favourite */}
               <li>
-                  <Link to="/favorites" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" onClick={toggleSidebar}>
+                  <Link to="/favourites" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" onClick={toggleSidebar}>
                   <svg
                     className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
                     aria-hidden="true"
@@ -145,7 +144,7 @@ function Sidebar() {
                       d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
                     />
                   </svg>
-                    <span className="flex-1 ms-3 whitespace-nowrap">Favorites</span>
+                    <span className="flex-1 ms-3 whitespace-nowrap">Favourites</span>
                   </Link>
               </li>
 
@@ -179,7 +178,7 @@ function Sidebar() {
               </li>
                             
               {/* Account */}
-              { !isLoggedin &&
+              { !isLoggedin() &&
               <li onClick={toggleSidebar}>
                   <Link to="/login" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                     <svg className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
@@ -190,7 +189,7 @@ function Sidebar() {
               </li>}
 
               {/* Log Out Button */}
-              { isLoggedin && 
+              { isLoggedin() && 
               <li onClick={handleLogout}>
                   <div  className=" cursor-pointer flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                   <svg

@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Context } from '../Context/Context'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import Basic from '../Components/EditProperty/Basic'
@@ -7,20 +6,20 @@ import Details from '../Components/EditProperty/Details'
 import Media from '../Components/EditProperty/Media'
 import Pricing from '../Components/EditProperty/Pricing'
 import Confirmation from '../Components/EditProperty/Confirmation'
+import { isLoggedin } from '../helper'
 
 function Edit() {
-  const {changeCurPage,isLoggedin} = useContext(Context)
   const [data,setData] = useState(null)
   const {propertyId} = useParams()
   const navigate = useNavigate()
 
   // Authorization
-  useEffect(()=>{
-    changeCurPage(`/edit/${propertyId}`)
-    if(!isLoggedin){
-      navigate("/login")
-    }
-  })
+  // useEffect(()=>{
+  //   // changeCurPage(`/edit/${propertyId}`)
+  //   if(!isLoggedin()){
+  //     navigate("/login")
+  //   }
+  // })
 
   // fetching property data
   useEffect(()=>{

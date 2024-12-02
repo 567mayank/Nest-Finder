@@ -4,10 +4,10 @@ import { Outlet } from 'react-router-dom';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
 import Sidebar from './Components/SideBar';
-import { ContextProvider } from './Context/Context';
+// import { ContextProvider } from './Context/Context';
 const Layout = () => {
   return (
-    <ContextProvider>
+    // <ContextProvider>
       <div>
         <Header/>
         <main className='min-h-screen mt-20'>
@@ -16,7 +16,7 @@ const Layout = () => {
         </main>
         {/* <Footer/> */}
       </div>
-    </ContextProvider>
+    // </ContextProvider>
   );
 };
 

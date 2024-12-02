@@ -117,6 +117,15 @@ const logout = async(req,res) => {
   return res.status(200).clearCookie("token").json({message:"Succeffully logout"})
 }
 
+const userInfo = async(req,res) => {
+  return res.status(200).json(
+    {
+      message : "User Info Fetched Successfully",
+      user : req.user
+    }
+  )
+}
+
 const isLoggedin = async(req,res) => {
   const token = req?.cookies.token
   if(!token) {
@@ -200,6 +209,7 @@ export {
   login,
   registerUser,
   logout,
+  userInfo,
   isLoggedin,
   updatePersonalInfo
 }

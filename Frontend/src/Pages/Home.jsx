@@ -1,22 +1,19 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import PropertyCard from '../Components/PropertyCard';
 import axios from "axios"
-import {Context} from "../Context/Context"
+import { backend, isLoggedin } from '../helper';
 
 function Home() {
-  const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [propType,setPropType] = useState("All Categories")
   const [data,setData] = useState(null)
   const [userFav,setUserFav] = useState(null)
-  const {isLoggedin} = useContext(Context)
 
   // Fetching Properties Data
   useEffect(()=>{
     const retrieveProperties = async () => {
       try {
-        const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/property/listAllProperty`)
+        const response = await axios.get(`${backend}/property/listAllProperty`)
         setData(response.data.properties)
       } catch (error) {
         console.error("error in fetching properties data",error)
@@ -49,14 +46,13 @@ function Home() {
   useEffect(() => {
     const retrieveUserFav = async() => {
       try {
-        const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/favourite/getUserFav`,{withCredentials : true})
-        console.log(response.data)
+        const response = await axios.get(`${backend}/favourite/getUserFav`,{withCredentials : true})
         setUserFav(response.data.favProperty)
       } catch (error) {
         console.error("error in fetching user favourite Properties",error)
       }
     }
-    if(isLoggedin) retrieveUserFav();
+    if(isLoggedin()) retrieveUserFav();
   },[isLoggedin])
 
   // Filters --->

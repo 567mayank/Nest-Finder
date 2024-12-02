@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Context } from '../Context/Context';
+import React, { useEffect, useState } from 'react';
 import {useNavigate} from 'react-router-dom'
 import axios from 'axios';
+import { backend, isLoggedin } from '../helper';
 
 function Profile() {
   const navigate = useNavigate()
@@ -15,19 +15,21 @@ function Profile() {
   const samplePhoto = "https://i.pinimg.com/736x/d2/4d/3f/d24d3fe31d365d1008bfcfff8de50a8d.jpg"
   const [rentedProperty,setRentedProperty] = useState(null)
   const [saleProperty,setSaleProperty] = useState(null)
-  const {isLoggedin,checkUser,isLoading,changeCurPage} = useContext(Context)
 
-  const dataRetriever = () => {
-    const local = JSON.parse(localStorage.getItem("User"))
-      if(local){
-        setData(local)
-        if(local.email) setEmail(local.email)
-        if(local.dob) setDob(local?.dob)
-        if(local.phone) setPhone(local.phone)
-      } else {
-        checkUser()
+  useEffect(()=>{
+    const dataRetriever = async() => {
+      try {
+        const response = await axios.get(`${backend}/user/userInfo`,{withCredentials : true})
+        setData(response.data.user)
+        setEmail(response.data.user.email)
+        setPhone(response.data.user.phone)
+        setDob(response.data.user.dob)
+      } catch (error) {
+        console.error(error)
       }
-  }
+    }
+    dataRetriever()
+  },[])
 
   const handleEditClick = async () => {
     if(isEditing){
@@ -56,17 +58,13 @@ function Profile() {
   };
 
   useEffect(()=>{
-    changeCurPage("/profile")
-    if(!isLoading && !isLoggedin) {
-      navigate("/login")
-    } else {
-      dataRetriever()
-    }
-  },[checkUser,isLoggedin])
+    if(!isLoggedin()) navigate("/login")
+  },[isLoggedin])
+  
 
   // for fetching Rented Properties
   useEffect(()=>{
-    if(!isLoggedin) return
+    if(!isLoggedin()) return
     const retrieveListedRentedProperty = async() => {
       try {
         const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/property/listRentedProperty`,{withCredentials : true})
@@ -80,7 +78,7 @@ function Profile() {
 
   // for fetching Sale Properties
   useEffect(()=>{
-    if(!isLoggedin) return
+    if(!isLoggedin()) return
     const retrieveListedSaleProperty = async() => {
       try {
         const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/property/listSaleProperty`,{withCredentials : true})
@@ -94,7 +92,7 @@ function Profile() {
 
   return (
     <div>
-      { !isLoading && data &&
+      {  data &&
         <div className='md:ml-64 px-10'>
         <div className="py-6 flex flex-col gap-y-7">
   

@@ -5,7 +5,8 @@ import {
   registerUser,
   logout,
   isLoggedin,
-  updatePersonalInfo
+  updatePersonalInfo,
+  userInfo
 } from "../Controllers/user.contoller.js"
 
 const router = Router()
@@ -13,6 +14,7 @@ const router = Router()
 router.route("/login").post(login)
 router.route("/register").post(registerUser)
 router.route("/logout").post(verifyJwt,logout)
+router.route("/userInfo").get(verifyJwt,userInfo)
 router.route("/isLoggedin").get(isLoggedin)
 router.route("/updatePersonalInfo").patch(verifyJwt,updatePersonalInfo)
 

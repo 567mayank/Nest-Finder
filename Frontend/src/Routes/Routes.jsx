@@ -9,6 +9,7 @@ import PropertyDetail from '../Pages/PropertyDetail';
 import UserRentedProperties from "../Pages/UserRentedProperties"
 import UserSaleProperties from "../Pages/UserSaleProperties"
 import Edit from '../Pages/Edit';
+import Favourite from '../Pages/Favourite';
 const router = createBrowserRouter([
   {
     path: "",
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
       {
         path:"/edit/:propertyId",
         element:<Edit/>
+      },
+      {
+        path:"/favourites",
+        element:<Favourite/>
       }
     ],
   },

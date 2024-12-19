@@ -272,11 +272,55 @@ const editBasicProperty = async (req,res) => {
   }
 }
 
+const editDetails = async (req,res) => {
+  const userId = req?.user?._id
+  const propertyId = req?.params?.propertyId
+  if(!userId) {
+    return res.status(401).json({message : "Unauthorized Access"})
+  }
+  if(!propertyId) {
+    return res.status(400).json({message : "Property Id not Provided"})
+  }
+  try {
+    const {formData} = req.body
+    const basicPropertyInfo = await Property.findOneAndUpdate(
+      {
+        _id : propertyId
+      },
+      {
+        area : formData.area,
+        bedrooms : formData.bedrooms,
+        floor : formData.floor,
+        parkingAvailable : formData.parkingAvailable,
+        furnishingStatus : formData.furnishingStatus,
+        propAge : formData.propAge,
+        description : formData.description
+      },
+      { new: true }
+    )
+
+    
+    if(!basicPropertyInfo){
+      return res.status(400).json({message : "Error in Updating Details of Property Info"})
+    }
+    return res.status(200).json(
+      {
+        message : "Details of Property Info Updated SuccessFully",
+        basicPropertyInfo
+      }
+    )
+  } catch (error) {
+    console.error("error in updating Details of Property Info",error) 
+    return res.status(500).json({message : "Internal Server Error in Updating Details of Property Info"})
+  }
+}
+
 export {
   listProperty,
   listAllProperty,
   listRentedProperty,
   listSaleProperty,
   listSingleProperty,
-  editBasicProperty
+  editBasicProperty,
+  editDetails
 }

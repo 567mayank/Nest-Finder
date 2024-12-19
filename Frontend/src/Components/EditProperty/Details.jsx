@@ -1,7 +1,10 @@
+import axios from 'axios';
 import React, { useState } from 'react';
+import { backend } from '../../Helper';
 
 function Details({ data }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [message, setMessage] = useState("")
   const [formData, setFormData] = useState({
     area: data?.area || '',
     bedrooms: data?.bedrooms || '',
@@ -21,8 +24,28 @@ function Details({ data }) {
   };
 
   const handleEditClick = () => {
+    if (isEditing) {
+      handleSubmit();
+    } 
     setIsEditing(!isEditing);
   };
+
+  const handleSubmit = async() => {
+    if (!formData.area || !formData.bedrooms || !formData.floor || !formData.furnishingStatus || !formData.propAge || !formData.description) {
+      setMessage("All Fields are Required")
+      return
+    }
+    try {
+      const response = await axios.patch(
+        `${backend}/property/editDetailsInfo/${data._id}`,
+        {formData},
+        {withCredentials : true}
+      )
+      setMessage("Details Updated Successfully")
+    } catch (error) {
+      setMessage(error?.response?.data?.message || "Error in Updating Details")
+    }
+  }
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md space-y-6">
@@ -157,6 +180,8 @@ function Details({ data }) {
           />
         </div>
       </div>
+
+      {message && <div className='text-center text-blue-600'>{message}</div>}
     </div>
   );
 }

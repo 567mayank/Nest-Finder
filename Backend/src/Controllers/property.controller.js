@@ -272,7 +272,7 @@ const editBasicProperty = async (req,res) => {
   }
 }
 
-const editDetails = async (req,res) => {
+const editDetailProperty = async (req,res) => {
   const userId = req?.user?._id
   const propertyId = req?.params?.propertyId
   if(!userId) {
@@ -315,6 +315,49 @@ const editDetails = async (req,res) => {
   }
 }
 
+const editPricingProperty = async (req, res) => {
+  const userId = req?.user?._id
+  const propertyId = req?.params?.propertyId
+  if(!userId) {
+    return res.status(401).json({message : "Unauthorized Access"})
+  }
+  if(!propertyId) {
+    return res.status(400).json({message : "Property Id not Provided"})
+  }
+
+  try {
+    const {formData} = req.body
+    const basicPropertyInfo = await Property.findOneAndUpdate(
+      {
+        _id : propertyId
+      },
+      {
+        amount : formData.amount,
+        securityDeposit : formData.securityDeposit,
+        currency : formData.currency,
+        paymentTerms : formData.paymentTerms,
+        negotiability : formData.negotiability,
+      },
+      { new: true }
+    )
+
+    
+    if(!basicPropertyInfo){
+      return res.status(400).json({message : "Error in Updating Pricing Info of Property"})
+    }
+    return res.status(200).json(
+      {
+        message : "Pricing Info of Property Updated SuccessFully",
+        basicPropertyInfo
+      }
+    )
+  } catch (error) {
+    console.error("error in updating Pricing Info of Property",error) 
+    return res.status(500).json({message : "Internal Server Error in Updating Pricing Info of Property"})
+  }
+
+}
+
 export {
   listProperty,
   listAllProperty,
@@ -322,5 +365,6 @@ export {
   listSaleProperty,
   listSingleProperty,
   editBasicProperty,
-  editDetails
+  editDetailProperty,
+  editPricingProperty
 }

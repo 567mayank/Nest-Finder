@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { backend } from '../../Helper';
 
 function Pricing({ data }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [message, setMessage] = useState("")
   const [formData, setFormData] = useState({
     amount: data?.amount || '',
     currency: data?.currency || 'USD',
@@ -10,22 +13,43 @@ function Pricing({ data }) {
     negotiability: data?.negotiability || '',
   });
 
+  useEffect(() => {
+    formData.negotiability = data.negotiability
+  },[data])
+
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    
+    const { name, value, type } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: type === 'checkbox' ? checked : value === "true" ? true : false,
+      [name]: type === 'radio' ? value === 'true' : value,
     }));
   };
-  
 
   const handleEditClick = () => {
-    if(isEditing){
-      console.log(formData)
+    if (isEditing) {
+      handleSubmit()
     }
     setIsEditing(!isEditing);
   };
+
+  const handleSubmit = async() => {
+    if (!formData.amount || !formData.currency || !formData.securityDeposit || !formData.paymentTerms) {
+      setMessage("All Fields are required")
+      return
+    }
+    try {
+      const response = await axios.patch(
+        `${backend}/property/editPricingInfo/${data._id}`,
+        {formData},
+        {withCredentials : true}
+      )
+      setMessage("Details Updated Successfully")
+    } catch (error) {
+      console.log("Error in Updating Pricng of property",error)
+      setMessage(error?.response?.data?.message || "Error in Updating Details")
+    }
+  }
+
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md space-y-6">
@@ -40,10 +64,9 @@ function Pricing({ data }) {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        {/* Amount */}
         <div className="flex flex-col">
           <label htmlFor="amount" className="text-sm font-medium text-gray-600">
-            {data.listingType === 'Sale'?'Amount':'Rent'}
+            {data.listingType === 'Sale' ? 'Amount' : 'Rent'}
           </label>
           <input
             type="number"
@@ -52,11 +75,11 @@ function Pricing({ data }) {
             value={formData.amount}
             onChange={handleChange}
             disabled={!isEditing}
+            min={0}
             className="mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-200"
           />
         </div>
 
-        {/* Currency */}
         <div className="flex flex-col">
           <label htmlFor="currency" className="text-sm font-medium text-gray-600">
             Currency
@@ -74,8 +97,7 @@ function Pricing({ data }) {
           </select>
         </div>
 
-        {/* Security Deposit */}
-        { data.listingType === 'Rent' &&
+        {data.listingType === 'Rent' && (
           <div className="flex flex-col">
             <label htmlFor="securityDeposit" className="text-sm font-medium text-gray-600">
               Security Deposit
@@ -87,13 +109,13 @@ function Pricing({ data }) {
               value={formData.securityDeposit}
               onChange={handleChange}
               disabled={!isEditing}
+              min={0}
               className="mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-200"
             />
           </div>
-        }
+        )}
 
-        {/* Payment Terms */}
-        { data.listingType === 'Rent' &&
+        {data.listingType === 'Rent' && (
           <div className="flex flex-col">
             <label htmlFor="paymentTerms" className="text-sm font-medium text-gray-600">
               Payment Terms
@@ -111,10 +133,9 @@ function Pricing({ data }) {
               <option value="Yearly">Yearly</option>
             </select>
           </div>
-        }
+        )}
 
-        {/* Negotiability */}
-        <div className="flex flex-col">
+        <div className="flex gap-x-3 items-center">
           <label htmlFor="negotiability" className="text-sm font-medium text-gray-600">
             Negotiability
           </label>
@@ -124,7 +145,7 @@ function Pricing({ data }) {
                 type="radio"
                 id="negotiability-yes"
                 name="negotiability"
-                value={true}
+                value="true"
                 checked={formData.negotiability === true}
                 onChange={handleChange}
                 disabled={!isEditing}
@@ -137,7 +158,7 @@ function Pricing({ data }) {
                 type="radio"
                 id="negotiability-no"
                 name="negotiability"
-                value={false}
+                value="false"
                 checked={formData.negotiability === false}
                 onChange={handleChange}
                 disabled={!isEditing}
@@ -148,6 +169,8 @@ function Pricing({ data }) {
           </div>
         </div>
       </div>
+
+      {message && <div className='text-center text-blue-600'>{message}</div>}
     </div>
   );
 }

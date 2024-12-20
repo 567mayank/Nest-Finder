@@ -412,6 +412,43 @@ const editImageProperty = async (req, res) => {
   }
 }
 
+const editContactProperty = async (req, res) => {
+  const userId = req?.user?._id
+  if (!userId) {
+    return res.status(401).json({message : "Unauthorized Access"})
+  }
+
+  const propertyId = req?.params?.propertyId
+  if (!propertyId) {
+    return res.status(400).json({message : "Property Id not provided"})
+  }
+
+  try {
+    const {formData} = req.body
+    const updatedProperty = await Property.findByIdAndUpdate(
+      propertyId,
+      {
+        $set : {
+          msgThroughEmail : formData.msgThroughEmail,
+          msgThroughPhone : formData.msgThroughPhone,
+          phone : formData.phone,
+          email : formData.email
+        }
+      },
+      { new: true }
+    )
+
+    if (!updatedProperty) {
+      return res.status(404).json({ message: "Property not found" });
+    }
+
+    return res.status(200).json({ message: "Contact info updated successfully", updatedProperty });
+  } catch (error) {
+    console.log("Error in upadating contact info",error)
+    return res.status(500).json({message : "Inernal Server Error in updating contact info"})
+  }
+}
+
 export {
   listProperty,
   listAllProperty,
@@ -421,5 +458,6 @@ export {
   editBasicProperty,
   editDetailProperty,
   editPricingProperty,
-  editImageProperty
+  editImageProperty,
+  editContactProperty
 }

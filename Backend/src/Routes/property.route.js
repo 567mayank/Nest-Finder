@@ -4,6 +4,7 @@ import upload from "../Middlewares/multer.middleware.js"
 
 import { 
   editBasicProperty,
+  editContactProperty,
   editDetailProperty,
   editImageProperty,
   editPricingProperty,
@@ -27,5 +28,6 @@ router.route("/editBasicInfo/:propertyId").patch(verifyJwt,editBasicProperty)
 router.route("/editDetailsInfo/:propertyId").patch(verifyJwt,editDetailProperty)
 router.route("/editPricingInfo/:propertyId").patch(verifyJwt,editPricingProperty)
 router.route("/editImageInfo/:propertyId").patch(verifyJwt,upload.single('image'),editImageProperty)
+router.route("/editContactInfo/:propertyId").patch(verifyJwt,editContactProperty)
 
 export default router

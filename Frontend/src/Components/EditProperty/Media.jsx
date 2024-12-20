@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IoIosAddCircle } from "react-icons/io";
+import { FaPencilAlt } from "react-icons/fa";
+import axios from 'axios';
+import {backend} from "../../Helper"
 
 function Media({ data }) {
   const [index, setIndex] = useState("");
@@ -12,11 +15,23 @@ function Media({ data }) {
   };
 
   // Function to handle file selection
-  const handleFileChange = (event) => {
+  const handleFileChange = async(event) => {
     const file = event.target.files[0];
     if (file) {
-      console.log(file)
-      console.log(index)
+      const formData = new FormData()
+      formData.append("image",file)
+      formData.append("index",index)
+      // console.log(file,index)
+      try {
+        const response = await axios.patch(
+          `${backend}/property/editImageInfo/${data._id}`,
+          formData,
+          {withCredentials:true}
+        )
+        setMedia(response.data.media)
+      } catch (error) {
+        console.log("error in updating image",error)
+      }
     }
   };
 
@@ -32,9 +47,11 @@ function Media({ data }) {
               src={img}
               alt={`media-${index}`}
               className="w-full h-64 object-cover rounded-lg shadow-md"
-              onClick={() => handleClick(index)}
+              
             />
-            
+            <div className='absolute top-2 left-2  border-2 border-white rounded-full text-white p-2 shadow-lg bg-zinc-900' onClick={() => handleClick(index)}>
+              <FaPencilAlt size={20} className=''/>
+            </div>
           </div>
         ))}
         {
@@ -54,6 +71,6 @@ function Media({ data }) {
 
     </div>
   );
-}
+}       
 
 export default Media;

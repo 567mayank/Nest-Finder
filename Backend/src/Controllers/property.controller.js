@@ -1,10 +1,11 @@
 import Property from "../Models/Property.model.js";
-import User from "../Models/User.model.js";
+import User from "../Models/User.model.js";``
+import { uploadOnCloudinary } from "../Utils/cloudinary.utils.js";
 
 const listProperty = async (req, res) => {
   const userId = req?.user?._id;
   if (!userId) {
-    return res.status(400).json({ message: "Unauthorized Access" });
+    return res.status(401).json({ message: "Unauthorized Access" });
   }
 
   try {
@@ -358,6 +359,59 @@ const editPricingProperty = async (req, res) => {
 
 }
 
+const editImageProperty = async (req, res) => {
+  const userId = req?.user?._id
+  if (!userId) {
+    return res.status(401).json({message : "Unauthorized Access"})
+  }
+
+  const propertyId = req?.params?.propertyId
+  if (!propertyId) {
+    return res.status(400).json({message : "Property Id not provided"})
+  }
+
+  try {
+    const {index} = req?.body
+    if (!index) {
+      return res.status(400).json({message : "Index not provided"})
+    }
+
+    if (!req?.file?.path) {
+      return res.status(400).json({message : "No Image Provided"})
+    }
+
+    const image = await uploadOnCloudinary(req.file?.path)
+    if(!image || !image.url){
+        return res.status(500).json({message:"Internal Server Error in uploading image on cloudinary!!!"})
+    }
+
+    const updatedProperty = await Property.findOneAndUpdate(
+      { _id: propertyId },
+      { 
+        $set: { [`media.${index}`]: image.url }
+      },
+      { new: true }
+    );
+    
+    // for adding new image
+    if (updatedProperty) {
+      const media = updatedProperty.media;
+      if (index >= media.length) {
+        media.push(image.url);
+        await Property.findByIdAndUpdate(propertyId, { media });
+      }
+    }
+
+    return res.status(200).json({
+      message : "Image Updated SuccessFully",
+      media : updatedProperty.media
+    })
+  } catch (error) {
+    console.log("Error in updating image of property")
+    return res.status(500).json({message : "Internal Server Error in Updating Image"})
+  }
+}
+
 export {
   listProperty,
   listAllProperty,
@@ -366,5 +420,6 @@ export {
   listSingleProperty,
   editBasicProperty,
   editDetailProperty,
-  editPricingProperty
+  editPricingProperty,
+  editImageProperty
 }

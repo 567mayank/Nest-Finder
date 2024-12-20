@@ -6,7 +6,7 @@ const updateFav = async (req, res) => {
   const userId = req?.user?._id;
   
   if (!userId) {
-    return res.status(400).json({ message: "Unauthorized Access" });
+    return res.status(401).json({ message: "Unauthorized Access" });
   }
   
   const propertyId = req.params.propertyId;

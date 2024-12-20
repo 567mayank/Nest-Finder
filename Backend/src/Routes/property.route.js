@@ -1,8 +1,11 @@
 import { Router } from "express";
 import verifyJwt from "../Middlewares/verifyJwt.middleware.js"
+import upload from "../Middlewares/multer.middleware.js"
+
 import { 
   editBasicProperty,
   editDetailProperty,
+  editImageProperty,
   editPricingProperty,
   listAllProperty, 
   listProperty, 
@@ -23,5 +26,6 @@ router.route("/listSaleProperty").get(verifyJwt,listSaleProperty)
 router.route("/editBasicInfo/:propertyId").patch(verifyJwt,editBasicProperty)
 router.route("/editDetailsInfo/:propertyId").patch(verifyJwt,editDetailProperty)
 router.route("/editPricingInfo/:propertyId").patch(verifyJwt,editPricingProperty)
+router.route("/editImageInfo/:propertyId").patch(verifyJwt,upload.single('image'),editImageProperty)
 
 export default router

@@ -36,12 +36,15 @@ const StepNavigation = () => {
     email:'',
     media:''
   });
+  const [maxPage, setMaxPage] = useState(1)
 
   useEffect(()=>{
-    const local = JSON.parse(localStorage.getItem("ListItem"))
+    const local = JSON.parse(sessionStorage.getItem("ListItem"))
     if(local) setProperty(local)
-    const curPage = JSON.parse(localStorage.getItem("ListItemCurPage"))
+    const curPage = JSON.parse(sessionStorage.getItem("ListItemCurPage"))
     if(curPage) setActiveStep(curPage) 
+    const maxPageLocal = JSON.parse(sessionStorage.getItem("ListItemMaxPage"))
+    if(maxPageLocal) setMaxPage(maxPageLocal) 
   },[])
 
   const handleChange = (e) => {
@@ -69,14 +72,16 @@ const StepNavigation = () => {
     }
   };
   
-
+  // For Saving Data Locally
   useEffect(() => {
     if(!property.title) return
-    localStorage.setItem("ListItem", JSON.stringify(property));
-    localStorage.setItem("ListItemCurPage",JSON.stringify(activeStep))
-  }, [property,activeStep]);
+    sessionStorage.setItem("ListItem", JSON.stringify(property));
+    sessionStorage.setItem("ListItemCurPage",JSON.stringify(activeStep))
+    sessionStorage.setItem("ListItemMaxPage",JSON.stringify(maxPage))
+  }, [property,activeStep,maxPage]);
   
   const handleStepClick = (step) => {
+    if (step > maxPage) return
     setActiveStep(step);
   };
 
@@ -91,6 +96,7 @@ const StepNavigation = () => {
       }
     }
     else{
+      setMaxPage(Math.max(maxPage, activeStep + 1))
       setActiveStep(activeStep+1); 
     }
   };
@@ -105,6 +111,24 @@ const StepNavigation = () => {
 
   return (
     <>
+      {/* Heading */}
+      <div className='ml-14 md:ml-64 px-2 md:px-20 py-5 flex items-center justify-between'>
+        <h1 className='text-2xl lg:text-4xl font-bold dark:text-white'>List Your Property &rarr;</h1>
+        {/* Saved Locally Section */}
+        <div className="text-sm md:text-base text-gray-700 dark:text-gray-300 flex items-center space-x-2">
+          <svg
+            className="w-5 h-5 text-green-500"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414L8 11.586l7.293-7.293a1 1 0 0 1 1.414 0z" />
+          </svg>
+          <span className="font-medium">Saved Locally</span>
+        </div>
+      </div>
+
+      {/* Completion Line */}
       <div className=' ml-14 md:ml-64 lg:ml-80 xl:ml-96'>
         <ol className="flex items-center w-full text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base">
           {steps.map((step) => {
@@ -124,18 +148,7 @@ const StepNavigation = () => {
                 onClick={() => handleStepClick(step.number)}
               >
                 <span className={`flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500`}>
-                  {isCompleted && (
-                    <svg
-                      className="w-4 h-4 me-2.5 text-green-600 dark:text-green-500"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M10 0C4.5 0 0 4.5 0 10s4.5 10 10 10 10-4.5 10-10S15.5 0 10 0zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm4.3-12.7l-4.3 4.3-2-2-1.4 1.4 3.4 3.4 5.7-5.7-1.4-1.4z" />
-                    </svg>
-                  )}
-                  {isActive && (
+                  {step.number <= maxPage && (
                     <svg
                       className="w-3.5 h-3.5 sm:w-4 sm:h-4 me-2.5"
                       aria-hidden="true"
@@ -162,6 +175,7 @@ const StepNavigation = () => {
           })}
         </ol>
       </div>
+
       {
         activeStep===1 && <Basic property={property} handleChange={handleChange} handleSubmit={handleSubmit} />
       }

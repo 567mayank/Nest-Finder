@@ -159,8 +159,8 @@ const listRentedProperty = async (req,res) => {
     path: "listedPropertyForRent",
     select: "-zip -msgThroughPhone -msgThroughEmail -msgThroughApp -email -phone -description -createdAt -updatedAt -__v",
     populate: {
-      path: "owner", // This is the field inside listedPropertyForRent you want to populate
-      select: "fullName avatar" // The fields you want from the owner
+      path: "owner", 
+      select: "fullName avatar" 
     }
   });
 
@@ -190,7 +190,11 @@ const listSaleProperty = async (req,res) => {
     .select("listedPropertyForSale")
     .populate({
       path: "listedPropertyForSale",
-      select : "-zip -msgThroughPhone -msgThroughEmail -msgThroughApp -email -phone -description -createdAt -updatedAt -__v"
+      select : "-zip -msgThroughPhone -msgThroughEmail -msgThroughApp -email -phone -description -createdAt -updatedAt -__v",
+      populate: {
+        path: "owner", 
+        select: "fullName avatar" 
+      }
     });
 
     if(!userSaleProperty){

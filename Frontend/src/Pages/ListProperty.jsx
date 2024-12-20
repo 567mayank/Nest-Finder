@@ -83,7 +83,6 @@ const StepNavigation = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if(activeStep===5){
-      console.log("hi")
       try {
         const response = await axios.post(`http://localhost:${8000}/property/listProperty`,property,{withCredentials:true})
         console.log(response.data)

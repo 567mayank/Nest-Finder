@@ -1,6 +1,6 @@
 import {Router} from "express"
 import { updateFav, userFavDetail, userFavourite } from "../Controllers/favourite.controller.js"
-import verifyJwt from "../Middlewares/verifyJwt.js"
+import verifyJwt from "../Middlewares/verifyJwt.middleware.js"
 
 const router = Router()
 

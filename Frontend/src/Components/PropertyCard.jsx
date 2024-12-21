@@ -46,7 +46,7 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
     <div className="max-w-full w-full bg-white shadow-md rounded-md overflow-hidden border border-gray-300">
       <div className="lg:grid lg:grid-cols-2 p-4">
         {/* Image Section */}
-        <div className="relative w-full lg:w-11/12 h-60 lg:h-80 overflow-hidden group">  
+        <div className="relative w-full lg:w-11/12 3xl:w-7/12 h-60 lg:h-80 overflow-hidden group  flex items-center rounded-md">  
           <div
             className="flex items-center transition-transform duration-500 ease-in-out"
             style={{
@@ -66,7 +66,7 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
           {/* Left Arrow */}
           <button
             onClick={prevImage}
-            className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700 transition-colors z-10 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
+            className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700 transition-colors z-10 lg:opacity-0 lg:group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
           >
             <FaChevronLeft size={20} />
           </button>
@@ -74,7 +74,7 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
           {/* Right Arrow */}
           <button
             onClick={nextImage}
-            className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700 transition-colors z-10 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
+            className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full shadow-md hover:bg-gray-700 transition-colors z-10 lg:opacity-0 lg:group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
           >
             <FaChevronRight size={20} />
           </button>
@@ -86,7 +86,7 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
         </div>
 
         {/* Details Section */}
-        <div className="flex flex-col justify-between py-3 ">
+        <div className="flex flex-col justify-between py-3 w-full 3xl:w-5/12">
           <h3 className="text-lg font-semibold text-gray-900">{property.title}</h3>
           <p className="text-xl font-bold text-gray-800">
             {property.currency.toUpperCase()} {property.amount}{' '}

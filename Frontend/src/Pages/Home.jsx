@@ -2,25 +2,35 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import PropertyCard from '../Components/PropertyCard';
 import axios from "axios"
 import { backend, isLoggedin } from '../Helper';
+import {useSelector, useDispatch} from "react-redux"
+import { addProperties } from '../Redux/dataSlice';
 
 function Home() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [propType,setPropType] = useState("All Categories")
   const [data,setData] = useState(null)
   const [userFav,setUserFav] = useState(null)
+  const dispatch = useDispatch()
+  const dataFromRedux = useSelector((state) => state.data.homeProperties);   // fetching from redux store
 
   // Fetching Properties Data
-  useEffect(()=>{
-    const retrieveProperties = async () => {
-      try {
-        const response = await axios.get(`${backend}/property/listAllProperty`)
-        setData(response.data.properties)
-      } catch (error) {
-        console.error("error in fetching properties data",error)
-      }
+  const retrieveProperties = async () => {
+    try {
+      const response = await axios.get(`${backend}/property/listAllProperty`)
+      setData(response.data.properties)
+      dispatch(addProperties(response.data.properties))
+    } catch (error) {
+      console.error("error in fetching properties data",error)
     }
-    retrieveProperties()
-  },[])
+  }
+
+  useEffect(() => {
+    if (dataFromRedux.length === 0) {
+      retrieveProperties()
+    } else {
+      setData(dataFromRedux[0])
+    }
+  },[dataFromRedux, dispatch])
 
   // Close dropdown when clicking outside
   const dropdownRef = useRef(null);
@@ -147,7 +157,6 @@ function Home() {
       </div>
 
       {/* Cards  */}
-
       <div className='flex flex-col gap-y-5'>
         { data &&
           data.map((property,index)=>(

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {useNavigate} from 'react-router-dom'
 import axios from 'axios';
-import { backend, isLoggedin } from '../helper';
+import { backend, isLoggedin } from '../Helper';
 import { FaPencilAlt } from "react-icons/fa";
 
 function Profile() {

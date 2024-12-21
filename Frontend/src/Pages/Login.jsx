@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { isLoggedin } from '../helper';
+import { isLoggedin } from '../Helper';
 import axios from "axios"
 
 function Login() {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import {useNavigate} from "react-router-dom"
 import PropertyCard from '../Components/PropertyCard.jsx'
-import {backend, isLoggedin} from "../Helper.jsx"
+import {backend, isLoggedin} from "../Helper"
 import axios from 'axios'
 
 function UserSaleProperties() {

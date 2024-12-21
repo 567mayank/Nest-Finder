@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {useNavigate} from 'react-router-dom'
 import axios from 'axios';
 import { backend, isLoggedin } from '../helper';
+import { FaPencilAlt } from "react-icons/fa";
 
 function Profile() {
   const navigate = useNavigate()
@@ -12,9 +13,9 @@ function Profile() {
   const [dob, setDob] = useState("");
   const [message,setMessage] = useState("")
   // const samplePhoto = "https://i.pinimg.com/236x/c1/01/27/c10127cfeefd05a9bc1c337b421395c7.jpg"
-  const samplePhoto = "https://i.pinimg.com/736x/d2/4d/3f/d24d3fe31d365d1008bfcfff8de50a8d.jpg"
   const [rentedProperty,setRentedProperty] = useState(null)
   const [saleProperty,setSaleProperty] = useState(null)
+  const fileInput = useRef()
 
   useEffect(()=>{
     const dataRetriever = async() => {
@@ -90,6 +91,14 @@ function Profile() {
     retrieveListedSaleProperty()
   },[isLoggedin])
 
+  // for changing avatar
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // make call for backend
+    }
+  }
+
   return (
     <div>
       {  data &&
@@ -100,11 +109,18 @@ function Profile() {
           <div className="flex flex-col md:flex-row md:justify-center md:gap-x-10 lg:gap-x-20 items-center gap-6 border border-gray-300 rounded-xl shadow-lg p-6 md:w-2/3 md:m-auto">
             
             {/* Profile Image */}
-            <img
-              src={samplePhoto}
-              alt="Man Image"
-              className="h-48 md:h-64 w-48 md:w-64 object-cover rounded-full border-4 border-gray-200 shadow-md"
-            />
+            <div className="relative">
+              <img
+                src={data.avatar}
+                alt={data.userName}
+                className="h-48 md:h-64 w-48 md:w-64 object-cover rounded-full border-4 border-gray-200 shadow-md"
+              />
+              <div className="absolute top-0 left-0 p-2 bg-white rounded-full shadow-md cursor-pointer hover:bg-gray-100 transition border border-black" onClick={() => fileInput.current.click()}>
+                <FaPencilAlt className="text-gray-700 text-xl" />
+              </div>
+              <input type="file" ref={fileInput} className='hidden' accept="image/*" onChange={handleFileChange} />   {/* hidden file input */ }
+            </div>
+
             
             {/* Profile Information */}
             <div className="flex flex-col items-center md:items-start text-center md:text-left mt-4 md:mt-0 gap-y-4">

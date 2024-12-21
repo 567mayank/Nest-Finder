@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { IoIosAddCircle } from "react-icons/io";
 import { FaPencilAlt } from "react-icons/fa";
 import axios from 'axios';
-import {backend} from "../../Helper"
+import {backend} from '../../helper';
 
 function Media({ data }) {
   const [index, setIndex] = useState("");

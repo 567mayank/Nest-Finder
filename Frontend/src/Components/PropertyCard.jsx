@@ -27,19 +27,19 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
   };
 
   const handleFavChange = async() => {
-    dispatch(editLikedProp(property._id))
     if(isFav) {
       dispatch(removeFavProperty(property._id))
       setIsFavChanged(isFavChanged - 1);
     }
     else {
-      dispatch(addFavProperty(property))
+      const newProp = {...property, favourite : property.favourite + 1}
+      dispatch(addFavProperty(newProp))
       setIsFavChanged(isFavChanged + 1);
     }
+    dispatch(editLikedProp(property._id))
     setIsFav(!isFav)
     try {
       const response = await axios.put(`http://localhost:${import.meta.env.VITE_APP_PORT}/favourite/update/${property._id}`,{},{ withCredentials: true })
-      // if(isFv) window.location.reload()
     } catch (error) {
       console.error("error in updating favourite",error)
     }

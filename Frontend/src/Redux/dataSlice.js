@@ -17,7 +17,7 @@ export const dataSlice = createSlice({
       state.homePropertiesWithUserLikes.push(action.payload)
     },
     editLikedProp : (state, action) => {
-      if (!isLoggedin()) 
+      if (!isLoggedin() || !state.homePropertiesWithUserLikes.length) 
         return
       state.homePropertiesWithUserLikes[0] = state.homePropertiesWithUserLikes[0].map((prop) => {
         if (prop._id === action.payload) {

@@ -32,7 +32,7 @@ function Home() {
     } else {
       setData(dataFromRedux[0])
     }
-  },[dispatch, data])
+  },[dispatch, data, dataFromRedux])
 
 
   useEffect(() => {
@@ -43,7 +43,7 @@ function Home() {
     } else {
       setData(dataLikesRedux[0]);
     }
-  },[dispatch, data])
+  },[dispatch, data, dataLikesRedux])
 
   // Close dropdown when clicking outside
   const dropdownRef = useRef(null);

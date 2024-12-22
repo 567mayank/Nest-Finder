@@ -93,10 +93,12 @@ const userFavDetail = async (req, res) => {
           select: "avatar fullName userName", 
         },
       });
+    
+    const properties = favProperty.map(item => item.property);
 
     return res.status(200).json({
       message: "Fetched Successfully",
-      favProperty : favProperty,
+      favProperty : properties,
     });
   } catch (error) {
     console.error(error); 

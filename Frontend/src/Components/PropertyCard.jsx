@@ -5,12 +5,16 @@ import { FaParking } from "react-icons/fa";
 import { GiSofa } from "react-icons/gi";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
+import {useDispatch} from 'react-redux'
+import { addFavProperty, removeFavProperty } from '../Redux/favouriteSlice';
+import { editLikedProp } from '../Redux/dataSlice';
 
 function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFav,setIsFav] = useState(property?.isLiked || isFv)
   const [isFavChanged,setIsFavChanged] = useState(0)
+  const dispatch = useDispatch()
 
   const nextImage = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % property.media.length);
@@ -23,12 +27,19 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
   };
 
   const handleFavChange = async() => {
-    if(isFav) setIsFavChanged(isFavChanged - 1);
-    else setIsFavChanged(isFavChanged + 1);
+    dispatch(editLikedProp(property._id))
+    if(isFav) {
+      dispatch(removeFavProperty(property._id))
+      setIsFavChanged(isFavChanged - 1);
+    }
+    else {
+      dispatch(addFavProperty(property))
+      setIsFavChanged(isFavChanged + 1);
+    }
     setIsFav(!isFav)
     try {
       const response = await axios.put(`http://localhost:${import.meta.env.VITE_APP_PORT}/favourite/update/${property._id}`,{},{ withCredentials: true })
-      if(isFv) window.location.reload()
+      // if(isFv) window.location.reload()
     } catch (error) {
       console.error("error in updating favourite",error)
     }
@@ -45,11 +56,11 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
               transform: `translateX(-${currentIndex * 100}%)`,
             }}
           >
-            {property.media.map((image, index) => (
+            {property?.media.map((image, index) => (
               <img
                 key={index}
                 src={image}
-                alt={property.title}
+                alt={property?.title}
                 className="w-full h-full object-cover rounded-md"
               />
             ))}
@@ -73,24 +84,24 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
 
           {/* Listing Type */}
           <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 text-xs font-semibold rounded-full">
-            For {property.listingType.toUpperCase()}
+            For {property?.listingType.toUpperCase()}
           </div>
         </div>
 
         {/* Details Section */}
         <div className="flex flex-col justify-between py-3 w-full 3xl:w-5/12">
-          <h3 className="text-lg font-semibold text-gray-900">{property.title}</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{property?.title}</h3>
           <p className="text-xl font-bold text-gray-800">
-            {property.currency.toUpperCase()} {property.amount}{' '}
-            {property.listingType === 'rent' && property.paymentTerms}
+            {property?.currency.toUpperCase()} {property?.amount}{' '}
+            {property?.listingType === 'rent' && property?.paymentTerms}
           </p>
           <p className="text-sm text-gray-600">
-            {property.address} | {property.neighborhood} | {property.city} |{' '}
-            {property.state}
+            {property?.address} | {property?.neighborhood} | {property?.city} |{' '}
+            {property?.state}
           </p>
 
           <p className="mt-2 text-sm text-gray-500">
-            {property.bedrooms} Beds | {property.propAge} Age | {property.area} sqft
+            {property?.bedrooms} Beds | {property?.propAge} Age | {property?.area} sqft
           </p>
 
           {/* Additional Info */}
@@ -103,8 +114,8 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
             )}
             <span className="inline-flex items-center text-sm text-gray-500">
             <GiSofa size={20} className='mr-1 text-blue-500'/>
-              {property.furnishingStatus.charAt(0).toUpperCase() +
-                property.furnishingStatus.slice(1)}
+              {property?.furnishingStatus.charAt(0).toUpperCase() +
+                property?.furnishingStatus.slice(1)}
             </span>
             {property?.pool && (
               <span className="inline-flex items-center text-sm text-gray-500">
@@ -148,7 +159,7 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
 
           {/* Negotiability */}
           <div className="mt-2 text-sm text-gray-500">
-            {property.negotiability
+            {property?.negotiability
               ? 'Negotiable Price'
               : 'Non Negotiable Price'}
           </div>
@@ -156,11 +167,11 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
           {/* User Information */}
           <div className="mt-4 flex items-center">
             <img
-              src={property.owner.avatar}
-              alt={property.title}
+              src={property?.owner.avatar}
+              alt={property?.title}
               className="w-8 h-8 rounded-full mr-2"
             />
-            <span className="text-sm text-gray-700">{property.owner.fullName} | Owner</span>
+            <span className="text-sm text-gray-700">{property?.owner.fullName} | Owner</span>
           </div>
 
           {/* Action Buttons */}
@@ -189,7 +200,7 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
                     <FaHeart size={20} /> 
                   </button> }
                 </div>
-                <div>{property.favourite + isFavChanged}</div>
+                <div>{property?.favourite + isFavChanged}</div>
               </div>
 
               

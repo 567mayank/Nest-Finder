@@ -25,8 +25,7 @@ function Favourite() {
     } else {
       retrieveData()
     }
-  },[dispatch, data])
-
+  },[dispatch, data, dataFromRedux])
 
   return (
     <div className='md:ml-64 px-2 md:px-20 py-5 flex flex-col gap-y-5'>
@@ -37,7 +36,7 @@ function Favourite() {
       <div className='flex flex-col gap-y-5'>
         {
           data && [...data].reverse().map((prop)=>(
-            <PropertyCard key={prop._id} property={prop.property} isFv={true}/>
+            <PropertyCard key={prop._id} property={ prop } isFv={true}/>
           ))
         }
       </div>

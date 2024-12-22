@@ -9,7 +9,7 @@ import axios from "axios"
 function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isFav,setIsFav] = useState(isFv)
+  const [isFav,setIsFav] = useState(property?.isLiked || isFv)
   const [isFavChanged,setIsFavChanged] = useState(0)
 
   const nextImage = () => {
@@ -33,14 +33,6 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
       console.error("error in updating favourite",error)
     }
   }
-
-  useEffect(()=>{
-    if(!userFav) return
-    userFav.map((prop) => {
-      if(prop.property === property._id) setIsFav(true)
-    })
-  },[userFav])
-
 
   return (
     <div className="max-w-full w-full bg-white shadow-md rounded-md overflow-hidden border border-gray-300">

@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   homeProperties: [],
+  homePropertiesWithUserLikes : []
 }
 
 export const dataSlice = createSlice({
@@ -11,9 +12,12 @@ export const dataSlice = createSlice({
     addProperties: (state, action) => {
       state.homeProperties.push(action.payload); 
     },
+    addHomePropertiesWithUserLikes : (state, action) => {
+      state.homePropertiesWithUserLikes.push(action.payload)
+    }
   },
 });
 
-export const {addProperties} = dataSlice.actions
+export const {addProperties, addHomePropertiesWithUserLikes} = dataSlice.actions
 
 export default dataSlice.reducer

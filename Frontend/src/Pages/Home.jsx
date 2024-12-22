@@ -3,34 +3,47 @@ import PropertyCard from '../Components/PropertyCard';
 import axios from "axios"
 import { backend, isLoggedin } from '../Helper';
 import {useSelector, useDispatch} from "react-redux"
-import { addProperties } from '../Redux/dataSlice';
+import { addProperties, addHomePropertiesWithUserLikes } from '../Redux/dataSlice';
 
 function Home() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [propType,setPropType] = useState("All Categories")
   const [data,setData] = useState(null)
-  const [userFav,setUserFav] = useState(null)
   const dispatch = useDispatch()
   const dataFromRedux = useSelector((state) => state.data.homeProperties);   // fetching from redux store
+  const dataLikesRedux = useSelector((state) =>  state.data.homePropertiesWithUserLikes)
 
   // Fetching Properties Data
-  const retrieveProperties = async () => {
+  const retrieveProperties = async (api, variable) => {
     try {
-      const response = await axios.get(`${backend}/property/listAllProperty`)
+      const response = await axios.get(api,{withCredentials : true})
       setData(response.data.properties)
-      dispatch(addProperties(response.data.properties))
+      dispatch(variable(response.data.properties))
     } catch (error) {
       console.error("error in fetching properties data",error)
     }
   }
 
   useEffect(() => {
+    if(isLoggedin()) 
+      return
     if (dataFromRedux.length === 0) {
-      retrieveProperties()
+      retrieveProperties(`${backend}/property/listAllProperty`, addProperties)
     } else {
       setData(dataFromRedux[0])
     }
-  },[dataFromRedux, dispatch])
+  },[dispatch, data])
+
+
+  useEffect(() => {
+    if (!isLoggedin()) 
+      return 
+    if (dataLikesRedux.length === 0) {
+      retrieveProperties(`${backend}/favourite/userfavPlusProperties`, addHomePropertiesWithUserLikes)
+    } else {
+      setData(dataLikesRedux[0]);
+    }
+  },[dispatch, data])
 
   // Close dropdown when clicking outside
   const dropdownRef = useRef(null);
@@ -50,20 +63,6 @@ function Home() {
 
   // Toggle dropdown visibility
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
-
-
-  // fetching user fav Properties
-  useEffect(() => {
-    const retrieveUserFav = async() => {
-      try {
-        const response = await axios.get(`${backend}/favourite/getUserFav`,{withCredentials : true})
-        setUserFav(response.data.favProperty)
-      } catch (error) {
-        console.error("error in fetching user favourite Properties",error)
-      }
-    }
-    if(isLoggedin()) retrieveUserFav();
-  },[isLoggedin])
 
   // Filters --->
   
@@ -160,7 +159,7 @@ function Home() {
       <div className='flex flex-col gap-y-5'>
         { data &&
           data.map((property,index)=>(
-            <PropertyCard key={property._id} property={property} userFav={userFav} />
+            <PropertyCard key={property._id} property={property} />
           ))
         }
       </div>

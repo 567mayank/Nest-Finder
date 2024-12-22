@@ -86,11 +86,11 @@ const userFavDetail = async (req, res) => {
   try {
     const favProperty = await Favourite.find({ user: userId })
       .populate({
-        path: "property", // Populating the 'property' field in Favourite model
-        select: "-zip -msgThroughPhone -msgThroughEmail -msgThroughApp -email -phone -description -createdAt -updatedAt -__v", // Excluding unnecessary fields
+        path: "property",
+        select: "-zip -msgThroughPhone -msgThroughEmail -msgThroughApp -email -phone -description -createdAt -updatedAt -__v", 
         populate: {
-          path: "owner", // Now we populate the 'owner' field inside 'property'
-          select: "avatar fullName userName", // Select only the fields you need from the owner
+          path: "owner", 
+          select: "avatar fullName userName", 
         },
       });
 
@@ -99,16 +99,98 @@ const userFavDetail = async (req, res) => {
       favProperty : favProperty,
     });
   } catch (error) {
-    console.error(error); // Log the error to debug
+    console.error(error); 
     return res.status(500).json({
       message: "Internal Server Error in Fetching User Favourite Properties",
     });
   }
 };
 
+const userfavPlusProperties = async (req, res) => {
+  const userId = req?.user?._id;
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized Access" });
+  }
+
+  try {
+    const properties = await Property.aggregate([
+      {
+        $lookup: {
+          from: 'favourites',  
+          let: { propertyId: '$_id', userId: userId }, 
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$property', '$$propertyId'] },  
+                    { $eq: ['$user', '$$userId'] },  
+                  ],
+                },
+              },
+            },
+            {
+              $limit: 1,  
+            },
+          ],
+          as: 'likedProperty', 
+        },
+      },
+      {
+        $addFields: {
+          isLiked: { $gt: [{ $size: '$likedProperty' }, 0] },  
+        },
+      },
+      {
+        $project: {
+          likedProperty: 0,  
+        },
+      },
+      {
+        $lookup : {
+          from : 'users',
+          localField : 'owner',
+          foreignField : '_id',
+          as : 'ownerDetails'
+        }
+      },
+      {
+        $addFields : {
+          owner : {
+            $arrayElemAt : ['$ownerDetails',0]
+          }
+        }
+      },
+      {
+        $project : {
+          ownerDetails : 0,
+          'owner.password' : 0,
+          'owner.listedPropertyForRent' : 0,
+          'owner.listedPropertyForSale' : 0,
+          'owner.location' : 0,
+          'owner.phone' : 0,
+          'owner._id' : 0,
+          'owner.email' : 0,
+          'owner.dob' : 0,
+        }
+      }
+    ]);
+
+    return res.status(200).json({
+      message: "Fetched Successfully",
+      properties,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Internal Server Error in Fetching Properties",
+    });
+  }
+};
 
 export { 
   updateFav,
   userFavourite,
-  userFavDetail
+  userFavDetail,
+  userfavPlusProperties
 };

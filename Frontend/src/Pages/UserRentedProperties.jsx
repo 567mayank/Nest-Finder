@@ -2,29 +2,41 @@ import React, { useState, useEffect } from 'react'
 import {useNavigate} from "react-router-dom"
 import PropertyCard from '../Components/PropertyCard.jsx'
 import {backend, isLoggedin} from "../Helper"
+import { useDispatch, useSelector } from 'react-redux'
+import { addUserRentedProp } from '../Redux/userSlice.js'
 import axios from 'axios'
 
 function UserRentedProperties() {
   const [data,setData] = useState(null)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const dataRedux = useSelector((state) =>  state.user.userRentedProp)
+
+  const retrieveListedRentedProperty = async() => {
+    try {
+      const response = await axios.get(`${backend}/property/listRentedProperty`,{withCredentials : true})
+      setData(response.data.rentedProperties)
+      dispatch(addUserRentedProp(response.data.rentedProperties))
+    } catch (error) {
+      console.error(error?.response?.data?.message,error)
+    }
+  }
   
   // for fetching Rented Properties
+  useEffect(() => {
+    if(dataRedux.length) {
+      setData(dataRedux[0])
+    } else {
+      retrieveListedRentedProperty()
+    }
+  },[dispatch, dataRedux])
+  
+  
   useEffect(()=>{
     if(!isLoggedin()) {
       navigate("/login")
       return
     }
-    
-    const retrieveListedRentedProperty = async() => {
-      try {
-        const response = await axios.get(`${backend}/property/listRentedProperty`,{withCredentials : true})
-        setData(response.data.rentedProperties)
-      } catch (error) {
-        console.error(error.response.data.message,error)
-      }
-    }
-
-    retrieveListedRentedProperty()
 
   },[])
 

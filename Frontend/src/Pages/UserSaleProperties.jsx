@@ -2,30 +2,41 @@ import React, { useState, useEffect } from 'react'
 import {useNavigate} from "react-router-dom"
 import PropertyCard from '../Components/PropertyCard.jsx'
 import {backend, isLoggedin} from "../Helper"
+import { useDispatch, useSelector } from 'react-redux'
+import { addUserSaleProp } from '../Redux/userSlice.js'
 import axios from 'axios'
 
 function UserSaleProperties() {
   
   const [data,setData] = useState(null)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const dataRedux = useSelector((state) =>  state.user.userSaleProp)
+  
+  const retrieveListedSaleProperty = async() => {
+    try {
+      const response = await axios.get(`${backend}/property/listSaleProperty`,{withCredentials : true})
+      setData(response.data.saleProperties)
+      dispatch(addUserSaleProp(response.data.saleProperties))
+    } catch (error) {
+      console.error(error.response.data.message,error)
+    }
+  }
   
   // for fetching sale Properties
+  useEffect(() => {
+    if(dataRedux.length) {
+      setData(dataRedux[0])
+    } else {
+      retrieveListedSaleProperty()
+    }
+  },[dispatch, dataRedux])
+
   useEffect(()=>{
     if(!isLoggedin()) {
       navigate("/login")
       return
     }
-    
-    const retrieveListedSaleProperty = async() => {
-      try {
-        const response = await axios.get(`${backend}/property/listSaleProperty`,{withCredentials : true})
-        setData(response.data.saleProperties)
-      } catch (error) {
-        console.error(error.response.data.message,error)
-      }
-    }
-
-    retrieveListedSaleProperty()
   },[])
   
   return (

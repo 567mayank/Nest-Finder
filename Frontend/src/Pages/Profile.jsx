@@ -3,6 +3,8 @@ import {useNavigate} from 'react-router-dom'
 import axios from 'axios';
 import { backend, isLoggedin } from '../Helper';
 import { FaPencilAlt } from "react-icons/fa";
+import {addUserSaleProp, addUserRentedProp} from "../Redux/userSlice"
+import {useDispatch, useSelector} from 'react-redux'
 
 function Profile() {
   const navigate = useNavigate()
@@ -16,6 +18,9 @@ function Profile() {
   const [rentedProperty,setRentedProperty] = useState(null)
   const [saleProperty,setSaleProperty] = useState(null)
   const fileInput = useRef()
+  const dispatch = useDispatch()
+  const rentPropRedux = useSelector((state) =>  state.user.userRentedProp)
+  const salePropRedux = useSelector((state) =>  state.user.userSaleProp)
 
   useEffect(()=>{
     const dataRetriever = async() => {
@@ -64,32 +69,44 @@ function Profile() {
   
 
   // for fetching Rented Properties
+  const retrieveListedRentedProperty = async() => {
+    try {
+      const response = await axios.get(`${backend}/property/listRentedProperty`,{withCredentials : true})
+      setRentedProperty(response.data.rentedProperties)
+      dispatch(addUserRentedProp(response.data.rentedProperties))
+    } catch (error) {
+      console.error(error.response.data.message,error)
+    }
+  }
+  
   useEffect(()=>{
     if(!isLoggedin()) return
-    const retrieveListedRentedProperty = async() => {
-      try {
-        const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/property/listRentedProperty`,{withCredentials : true})
-        setRentedProperty(response.data.rentedProperties)
-      } catch (error) {
-        console.error(error.response.data.message,error)
-      }
+    if (rentPropRedux.length) {
+      setRentedProperty(rentPropRedux[0])
+    } else {
+      retrieveListedRentedProperty()
     }
-    retrieveListedRentedProperty()
-  },[isLoggedin])
+  },[dispatch, rentPropRedux])
 
   // for fetching Sale Properties
+  const retrieveListedSaleProperty = async() => {
+    try {
+      const response = await axios.get(`${backend}/property/listSaleProperty`,{withCredentials : true})
+      setSaleProperty(response.data.saleProperties)
+      dispatch(addUserSaleProp(response.data.saleProperties))
+    } catch (error) {
+      console.error(error.response.data.message,error)
+    }
+  }
+
   useEffect(()=>{
     if(!isLoggedin()) return
-    const retrieveListedSaleProperty = async() => {
-      try {
-        const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/property/listSaleProperty`,{withCredentials : true})
-        setSaleProperty(response.data.saleProperties)
-      } catch (error) {
-        console.error(error.response.data.message,error)
-      }
+    if (salePropRedux.length) {
+      setSaleProperty(salePropRedux[0])
+    } else {
+      retrieveListedSaleProperty()
     }
-    retrieveListedSaleProperty()
-  },[isLoggedin])
+  },[salePropRedux, dispatch])
 
   // for changing avatar
   const handleFileChange = (event) => {

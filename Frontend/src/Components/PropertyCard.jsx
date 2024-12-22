@@ -13,7 +13,6 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFav,setIsFav] = useState(property?.isLiked || isFv)
-  const [isFavChanged,setIsFavChanged] = useState(0)
   const dispatch = useDispatch()
 
   const nextImage = () => {
@@ -29,12 +28,10 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
   const handleFavChange = async() => {
     if(isFav) {
       dispatch(removeFavProperty(property._id))
-      setIsFavChanged(isFavChanged - 1);
     }
     else {
       const newProp = {...property, favourite : property.favourite + 1}
       dispatch(addFavProperty(newProp))
-      setIsFavChanged(isFavChanged + 1);
     }
     dispatch(editLikedProp(property._id))
     setIsFav(!isFav)
@@ -200,7 +197,7 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
                     <FaHeart size={20} /> 
                   </button> }
                 </div>
-                <div>{property?.favourite + isFavChanged}</div>
+                <div>{property?.favourite}</div>
               </div>
 
               

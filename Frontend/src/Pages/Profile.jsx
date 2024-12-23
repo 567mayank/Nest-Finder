@@ -3,13 +3,14 @@ import {useNavigate} from 'react-router-dom'
 import axios from 'axios';
 import { backend, isLoggedin } from '../Helper';
 import { FaPencilAlt } from "react-icons/fa";
-import {addUserSaleProp, addUserRentedProp} from "../Redux/userSlice"
+import {addUserSaleProp, addUserRentedProp, addProfile, changeUserAvatar} from "../Redux/userSlice"
 import {useDispatch, useSelector} from 'react-redux'
 
 function Profile() {
   const navigate = useNavigate()
   const [data,setData] = useState(null)
   const [isEditing, setIsEditing] = useState(false);
+  const [fullName, setName] = useState("")
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [dob, setDob] = useState("");
@@ -21,39 +22,49 @@ function Profile() {
   const dispatch = useDispatch()
   const rentPropRedux = useSelector((state) =>  state.user.userRentedProp)
   const salePropRedux = useSelector((state) =>  state.user.userSaleProp)
+  const UserRedux = useSelector((state) => state.user.profile)
+
+  // for fetching user data
+  const dataRetriever = async() => {
+    try {
+      const response = await axios.get(`${backend}/user/userInfo`,{withCredentials : true})
+      setData(response.data.user)
+      dispatch(addProfile(response.data.user))
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   useEffect(()=>{
-    const dataRetriever = async() => {
-      try {
-        const response = await axios.get(`${backend}/user/userInfo`,{withCredentials : true})
-        setData(response.data.user)
-        setEmail(response.data.user.email)
-        setPhone(response.data.user.phone)
-        setDob(response.data.user.dob)
-      } catch (error) {
-        console.error(error)
-      }
+    if (Object.keys(UserRedux).length) {
+      setData(UserRedux)
+      setName(UserRedux.fullName)
+      setEmail(UserRedux.email)
+      setPhone(UserRedux.phone)
+      setDob(UserRedux.dob)
+    } else {
+      dataRetriever()
     }
-    dataRetriever()
-  },[])
+  },[UserRedux, dispatch])
 
+  // for editing user info
   const handleEditClick = async () => {
     if(isEditing){
-      if(!dob || !email || !phone){
+      if(!dob || !email || !phone || !fullName){
         setMessage("All Field Required")
         return
       }
       try {
         const response = await axios.patch(
-          `http://localhost:${import.meta.env.VITE_APP_PORT}/user/updatePersonalInfo`,
+          `${backend}/user/updatePersonalInfo`,
           {
-            email,phone,dob
+            email,phone,dob,fullName
           },
           {
             withCredentials : true
           }
         )
-        localStorage.setItem("User",JSON.stringify(response.data.user))
+        dispatch(addProfile(response.data.user))
         setMessage(response.data.message)
       } catch (error) {
         setMessage(error.response.data.message)
@@ -109,10 +120,17 @@ function Profile() {
   },[salePropRedux, dispatch])
 
   // for changing avatar
-  const handleFileChange = (event) => {
+  const handleFileChange = async(event) => {
     const file = event.target.files[0];
     if (file) {
-      // make call for backend
+      const formData = new FormData()
+      formData.append('avatar',file)
+      try {
+        const response = await axios.patch(`${backend}/user/updateAvatar`,formData,{withCredentials:true})
+        dispatch(changeUserAvatar(response.data.avatar))
+      } catch (error) {
+        console.log("error in updating profile/avatar", error)
+      }
     }
   }
 
@@ -159,6 +177,21 @@ function Profile() {
                 >
                   {isEditing ? 'Save' : 'Edit'}
                 </button>
+              </div>
+
+              {/* Name Field */}
+              <div className={`mb-4 flex flex-col md:flex-row justify-between ${!isEditing && 'hidden'}`}>
+                <div className="text-lg font-medium text-gray-700">Name</div>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setName(e.target.value)}
+                    className="text-gray-900 border border-gray-300 rounded-md p-2"
+                  />
+                ) : (
+                  <div className="text-xl text-gray-900">{fullName}</div>
+                )}
               </div>
   
               {/* Email Field */}

@@ -5,6 +5,8 @@ import Media from '../Components/ListProperty/Media';
 import Pricing from '../Components/ListProperty/Pricing';
 import Confirmation from '../Components/ListProperty/Confirmation';
 import axios from 'axios';
+import {isLoggedin, backend} from '../Helper'
+import{useNavigate} from 'react-router-dom'
 
 const StepNavigation = () => {
   const [activeStep, setActiveStep] = useState(1);
@@ -37,6 +39,7 @@ const StepNavigation = () => {
     media:''
   });
   const [maxPage, setMaxPage] = useState(1)
+  const naivgate = useNavigate()
 
   useEffect(()=>{
     const local = JSON.parse(sessionStorage.getItem("ListItem"))
@@ -71,6 +74,12 @@ const StepNavigation = () => {
       }));
     }
   };
+
+  useEffect(() => {
+    if (!isLoggedin()) {
+      naivgate("/login")
+    }
+  },[])
   
   // For Saving Data Locally
   useEffect(() => {
@@ -89,7 +98,7 @@ const StepNavigation = () => {
     e.preventDefault();
     if(activeStep===5){
       try {
-        const response = await axios.post(`http://localhost:${8000}/property/listProperty`,property,{withCredentials:true})
+        const response = await axios.post(`${backend}/property/listProperty`,property,{withCredentials:true})
         console.log(response.data)
       } catch (error) {
         console.log(error)

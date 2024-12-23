@@ -1,6 +1,7 @@
 import Property from "../Models/Property.model.js"
 import User from "../Models/User.model.js"
 import jwt from "jsonwebtoken"
+import {uploadOnCloudinary} from '../Utils/cloudinary.utils.js'
 
 const login = async(req,res) => {
   const {email,userName,password} = req.body
@@ -170,8 +171,8 @@ const updatePersonalInfo = async(req,res) => {
     return res.status(400).json({message:"Unathorized Access"})
   }
   try {
-    const {phone,email,dob} = req.body
-    if(!phone || !email || !dob){
+    const {phone,email,dob,fullName} = req.body
+    if(!phone || !email || !dob || !fullName){
       return res.status(400).json({message:"All Field/Data Required"})
     }
     const user = await User.findOneAndUpdate(
@@ -182,7 +183,8 @@ const updatePersonalInfo = async(req,res) => {
         $set : {
           phone,
           email,
-          dob
+          dob,
+          fullName
         }
       },
       {
@@ -205,11 +207,47 @@ const updatePersonalInfo = async(req,res) => {
   }
 }
 
+const upadteUserAvatar = async(req, res) => {
+  const userId = req?.user?._id 
+  if (!userId) {
+    return res.status(401).json({message : "Unauthorized Access"})
+  }
+  try {
+
+    const avatarPath = req?.file?.path
+    if (!avatarPath) {
+      return res.status(400).json({message : "No Image provided"})
+    }
+    const avatar = await uploadOnCloudinary(avatarPath)
+    if(!avatar) {
+      return res.status(500).json({message : "Internal Server error in uploading image in cloudinary"})
+    }
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        $set : {
+          avatar : avatar.url
+        }
+      },
+      {new : true}
+    )
+
+    return res.status(200).json({
+      message : "Avatar Updated Successfully",
+      avatar : user.avatar
+    })
+  } catch (error) {
+    console.log("Internal Server Error in updating avatar", error)
+    return res.status(500).json({message : "Ineternal Server Error in updating avatar of User"})
+  }
+}
+
 export {
   login,
   registerUser,
   logout,
   userInfo,
   isLoggedin,
-  updatePersonalInfo
+  updatePersonalInfo,
+  upadteUserAvatar
 }

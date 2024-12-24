@@ -117,6 +117,6 @@ Registered users can add new properties by filling out a listing form.
 Users can send messages to property owners or agents directly through the platform.
 
 
-## Thank you for checking out Property Marketplace! 
+## Thank you for checking out Nest Finder! 
 
 This **README.md** file will give contributors and users clear guidance on how to set up, use, and contribute to your

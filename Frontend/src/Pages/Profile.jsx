@@ -125,6 +125,7 @@ function Profile() {
     if (file) {
       const formData = new FormData()
       formData.append('avatar',file)
+      formData.append('prevImage',data.avatar)
       try {
         const response = await axios.patch(`${backend}/user/updateAvatar`,formData,{withCredentials:true})
         dispatch(changeUserAvatar(response.data.avatar))

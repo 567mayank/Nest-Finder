@@ -1,7 +1,7 @@
 import Property from "../Models/Property.model.js"
 import User from "../Models/User.model.js"
 import jwt from "jsonwebtoken"
-import {uploadOnCloudinary} from '../Utils/cloudinary.utils.js'
+import {uploadOnCloudinary, destroy} from '../Utils/cloudinary.utils.js'
 
 const login = async(req,res) => {
   const {email,userName,password} = req.body
@@ -213,7 +213,7 @@ const upadteUserAvatar = async(req, res) => {
     return res.status(401).json({message : "Unauthorized Access"})
   }
   try {
-
+    const {prevImage} = req.body
     const avatarPath = req?.file?.path
     if (!avatarPath) {
       return res.status(400).json({message : "No Image provided"})
@@ -231,6 +231,12 @@ const upadteUserAvatar = async(req, res) => {
       },
       {new : true}
     )
+
+    if (prevImage) {
+      const publicId = prevImage.split('/').pop().split('.')[0]; 
+      await destroy(publicId); 
+    }
+
 
     return res.status(200).json({
       message : "Avatar Updated Successfully",

@@ -48,7 +48,15 @@ const userSchema = mongoose.Schema({
   listedPropertyForSale : [{
     type : Schema.Types.ObjectId,
     ref : "Property"
-  }]
+  }],
+  isActive : {
+    type : Boolean,
+    default : false
+  },
+  socketId : {
+    type : String,
+    default : ""
+  }
 })
 
 userSchema.pre("save", async function (next) {

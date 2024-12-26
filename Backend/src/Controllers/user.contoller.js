@@ -248,6 +248,12 @@ const upadteUserAvatar = async(req, res) => {
   }
 }
 
+const updateSocketId = async(req,res) => {
+}
+
+const removeSocketId = async(req,res) => {
+}
+
 export {
   login,
   registerUser,
@@ -255,5 +261,7 @@ export {
   userInfo,
   isLoggedin,
   updatePersonalInfo,
-  upadteUserAvatar
+  upadteUserAvatar,
+  updateSocketId,
+  removeSocketId
 }

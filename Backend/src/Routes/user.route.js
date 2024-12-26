@@ -8,7 +8,9 @@ import {
   isLoggedin,
   updatePersonalInfo,
   userInfo,
-  upadteUserAvatar
+  upadteUserAvatar,
+  updateSocketId,
+  removeSocketId
 } from "../Controllers/user.contoller.js"
 
 const router = Router()
@@ -20,5 +22,8 @@ router.route("/userInfo").get(verifyJwt,userInfo)
 router.route("/isLoggedin").get(isLoggedin)
 router.route("/updatePersonalInfo").patch(verifyJwt,updatePersonalInfo)
 router.route("/updateAvatar").patch(verifyJwt,upload.single('avatar'),upadteUserAvatar)
+
+router.route("/updateSocketId").put(verifyJwt,updateSocketId)
+router.route("/removeSocketId").put(verifyJwt,removeSocketId)
 
 export default router

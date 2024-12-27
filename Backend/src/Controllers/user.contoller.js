@@ -333,6 +333,46 @@ const sendRequest = async (req, res) => {
   }
 };
 
+const getRequest = async (req, res) => {
+  const userId = req?.user?.id;
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized Access" });
+  }
+
+  try {
+    const user = await User.findById(userId)
+      .populate({
+        path: 'requestSent',
+        populate: [
+          { path: 'owner', select: 'fullName email avatar' },  
+          { path: 'property', select: 'title description media' }, 
+        ]
+      })
+      .populate({
+        path: 'requestReceived',
+        populate: [
+          { path: 'sender', select: 'fullName email avatar' }, 
+          { path: 'property', select: 'title description media' },  
+        ]
+      });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({
+      message: "Requests fetched successfully",
+      requestSent: user.requestSent,
+      requestReceived: user.requestReceived
+    });
+
+  } catch (error) {
+    console.error("Error in fetching Requests", error);
+    return res.status(500).json({ message: "Internal Server Error in fetching message request" });
+  }
+};
+
+
 export {
   login,
   registerUser,
@@ -343,5 +383,6 @@ export {
   upadteUserAvatar,
   updateSocketId,
   removeSocketId,
-  sendRequest
+  sendRequest,
+  getRequest
 }

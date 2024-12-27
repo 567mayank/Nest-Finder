@@ -11,6 +11,8 @@ import UserSaleProperties from "../Pages/UserSaleProperties"
 import Edit from '../Pages/Edit';
 import Favourite from '../Pages/Favourite';
 import Inbox from '../Pages/Inbox';
+import Request from '../Pages/Request';
+
 const router = createBrowserRouter([
   {
     path: "",
@@ -59,6 +61,10 @@ const router = createBrowserRouter([
       {
         path:"/inbox",
         element:<Inbox/>
+      },
+      {
+        path : "/request",
+        element:<Request/>
       }
     ],
   },

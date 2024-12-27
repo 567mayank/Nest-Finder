@@ -7,7 +7,7 @@ const verifyJwt = async(req,res,next) => {
   }
   try {
     const decodedValue = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    const user = await User.findById(decodedValue._id).select("-password")
+    const user = await User.findById(decodedValue._id).select("-password -requestSent -requestReceived -listedPropertyForRent -listedPropertyForSale")
     if (user) {
       req.user = user;  
       next();  

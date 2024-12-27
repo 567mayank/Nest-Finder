@@ -11,7 +11,8 @@ import {
   upadteUserAvatar,
   updateSocketId,
   removeSocketId,
-  sendRequest
+  sendRequest,
+  getRequest
 } from "../Controllers/user.contoller.js"
 
 const router = Router()
@@ -28,5 +29,6 @@ router.route("/updateSocketId").put(verifyJwt,updateSocketId)
 router.route("/removeSocketId").put(verifyJwt,removeSocketId)
 
 router.route("/sendRequest/:ownerId").put(verifyJwt,sendRequest)
+router.route("/getRequest").get(verifyJwt,getRequest)
 
 export default router

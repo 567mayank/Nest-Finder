@@ -29,6 +29,7 @@ function Profile() {
     try {
       const response = await axios.get(`${backend}/user/userInfo`,{withCredentials : true})
       setData(response.data.user)
+      console.log(response.data.user)
       dispatch(addProfile(response.data.user))
     } catch (error) {
       console.error(error)
@@ -38,10 +39,10 @@ function Profile() {
   useEffect(()=>{
     if (Object.keys(UserRedux).length) {
       setData(UserRedux)
-      setName(UserRedux.fullName)
-      setEmail(UserRedux.email)
-      setPhone(UserRedux.phone)
-      setDob(UserRedux.dob)
+      setName(UserRedux.fullName || "")
+      setEmail(UserRedux.email || "")
+      setPhone(UserRedux.phone || "")
+      setDob(UserRedux.dob || "")
     } else {
       dataRetriever()
     }

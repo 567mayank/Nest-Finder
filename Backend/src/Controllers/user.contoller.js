@@ -2,6 +2,7 @@ import Property from "../Models/Property.model.js"
 import User from "../Models/User.model.js"
 import jwt from "jsonwebtoken"
 import {uploadOnCloudinary, destroy} from '../Utils/cloudinary.utils.js'
+import mongoose from "mongoose"
 
 const login = async(req,res) => {
   const {email,userName,password} = req.body
@@ -263,12 +264,31 @@ const sendRequest = async (req, res) => {
   try {
     const { message, propertyId } = req?.body;
     const ownerId = req?.params.ownerId;
-    console.log(message, propertyId, ownerId)
+
     if (!message || !propertyId) {
       return res.status(400).json({ message: "Message and Property ID are required" });
     }
     if (!ownerId) {
       return res.status(400).json({ message: "Owner ID is required" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(propertyId) || !mongoose.Types.ObjectId.isValid(ownerId)) {
+      return res.status(400).json({ message: "Invalid ObjectId provided" });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.requestSent.length >= 5) {
+      return res.status(400).json({ message: "You cannot send more than 5 requests" });
+    }
+
+    const isPropertyAlreadyRequested = user.requestSent.some(request => request.property.toString() === propertyId.toString());
+    if (isPropertyAlreadyRequested) {
+      return res.status(400).json({ message: "You have already sent a request for this property" });
     }
 
     const requests = await User.findByIdAndUpdate(
@@ -278,11 +298,16 @@ const sendRequest = async (req, res) => {
           requestSent: {
             owner: ownerId,
             property: propertyId,
+            message, 
           },
         },
       },
-      { new: true }
+      { new: true, upsert: true } 
     );
+
+    if (!requests) {
+      return res.status(404).json({ message: "Failed to update requestSent" });
+    }
 
     await User.findByIdAndUpdate(
       ownerId,
@@ -291,19 +316,22 @@ const sendRequest = async (req, res) => {
           requestReceived: {
             sender: userId,
             property: propertyId,
+            message, 
           },
         },
       },
-      { new: true }
+      { new: true, upsert: true }
     );
 
-    return res.status(200).json({ message: "Request sent successfully", requests : requests.requestSent });
+    return res.status(200).json({
+      message: "Request sent successfully",
+      requests: requests.requestSent, 
+    });
   } catch (error) {
     console.error("Sending Request Error", error);
     return res.status(500).json({ message: "Internal Server Error in Send Request" });
   }
 };
-
 
 export {
   login,

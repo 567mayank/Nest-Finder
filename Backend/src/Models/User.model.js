@@ -70,6 +70,10 @@ const userSchema = mongoose.Schema({
         ref: 'Property',
         required: true,
       },
+      message : {
+        type : String,
+        required : true
+      }
     }],
     default: [], 
   },
@@ -85,6 +89,10 @@ const userSchema = mongoose.Schema({
         ref: 'Property',
         required: true,
       },
+      message : {
+        type : String,
+        required : true
+      }
     }],
     default: [], 
   },

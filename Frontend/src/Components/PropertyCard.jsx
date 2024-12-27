@@ -8,12 +8,14 @@ import axios from "axios"
 import {useDispatch} from 'react-redux'
 import { addFavProperty, removeFavProperty } from '../Redux/favouriteSlice';
 import { editLikedProp } from '../Redux/dataSlice';
+import InitialMsgBox from './InitialMsgBox';
 
 function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFav,setIsFav] = useState(property?.isLiked || isFv)
   const dispatch = useDispatch()
+  const [dialogBoxOpen, setDialogBoxOpen] = useState(false)
 
   const nextImage = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % property.media.length);
@@ -40,6 +42,10 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
     } catch (error) {
       console.error("error in updating favourite",error)
     }
+  }
+
+  const handleMessage = () => {
+    setDialogBoxOpen(true)
   }
 
   return (
@@ -208,7 +214,7 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
                 <FaPhoneAlt size={20} />
               </button>
               <button
-                onClick={() => alert('Message clicked')}
+                onClick={() => handleMessage()}
                 className="text-blue-600 hover:text-blue-800"
               >
                 <FaRegEnvelope size={20} />
@@ -231,6 +237,11 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
             </div>
           }
         </div>
+
+        {
+          dialogBoxOpen &&
+          <InitialMsgBox data={property} setOpen={setDialogBoxOpen}/>
+        }
       </div>
     </div>
   );

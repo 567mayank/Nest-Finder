@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
+import { type } from "os";
 
 const userSchema = mongoose.Schema({
   userName : {
@@ -56,7 +57,37 @@ const userSchema = mongoose.Schema({
   socketId : {
     type : String,
     default : ""
-  }
+  },
+  requestSent: {
+    type: [{
+      owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', 
+        required: true,
+      },
+      property: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Property',
+        required: true,
+      },
+    }],
+    default: [], 
+  },
+  requestReceived: {
+    type: [{
+      sender: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', 
+        required: true,
+      },
+      property: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Property',
+        required: true,
+      },
+    }],
+    default: [], 
+  },
 })
 
 userSchema.pre("save", async function (next) {

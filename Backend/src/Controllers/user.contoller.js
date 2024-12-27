@@ -254,6 +254,57 @@ const updateSocketId = async(req,res) => {
 const removeSocketId = async(req,res) => {
 }
 
+const sendRequest = async (req, res) => {
+  const userId = req?.user?._id;
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized Access" });
+  }
+
+  try {
+    const { message, propertyId } = req?.body;
+    const ownerId = req?.params.ownerId;
+    console.log(message, propertyId, ownerId)
+    if (!message || !propertyId) {
+      return res.status(400).json({ message: "Message and Property ID are required" });
+    }
+    if (!ownerId) {
+      return res.status(400).json({ message: "Owner ID is required" });
+    }
+
+    const requests = await User.findByIdAndUpdate(
+      userId,
+      {
+        $push: {
+          requestSent: {
+            owner: ownerId,
+            property: propertyId,
+          },
+        },
+      },
+      { new: true }
+    );
+
+    await User.findByIdAndUpdate(
+      ownerId,
+      {
+        $push: {
+          requestReceived: {
+            sender: userId,
+            property: propertyId,
+          },
+        },
+      },
+      { new: true }
+    );
+
+    return res.status(200).json({ message: "Request sent successfully", requests : requests.requestSent });
+  } catch (error) {
+    console.error("Sending Request Error", error);
+    return res.status(500).json({ message: "Internal Server Error in Send Request" });
+  }
+};
+
+
 export {
   login,
   registerUser,
@@ -263,5 +314,6 @@ export {
   updatePersonalInfo,
   upadteUserAvatar,
   updateSocketId,
-  removeSocketId
+  removeSocketId,
+  sendRequest
 }

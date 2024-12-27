@@ -171,7 +171,6 @@ const userfavPlusProperties = async (req, res) => {
           'owner.listedPropertyForSale' : 0,
           'owner.location' : 0,
           'owner.phone' : 0,
-          'owner._id' : 0,
           'owner.email' : 0,
           'owner.dob' : 0,
         }

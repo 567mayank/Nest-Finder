@@ -1,47 +1,47 @@
 import axios from 'axios';
 import React, { useEffect, useState, useRef } from 'react';
-import { FaPaperPlane } from 'react-icons/fa';
-import { FaArrowLeft } from "react-icons/fa";
+import { FaPaperPlane, FaArrowLeft } from 'react-icons/fa';
 import { backend } from '../../Helper';
-import { useSocketUser } from "../../SocketContext";
+import { useSocketUser } from '../../SocketContext';
 import Messages from './Messages';
 import { useSelector, useDispatch } from 'react-redux';
 import { addNotification } from '../../Redux/chatSlice';
 import { toggleChatIsOpen } from '../../Redux/msgSlice';
+import { ImCross } from "react-icons/im";
 
 function ChatSection() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [messageInput, setMessageInput] = useState('');
   const [messages, setMessages] = useState(null);
   const { socket } = useSocketUser();
-  const user = useSelector((state) => state.user.profile)
+  const user = useSelector((state) => state.user.profile);
   const chatIdRef = useRef(null);
-  const reciever = useSelector((state) => state.msg.chatUser)
-  const isOpen = useSelector((state) => state.msg.chatIsOpen)
+  const reciever = useSelector((state) => state.msg.chatUser);
+  const isOpen = useSelector((state) => state.msg.chatIsOpen);
 
-
-  // isOpen false 
+  // Reset states when chat is closed
   useEffect(() => {
     if (isOpen) return;
 
-    setMessageInput("");
+    setMessageInput('');
     setMessages(null);
     chatIdRef.current = null;
   }, [isOpen]);
 
-  useEffect(()=>{
-    if(isOpen ) return
-    socket.on("msg-backend",(msg) => {
-      dispatch(addNotification(msg.msg.conversationId))  // for adding count in redux when chat is unopened 
-    })
+  // Listen for new messages when chat is closed
+  useEffect(() => {
+    if (isOpen) return;
+
+    socket.on('msg-backend', (msg) => {
+      dispatch(addNotification(msg.msg.conversationId)); // For adding count in Redux when chat is unopened
+    });
 
     return () => {
-      socket.off("msg-backend");
+      socket.off('msg-backend');
     };
+  }, [isOpen, socket, dispatch]);
 
-  },[isOpen])
-
-  // fetching messages
+  // Fetching messages
   useEffect(() => {
     if (!isOpen) return;
 
@@ -53,9 +53,9 @@ function ChatSection() {
         );
 
         setMessages(response.data.chat.messages);
-        chatIdRef.current = response.data.chat._id; 
+        chatIdRef.current = response.data.chat._id;
 
-        startSocket()
+        startSocket();
 
         // Mark messages as seen
         await axios.put(
@@ -64,33 +64,33 @@ function ChatSection() {
           { withCredentials: true }
         );
       } catch (error) {
-        console.error("Error in fetching messages", error);
+        console.error('Error in fetching messages', error);
       }
     };
     retrieveMsg();
-  }, [isOpen, reciever, socket]);
-  
-  // intiating socket
+  }, [isOpen, reciever]);
+
+  // Initialize socket listener
   const startSocket = () => {
     if (!isOpen || !chatIdRef.current) return;
 
     const handleNewMessage = ({ msg, msgId }) => {
       if (!isOpen) return;
-      msg.status = "Read"
+      msg.status = 'Read';
       if (msg.conversationId === chatIdRef.current) {
         setMessages((prevMessages) => [...prevMessages, msg]);
         readMsg(msgId);
       }
     };
 
-    socket.on("msg-backend", handleNewMessage);
+    socket.on('msg-backend', handleNewMessage);
 
     return () => {
-      socket.off("msg-backend", handleNewMessage);
+      socket.off('msg-backend', handleNewMessage);
     };
-  }
+  };
 
-  // Marking a message as 'read' in the database
+  // Mark a message as 'read' in the database
   const readMsg = async (msgId) => {
     try {
       await axios.put(
@@ -99,7 +99,7 @@ function ChatSection() {
         { withCredentials: true }
       );
     } catch (error) {
-      console.error("Error in updating seen of single message", error);
+      console.error('Error in updating seen of single message', error);
     }
   };
 
@@ -112,38 +112,44 @@ function ChatSection() {
       msg: messageInput,
       sender: user._id,
       reciever: reciever._id,
-      conversationId: chatIdRef.current, 
+      conversationId: chatIdRef.current,
       createdAt: new Date(),
-      status : "Sent"
+      status: 'Sent',
     };
 
-    socket.emit("msg", msg);
+    socket.emit('msg', msg);
     setMessages((prevMessages) => [...prevMessages, msg]);
-    setMessageInput("");
+    setMessageInput('');
   };
 
   return (
-    <div>
+    <div className="h-full w-full bg-[#392a35] flex flex-col md:rounded-xl md:rounded-br-none">
       {isOpen ? (
-        <div className="flex flex-col h-screen md:h-[650px] bg-[#392a35] md:rounded-xl">
-          {/* Heading (User's Name and Photo) */}
-          <div className="bg-[#1A1A1D] text-white p-4 flex items-center space-x-3 border-b border-zinc-500 sm:absolute md:static w-full rounded-t-xl">
-            <button className="text-white hover:text-gray-400 mr-4" onClick={() => dispatch(toggleChatIsOpen())}>
+        <>
+          {/* Header */}
+          <div className="bg-[#1A1A1D] text-white p-4 flex items-center space-x-3 border-b border-zinc-500 rounded-t-xl">
+            <button
+              className="text-white hover:text-gray-400 mr-4"
+              onClick={() => dispatch(toggleChatIsOpen())}
+            >
               <FaArrowLeft size={20} />
             </button>
             <img
               src={reciever?.avatar}
-              alt={reciever?.usernName}
-              className="rounded-full w-12 h-11 object-cover"
+              alt={reciever?.userName}
+              className="rounded-full w-12 h-12 object-cover"
             />
             <h3 className="text-lg font-semibold">{reciever?.fullName}</h3>
           </div>
 
-          {/* Main Part - Chat Messages */}
+          {/* Messages Section */}
           <Messages messages={messages} user={user} />
 
-          {/* Input Field for Sending Message */}
-          <form onSubmit={handleSendMessage} className="bg-[#1A1A1D] p-4 flex items-center space-x-3 border-t border-zinc-600 md:rounded-bl-xl">
+          {/* Input Section */}
+          <form
+            onSubmit={handleSendMessage}
+            className="bg-[#1A1A1D] p-4 flex items-center space-x-3 border-t border-zinc-600 rounded-b-xl"
+          >
             <input
               type="text"
               value={messageInput}
@@ -158,9 +164,9 @@ function ChatSection() {
               <FaPaperPlane />
             </button>
           </form>
-        </div>
+        </>
       ) : (
-        <div className="flex flex-col items-center justify-center h-screen bg-[#392a35] text-white">
+        <div className="flex flex-col items-center justify-center h-full bg-[#392a35] text-white">
           <div className="text-4xl font-semibold text-center mb-6">
             Start Your Chat
           </div>

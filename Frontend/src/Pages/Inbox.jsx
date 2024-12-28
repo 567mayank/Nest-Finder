@@ -5,88 +5,100 @@ import { backend, isLoggedin } from '../Helper';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../Components/Loading';
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux';
 import { addContacts } from '../Redux/chatSlice';
 import { addProfile } from '../Redux/userSlice';
+import { Rnd } from 'react-rnd';
 
 function App() {
-  const dispatch = useDispatch()
-  const navigate = useNavigate() 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const [isLoading,setIsLoading] = useState(false)
-  
-  const chatSecOpen = useSelector((state) => state.msg.chatIsOpen)
+  const [isLoading, setIsLoading] = useState(false);
 
-  const chatRedux = useSelector((state) => state.chat.contacts) 
-  
-  const UserRedux = useSelector((state) => state.user.profile)
+  const chatSecOpen = useSelector((state) => state.msg.chatIsOpen);
 
+  const chatRedux = useSelector((state) => state.chat.contacts);
 
-  // fetching contacts
+  const UserRedux = useSelector((state) => state.user.profile);
+
+  const [isMdOrLarger, setIsMdOrLarger] = useState(false);
+
+  // Function to check screen size using matchMedia
+  const checkScreenSize = () => {
+    const mediaQuery = window.matchMedia('(min-width: 768px)');
+    setIsMdOrLarger(mediaQuery.matches);
+    mediaQuery.addEventListener('change', (e) => setIsMdOrLarger(e.matches));
+  };
+
+  useEffect(() => {
+    checkScreenSize();
+    return () => {
+      // Clean up listener
+      window.removeEventListener('change', checkScreenSize);
+    };
+  }, []);
+
   const retrieveData = async () => {
-    // setIsLoading(true)
     try {
-      const response = await axios.get(
-        `${backend}/chat/allUserChat`,
-        {
-          withCredentials: true,
-        }
-      );
-      dispatch(addContacts(response.data.conversations))
+      const response = await axios.get(`${backend}/chat/allUserChat`, {
+        withCredentials: true,
+      });
+      dispatch(addContacts(response.data.conversations));
     } catch (error) {
       console.error('Error in fetching Chats', error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    if (chatRedux.length === 0) 
-      retrieveData()
-  }, [chatRedux, dispatch])
+    if (chatRedux.length === 0) retrieveData();
+  }, [chatRedux, dispatch]);
 
-
-  const dataRetriever = async() => {
+  const dataRetriever = async () => {
     try {
-      const response = await axios.get(`${backend}/user/userInfo`,{withCredentials : true})
-      dispatch(addProfile(response.data.user))
+      const response = await axios.get(`${backend}/user/userInfo`, {
+        withCredentials: true,
+      });
+      dispatch(addProfile(response.data.user));
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     if (Object.keys(UserRedux).length === 0) {
-      dataRetriever()
+      dataRetriever();
     }
-  },[UserRedux, dispatch])
+  }, [UserRedux, dispatch]);
 
-
-  useEffect(()=>{
-    if(!isLoggedin()) {
-      navigate("/")
-      return
+  useEffect(() => {
+    if (!isLoggedin()) {
+      navigate('/');
+      return;
     }
-  },[isLoggedin])
+
+    if (isMdOrLarger) {
+      navigate('/'); // Redirect to home page
+    }
+  }, [isLoggedin(), isMdOrLarger, navigate]);
 
   return (
-    <div className='md:ml-64 md:flex md:w-2/4 lg:w-1/4 h-screen md:h-[650px] md:absolute md:right-4 md:bottom-10 '>
-      {/* Conditional rendering for contact list */}
-      {isLoading && <Loading/>}
-      <div
-        className={`w-full ${
-          chatSecOpen ? 'hidden' : 'block'
-        }`}
-      >
-        <Contact/>
-      </div>
+    <div>
+      {/* for small screen */}
+      <div className='md:hidden'>
+        <div
+          className={`w-full h-screen ${chatSecOpen ? 'hidden' : 'block'}`}
+        >
+          <Contact />
+        </div>
 
-      <div
-        className={`w-full  ${
-          chatSecOpen ? 'block' : 'hidden'
-        }`}
-      >
-        <ChatSection/>
+        <div
+          className={`w-full h-screen ${chatSecOpen ? 'block' : 'hidden'}`}
+        >
+          <ChatSection />
+        </div>
       </div>
     </div>
   );

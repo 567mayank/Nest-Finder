@@ -42,7 +42,7 @@ function Request() {
       );
     }
   
-    return requests.map((request, index) => (
+    return [...requests].reverse().map((request, index) => (
       <div key={index} className="flex bg-white w-full sm:w-2/3 mx-auto shadow-lg rounded-lg p-6 mb-6 transition-transform transform hover:scale-105 hover:shadow-xl">
         {/* Image */}
         <img 
@@ -99,7 +99,6 @@ function Request() {
   };
 
   const handleAccept = async(id, senderId, propertyId) => {
-    console.log(id, senderId)
     try {
       const response = await axios.post(
         `${backend}/request/accept`,
@@ -110,14 +109,22 @@ function Request() {
         },
         {withCredentials : true}
       )
-      console.log(response.data)
     } catch (error) {
       console.error("error in accepting request", error)
     }
   }
 
   const handleReject = async(id, senderId) => {
-    console.log(id, senderId)
+    try {
+      const response = await axios.post(
+        `${backend}/request/reject`,
+        {requestId : id},
+        {withCredentials : true}
+      )
+      window.location.reload()
+    } catch (error) {
+      console.error("error in accepting request", error)
+    }
   }
 
   return (

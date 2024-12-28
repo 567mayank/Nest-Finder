@@ -108,6 +108,12 @@ const acceptRequest = async (req, res) => {
       }
     )
 
+    if(!chat) {
+      return res.status(500).json({message : "Internal Server Error in creating chat"})
+    }
+
+    await Request.deleteOne({_id : requestId})
+
     return res.status(200).json({message : "Request Accepted successfully"})
   } catch (error) {
     console.error("Erorr in accepting request",error)
@@ -115,8 +121,25 @@ const acceptRequest = async (req, res) => {
   }
 }
 
-const rejectRequest = (req, res) => {
+const rejectRequest = async(req, res) => {
+  const userId = req?.user?._id;
+  if (!userId) {
+    return res.status(401).json({message : "Unauthorized Access"})
+  }
+   
+  try {
+    const {requestId} = req.body;
+    if (!requestId) {
+      return res.status(400).json({message : "Request Id not provided"})
+    }
 
+    await Request.deleteOne({_id : requestId})
+
+    return res.status(200).json({message : "Request Rejected/Withdrawn Successfuly"})
+  } catch (error) {
+    console.error("Internal Server Error in rejecting request", error)
+    return res.status(500).json({message : "Internal Server Error in rejecting request"})
+  }
 }
 
 

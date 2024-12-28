@@ -30,7 +30,7 @@ function Contact() {
   }, [searchQuery, contacts]);
 
   return (
-    <div className="h-screen lg:h-full bg-[#3B1C32] lg:rounded-t-xl lg:rounded-bl-xl">
+    <div className="h-screen md:h-full bg-[#3B1C32] md:rounded-t-xl md:rounded-bl-xl">
       {/* Header */}
       {isLoading && <Loading />}
       {notification && <Notification message={notification} onClose={handleNotification} />}
@@ -46,7 +46,7 @@ function Contact() {
           placeholder="Search"
           value={searchQuery} // Controlled input
           onChange={(e) => setSearchQuery(e.target.value)} // Update search query
-          className=" w-full flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#643954] focus:border-[#643954]"
+          className=" w-full flex-1 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#643954] focus:border-[#643954]"
         />
       </div>
 

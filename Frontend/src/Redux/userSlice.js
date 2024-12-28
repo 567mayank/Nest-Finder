@@ -3,7 +3,8 @@ import {createSlice} from "@reduxjs/toolkit";
 const initialState = {
   profile : {},
   userRentedProp : [],
-  userSaleProp : []
+  userSaleProp : [],
+  sidebarOpen : false
 }
 
 export const userSlice = createSlice({
@@ -21,10 +22,13 @@ export const userSlice = createSlice({
     },
     changeUserAvatar : (state, action) => {
       state.profile.avatar = action.payload
+    },
+    toggleSideBar : (state, action) => {
+      state.sidebarOpen = !state.sidebarOpen
     }
   }
 })
 
-export const {addProfile, addUserRentedProp, addUserSaleProp, changeUserAvatar} = userSlice.actions
+export const {addProfile, addUserRentedProp, addUserSaleProp, changeUserAvatar, toggleSideBar} = userSlice.actions
 
 export default userSlice.reducer

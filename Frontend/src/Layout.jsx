@@ -9,7 +9,7 @@ const Layout = () => {
   return (
     <SocketProvider>
       <Header/>
-      <main className=' mt-20'>
+      <main className=' mt-16'>
         <Sidebar/>
         <Outlet />
       </main>

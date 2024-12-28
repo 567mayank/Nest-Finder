@@ -70,7 +70,7 @@ function App() {
   },[isLoggedin])
 
   return (
-    <div className='lg:ml-64 lg:flex lg:w-1/4 h-screen lg:h-[650px] lg:absolute lg:right-4 lg:bottom-10 '>
+    <div className='md:ml-64 md:flex md:w-2/4 lg:w-1/4 h-screen md:h-[650px] md:absolute md:right-4 md:bottom-10 '>
       {/* Conditional rendering for contact list */}
       {isLoading && <Loading/>}
       <div

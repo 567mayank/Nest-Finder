@@ -3,49 +3,30 @@ import { useState } from 'react';
 import {Link, useNavigate} from "react-router-dom"
 import axios from 'axios';
 import { isLoggedin } from '../Helper';
+import {useDispatch, useSelector} from 'react-redux'
+import { toggleSideBar } from '../Redux/userSlice';
+import { FaThList } from "react-icons/fa";
 
 function Sidebar() {
   const navigate = useNavigate()
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // const [sidebarOpen, setSidebarOpen] = useState(false);
+  const sidebarOpen = useSelector((state) => state.user.sidebarOpen)
   const [selectOpen,setSelectOpen] = useState(false)
+  const dispatch = useDispatch()
 
   const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+    dispatch(toggleSideBar())
   };
 
   const handleLogout = async() => {
     localStorage.clear()
     await axios.post(`http://localhost:${8000}/user/logout`,{},{withCredentials:true})
-    // checkUser()
     navigate("/")
   }
   
   return (
-    <div>
-      <button
-        onClick={toggleSidebar}
-        aria-controls="sidebar-multi-level-sidebar"
-        aria-expanded={sidebarOpen ? 'true' : 'false'}
-        type="button"
-        className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-      >
-        <span className="sr-only">Open sidebar</span>
-        <svg
-          className="w-6 h-6"
-          aria-hidden="true"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            clipRule="evenodd"
-            fillRule="evenodd"
-            d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
-          ></path>
-        </svg>
-      </button>
-
-      <aside id="sidebar-multi-level-sidebar" className={`fixed top-16 mt-2 left-0 z-40 w-64 h-screen transition-transform transform ${
+    <div className=''>
+      <aside id="sidebar-multi-level-sidebar" className={`border-r border-zinc-300 fixed top-16 left-0 z-40 w-64 h-screen transition-transform transform ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0`}
         aria-label="Sidebar" >
@@ -81,9 +62,7 @@ function Sidebar() {
                   aria-controls="dropdown-example"
                   data-collapse-toggle="dropdown-example"
                 >
-                  <svg className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
-                      <path d="M16 14V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v15a3 3 0 0 0 3 3h12a1 1 0 0 0 0-2h-1v-2a2 2 0 0 0 2-2ZM4 2h2v12H4V2Zm8 16H3a1 1 0 0 1 0-2h9v2Z"/>
-                  </svg>
+                  <FaThList className='flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white' />
                   <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">
                     Your Listings
                   </span>

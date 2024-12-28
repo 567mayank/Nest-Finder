@@ -125,7 +125,7 @@ function ChatSection() {
   return (
     <div>
       {isOpen ? (
-        <div className="flex flex-col h-screen lg:h-[650px] bg-[#392a35] lg:rounded-xl">
+        <div className="flex flex-col h-screen md:h-[650px] bg-[#392a35] md:rounded-xl">
           {/* Heading (User's Name and Photo) */}
           <div className="bg-[#1A1A1D] text-white p-4 flex items-center space-x-3 border-b border-zinc-500 sm:absolute md:static w-full rounded-t-xl">
             <button className="text-white hover:text-gray-400 mr-4" onClick={() => dispatch(toggleChatIsOpen())}>
@@ -143,7 +143,7 @@ function ChatSection() {
           <Messages messages={messages} user={user} />
 
           {/* Input Field for Sending Message */}
-          <form onSubmit={handleSendMessage} className="bg-[#1A1A1D] p-4 flex items-center space-x-3 border-t border-zinc-600 lg:rounded-bl-xl">
+          <form onSubmit={handleSendMessage} className="bg-[#1A1A1D] p-4 flex items-center space-x-3 border-t border-zinc-600 md:rounded-bl-xl">
             <input
               type="text"
               value={messageInput}

@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { isLoggedin } from '../Helper';
+import { backend ,isLoggedin } from '../Helper';
 import axios from "axios"
+import { SocketContext } from "../SocketContext"
 
 function Login() {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [message,setMessage] = useState("")
   const navigate = useNavigate()
+  const {socket} = useContext(SocketContext)
 
   useEffect(()=>{
     if(isLoggedin()) navigate("/")
@@ -22,7 +24,7 @@ function Login() {
     }
     try {
       const response = await axios.post(
-        `http://localhost:8000/user/login`,
+        `${backend}/user/login`,
         {
           userName,
           password
@@ -32,6 +34,15 @@ function Login() {
         }
       )
       localStorage.setItem("email",JSON.stringify(response.data.user.email))
+      try {
+        await axios.put(
+          `${backend}/user/updateSocketId`,
+          {socketId : socket.id},
+          {withCredentials : true}
+        )
+      } catch (error) {
+        console.error("error in updating socketId",error)
+      }
       setMessage(response.data.message)
       navigate("/profile")
     } catch (error) {

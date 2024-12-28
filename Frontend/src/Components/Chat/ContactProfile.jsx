@@ -25,8 +25,8 @@ function ContactProfile({
         className="rounded-full w-10 h-10 object-cover"
       />
       <div className="flex-1">
-        <h4 className="font-semibold text-gray-800">{data?.name}</h4>
-        <p className="text-gray-600 text-sm">@{data?.username}</p>
+        <h4 className="font-semibold text-gray-800">{data?.fullName}</h4>
+        <p className="text-gray-600 text-sm">@{data?.userName}</p>
       </div>
       {unreadCount > 0 && (
         <div className="bg-pink-500 text-white text-xs rounded-full px-2 py-1">

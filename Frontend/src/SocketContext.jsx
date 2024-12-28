@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 import axios from "axios";
 import { backend, isLoggedin } from "./Helper";
 
-const SocketContext = createContext(null);
+export const SocketContext = createContext(null);
 
 export const SocketProvider = ({ children }) => {
   const socket = useMemo(() => io(`${backend}`, { 

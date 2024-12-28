@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import UsernameAsk from "../Component/UsernameAsk";
 import ContactProfile from './ContactProfile';
-// import { useSocketUser } from '../SocketContext';
-import { IoLogOut } from "react-icons/io5";
-import axios from 'axios';
-import { backend } from '../../Helper';
 import Loading from '../Loading';
 import Notification from '../Notification'
 import { useSelector } from 'react-redux';
 
 function Contact() {
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user.profile)
   const [isLoading, setIsLoading] = useState(false);
   const [notification, setNotification] = useState("");
   const [searchQuery, setSearchQuery] = useState(""); 
@@ -28,31 +22,21 @@ function Contact() {
   useEffect(() => {
     if (contacts) {
       const filtered = contacts.filter((contact) =>
-        contact?.participants[0]?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        contact?.participants[0]?.username.toLowerCase().includes(searchQuery.toLowerCase())
+        contact?.participants[0]?.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        contact?.participants[0]?.userName.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredContacts(filtered);
     }
   }, [searchQuery, contacts]);
 
   return (
-    <div className="h-screen lg:h-full bg-[#3B1C32]">
+    <div className="h-screen lg:h-full bg-[#3B1C32] lg:rounded-t-xl lg:rounded-bl-xl">
       {/* Header */}
       {isLoading && <Loading />}
       {notification && <Notification message={notification} onClose={handleNotification} />}
 
-      <div className="bg-[#1A1A1D] p-4 flex items-center justify-between text-white">
-        <div className="flex items-center gap-x-2 space-x-2">
-          <img
-            src={user?.avatar}
-            alt="UserName"
-            className="rounded-full w-10 h-10 object-cover"
-          />
-          <div>
-            <h3 className="text-lg font-semibold">{user?.fullName}</h3>
-            <h3 className="text-xs text-gray-200 font-semibold">@{user?.userName}</h3>
-          </div>
-        </div>
+      <div className="bg-[#1A1A1D] p-4 flex items-center justify-between text-white rounded-t-xl" >
+        <h1 className='text-2xl font-semibold'>Inbox</h1>
       </div>
 
       {/* Search and Buttons */}
@@ -64,18 +48,10 @@ function Contact() {
           onChange={(e) => setSearchQuery(e.target.value)} // Update search query
           className=" w-full flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#643954] focus:border-[#643954]"
         />
-        {/* <div className='flex w-full gap-x-2'>
-          <button className=" w-1/2 bg-[#e782b5] text-white py-2 px-4 rounded-full hover:bg-[#e965a7] transition-colors" onClick={handleNewChat}>
-            Start New Chat
-          </button>
-          <button className="w-1/2 bg-[#e782b5] text-white py-2 px-4 rounded-full hover:bg-[#e965a7] transition-colors" onClick={handleNewGroup}>
-            Make A New Group
-          </button>
-        </div> */}
       </div>
 
       {/* Chat/People List */}
-      <div className="overflow-auto p-4">
+      <div className="overflow-auto p-4 rounded-bl-xl">
         <div className="space-y-3">
           {filteredContacts && filteredContacts.length > 0 ? (
             filteredContacts.map((chat, index) => (
@@ -87,7 +63,6 @@ function Contact() {
         </div>
       </div>
 
-      {/* {dialog && <UsernameAsk setNotification={setNotification} setDialog={setDialog} />} */}
     </div>
   );
 }

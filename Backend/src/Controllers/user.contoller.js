@@ -1,8 +1,6 @@
-import Request from "../Models/Request.model.js"
 import User from "../Models/User.model.js"
 import jwt from "jsonwebtoken"
 import {uploadOnCloudinary, destroy} from '../Utils/cloudinary.utils.js'
-import mongoose from "mongoose"
 
 const login = async(req,res) => {
   const {email,userName,password} = req.body
@@ -250,9 +248,46 @@ const upadteUserAvatar = async(req, res) => {
 }
 
 const updateSocketId = async(req,res) => {
+  const userId = req?.user?._id
+  if(!userId){
+    return res.status(400).json({message : "Unathorised Access"})
+  }
+  const {socketId} = req?.body 
+  if(!socketId){
+    return res.status(400).json({message : "SocketId not provided"})
+  }
+  try {
+    await User.findByIdAndUpdate(
+      userId,
+      {
+        socketId,
+        isActive : true
+      }
+    )
+    return res.status(200).json({message : "SocketId Updated Successfully"})
+  } catch (error) {
+    return res.status(500).json({message : "Internal Server Error in Updating SocketId"})
+  }
 }
 
 const removeSocketId = async(req,res) => {
+  console.log("success")
+  const userId = req?.user?._id
+  if(!userId){
+    return res.status(400).json({message : "Unathorised Access"})
+  }
+  try {
+    await User.findByIdAndUpdate(
+      userId,
+      {
+        socketId : null,
+        isActive : false
+      }
+    )
+    return res.status(200).json({message : "SocketId Removed Successfully"})
+  } catch (error) {
+    return res.status(500).json({message : "Internal Server Error in Removing SocketId"})
+  }
 }
 
 

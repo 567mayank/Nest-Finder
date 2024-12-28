@@ -29,7 +29,6 @@ function Profile() {
     try {
       const response = await axios.get(`${backend}/user/userInfo`,{withCredentials : true})
       setData(response.data.user)
-      console.log(response.data.user)
       dispatch(addProfile(response.data.user))
     } catch (error) {
       console.error(error)

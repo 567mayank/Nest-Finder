@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { backend, isLoggedin } from '../Helper';
 import { useNavigate } from 'react-router-dom';
+
 function Request() {
   const [current, setCurrent] = useState("Received");
   const navigate = useNavigate()
@@ -15,7 +16,7 @@ function Request() {
     }
     const dataRetriever = async() => {
       try {
-        const response = await axios.get(`${backend}/user/getRequest`,{withCredentials : true})
+        const response = await axios.get(`${backend}/request/getRequest`,{withCredentials : true})
         setRecievedRequest(response.data.requestReceived)
         setSentRequests(response.data.requestSent)
       } catch (error) {
@@ -29,7 +30,7 @@ function Request() {
     setCurrent(tab);
   };
 
-  // Render the correct array based on the current tab
+  // Render based on sent/recieved
   const renderRequests = (type) => {
     const requests = type === "Sent" ? sentRequests : receivedRequests;
   
@@ -56,19 +57,19 @@ function Request() {
           </h3>
           <label>Message: </label>
           <p className="text-gray-600 mb-3 border p-3 rounded-tr-md rounded-b-lg border-zinc-700 max-w-full overflow-hidden whitespace-pre-wrap break-words">
-            {request.message}
+            {request.msg}
           </p>
 
           <div className="flex items-center space-x-3 text-sm">
             <span className="font-semibold">{type === "Sent" ? "Owner" : "Sender"}:</span>
             {/* Full Name */}
             <div className="font-medium text-gray-800">
-              {request.owner?.fullName || request.sender?.fullName}
+              {request.reciever?.fullName || request.sender?.fullName}
             </div>
             {/* Avatar */}
             <img
-              src={request.owner?.avatar || request.sender?.avatar}
-              alt={request.owner?.fullName || request.sender?.fullName}
+              src={request.reciever?.avatar || request.sender?.avatar}
+              alt={request.reciever?.fullName || request.sender?.fullName}
               className="w-10 h-10 object-cover rounded-full border border-gray-300"
             />
           </div>
@@ -77,10 +78,10 @@ function Request() {
   
         {type !== "Sent" && (
           <div className="flex flex-col space-y-3 ml-4 my-auto">
-            <button className="w-full py-2 px-4 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-200">
+            <button className="w-full py-2 px-4 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-200" onClick={() => handleAccept(request._id, request.sender._id, request.property._id)}>
               Accept
             </button>
-            <button className="w-full py-2 px-4 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-all duration-200">
+            <button className="w-full py-2 px-4 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-all duration-200" onClick={() => handleReject(request._id, request.sender._id, request.property._id)}>
               Decline
             </button>
           </div>
@@ -88,7 +89,7 @@ function Request() {
   
         {type === "Sent" && (
           <div className="flex flex-col space-y-3 ml-4 my-auto">
-            <button className="w-full py-2 px-4 bg-yellow-500 text-white font-semibold rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-200">
+            <button className="w-full py-2 px-4 bg-yellow-500 text-white font-semibold rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-200" onClick={() => handleReject(request._id, request.sender._id, request.property._id )}>
               Withdraw
             </button>
           </div>
@@ -96,6 +97,28 @@ function Request() {
       </div>
     ));
   };
+
+  const handleAccept = async(id, senderId, propertyId) => {
+    console.log(id, senderId)
+    try {
+      const response = await axios.post(
+        `${backend}/request/accept`,
+        {
+          requestId : id,
+          senderId,
+          propertyId
+        },
+        {withCredentials : true}
+      )
+      console.log(response.data)
+    } catch (error) {
+      console.error("error in accepting request", error)
+    }
+  }
+
+  const handleReject = async(id, senderId) => {
+    console.log(id, senderId)
+  }
 
   return (
     <div className="lg:ml-64 mt-6">

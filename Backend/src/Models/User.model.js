@@ -58,44 +58,6 @@ const userSchema = mongoose.Schema({
     type : String,
     default : ""
   },
-  requestSent: {
-    type: [{
-      owner: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', 
-        required: true,
-      },
-      property: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Property',
-        required: true,
-      },
-      message : {
-        type : String,
-        required : true
-      }
-    }],
-    default: [], 
-  },
-  requestReceived: {
-    type: [{
-      sender: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', 
-        required: true,
-      },
-      property: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Property',
-        required: true,
-      },
-      message : {
-        type : String,
-        required : true
-      }
-    }],
-    default: [], 
-  },
 })
 
 userSchema.pre("save", async function (next) {

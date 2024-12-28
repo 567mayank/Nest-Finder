@@ -16,8 +16,8 @@ function InitialMsgBox({ data, setOpen }) {
 
     setMessage("Sending message...");
     try {
-      const response = await axios.put(
-        `${backend}/user/sendRequest/${data.owner._id}`,
+      const response = await axios.post(
+        `${backend}/request/sendRequest/${data.owner._id}`,
         {
           propertyId: data._id,
           message: input,
@@ -34,7 +34,7 @@ function InitialMsgBox({ data, setOpen }) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 backdrop-blur-sm">
-      <div className="w-1/3 h-auto bg-white rounded-lg shadow-lg p-6 space-y-4">
+      <div className="mx-2 md:w-1/3 h-auto bg-white rounded-lg shadow-lg p-6 space-y-4">
         <div className="flex justify-between items-center">
           <div>
             <h2 className="text-xl font-semibold">For {data.title}</h2>

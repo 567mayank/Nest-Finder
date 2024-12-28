@@ -31,12 +31,13 @@ import router from "./Routes/user.route.js"
 import propertyRouter from "./Routes/property.route.js"
 import favoutiteRouter from "./Routes/favourite.route.js"
 import chatRouter from "./Routes/chat.route.js"
+import requestRouter from "./Routes/request.route.js"
 
 app.use("/user",router)
 app.use("/property",propertyRouter)
 app.use("/favourite",favoutiteRouter)
 app.use("/chat", chatRouter)
-
+app.use("/request", requestRouter)
 
 
 export default server

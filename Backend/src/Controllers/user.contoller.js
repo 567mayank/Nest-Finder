@@ -1,4 +1,4 @@
-import Property from "../Models/Property.model.js"
+import Request from "../Models/Request.model.js"
 import User from "../Models/User.model.js"
 import jwt from "jsonwebtoken"
 import {uploadOnCloudinary, destroy} from '../Utils/cloudinary.utils.js'
@@ -255,122 +255,6 @@ const updateSocketId = async(req,res) => {
 const removeSocketId = async(req,res) => {
 }
 
-const sendRequest = async (req, res) => {
-  const userId = req?.user?._id;
-  if (!userId) {
-    return res.status(401).json({ message: "Unauthorized Access" });
-  }
-
-  try {
-    const { message, propertyId } = req?.body;
-    const ownerId = req?.params.ownerId;
-
-    if (!message || !propertyId) {
-      return res.status(400).json({ message: "Message and Property ID are required" });
-    }
-    if (!ownerId) {
-      return res.status(400).json({ message: "Owner ID is required" });
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(propertyId) || !mongoose.Types.ObjectId.isValid(ownerId)) {
-      return res.status(400).json({ message: "Invalid ObjectId provided" });
-    }
-
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (user.requestSent.length >= 5) {
-      return res.status(400).json({ message: "You cannot send more than 5 requests" });
-    }
-
-    const isPropertyAlreadyRequested = user.requestSent.some(request => request.property.toString() === propertyId.toString());
-    if (isPropertyAlreadyRequested) {
-      return res.status(400).json({ message: "You have already sent a request for this property" });
-    }
-
-    const requests = await User.findByIdAndUpdate(
-      userId,
-      {
-        $push: {
-          requestSent: {
-            owner: ownerId,
-            property: propertyId,
-            message, 
-          },
-        },
-      },
-      { new: true, upsert: true } 
-    );
-
-    if (!requests) {
-      return res.status(404).json({ message: "Failed to update requestSent" });
-    }
-
-    await User.findByIdAndUpdate(
-      ownerId,
-      {
-        $push: {
-          requestReceived: {
-            sender: userId,
-            property: propertyId,
-            message, 
-          },
-        },
-      },
-      { new: true, upsert: true }
-    );
-
-    return res.status(200).json({
-      message: "Request sent successfully",
-      requests: requests.requestSent, 
-    });
-  } catch (error) {
-    console.error("Sending Request Error", error);
-    return res.status(500).json({ message: "Internal Server Error in Send Request" });
-  }
-};
-
-const getRequest = async (req, res) => {
-  const userId = req?.user?.id;
-  if (!userId) {
-    return res.status(401).json({ message: "Unauthorized Access" });
-  }
-
-  try {
-    const user = await User.findById(userId)
-      .populate({
-        path: 'requestSent',
-        populate: [
-          { path: 'owner', select: 'fullName email avatar' },  
-          { path: 'property', select: 'title description media' }, 
-        ]
-      })
-      .populate({
-        path: 'requestReceived',
-        populate: [
-          { path: 'sender', select: 'fullName email avatar' }, 
-          { path: 'property', select: 'title description media' },  
-        ]
-      });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    return res.status(200).json({
-      message: "Requests fetched successfully",
-      requestSent: user.requestSent,
-      requestReceived: user.requestReceived
-    });
-
-  } catch (error) {
-    console.error("Error in fetching Requests", error);
-    return res.status(500).json({ message: "Internal Server Error in fetching message request" });
-  }
-};
 
 
 export {
@@ -383,6 +267,4 @@ export {
   upadteUserAvatar,
   updateSocketId,
   removeSocketId,
-  sendRequest,
-  getRequest
 }

@@ -68,48 +68,48 @@ const login = async(req,res) => {
 }
 
 const registerUser = async(req,res) => {
-  const {userName,fullName,email,password} = req.body
-  if(!userName || !fullName || !email || !password) {
-    return res.
-      status(400).
-      json({
-        message : "All Credentials are required"
-      })
+  const {fullName,userName,email,password} = req.body
+  if(!fullName || !userName || !email || !password ){
+    return res.status(400).json({message : "All fields are required"})
   }
   try {
-    const existingUser = await User.findOne({
-      $or : [{userName},{email}]
-    })
-    if(existingUser){
-      return res.status(400).json({
-        message : "User with same username/Email already Exist"
-      })
-    } 
-    const user = await User.create({
-      userName,
-      fullName,
-      email,
-      password
-    })
-
-    if(!user) {
-      return res.
-      status(500).
-      json({
-        message : "Internal Server Error in creating user"
-      })
+    const existingUser = await User.findOne(
+      {
+        $or : [{userName},{email}]
+      }
+    )
+    if(existingUser) {
+      return res.status(400).json({message : "Email/userName Already Taken"})
     }
 
-    res.
-    status(200).
-    json({
-      message : "Registeration Successfull"
-    })
+    let avatarUrl = null;
+
+    if (req.file) {
+      avatarUrl = await uploadOnCloudinary(req.file.path); 
+    }
+
+    if(!avatarUrl) {
+      return res.status(400).json({message : "File Not Uploaded"})
+    }
+
+    const user = await User.create(
+      {
+        fullName,
+        email,
+        userName,
+        password,
+        avatar : avatarUrl.url
+      }
+    )
+    return res.status(200).json(
+      {
+        message : "User Registered SuccessFully",
+        user
+      }
+    )
   } catch (error) {
-    console.error("Error in registering user",error)
-    return res.status(500).json({
-      message : "Internal Server Error"
-    })
+    console.error("error in registering user",error)
+    return res.status(500).json({message : "Internal Server Error in Registering User"})
   }
 }
 

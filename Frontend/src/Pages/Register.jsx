@@ -1,188 +1,189 @@
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { backend } from '../Helper';
 import axios from 'axios';
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import {useDispatch} from 'react-redux'
-import {changeMsg} from "../Redux/userSlice"
+import { useDispatch } from 'react-redux';
+import { toggleLogin, changeMsg } from '../Redux/userSlice';
 
 function Register() {
-  // State to store form data
-  const [formData, setFormData] = useState({
-    fullName: '',
-    userName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    termsAccepted: false
-  });
-  const [message,setMessage] = useState("")
-  const dispatch = useDispatch()
+  const [userName, setUserName] = useState('');
+  const [email, setEmail] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [avatar, setAvatar] = useState(null); // For storing avatar image file
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  // Handle input changes
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-    setMessage("")
-  };
+  useEffect(() => {
+    setMessage('');
+  }, [userName, email, fullName, password, confirmPassword, avatar]);
 
-  // Handle form submission
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if(formData.password!==formData.confirmPassword) {
-      setMessage("Password Don't match")
+
+    if (!userName.trim() || !email.trim() || !fullName.trim() || !password.trim() || !confirmPassword.trim()) {
+      setMessage('All fields are required.');
+      return;
+    }
+
+    
+    if (password !== confirmPassword) {
+      setMessage('Passwords do not match.');
+      return;
+    }
+    
+    if (password.length < 6) {
+      setMessage("Password should contain at least 6 characters.");
       return
     }
-    if(!formData.email||!formData.userName||!formData.fullName||!formData.password) {
-      setMessage("All field are required")
-      return 
+    if (!avatar) {
+      setMessage('Avatar is required.');
+      return;
     }
+    setMessage("Registering...")
     try {
-      const response = await axios.post('http://localhost:8000/user/register',formData,{withCredentials:true})
-      setMessage(response.data.message)
-      dispatch(changeMsg("Registered Successfully!!"))
+      const formData = new FormData();
+      formData.append('userName', userName);
+      formData.append('email', email);
+      formData.append('fullName', fullName);
+      formData.append('password', password);
+      formData.append('avatar', avatar); 
+
+      const response = await axios.post(
+        `${backend}/user/register`,
+        formData,
+        { withCredentials: true }
+      );
+
+      setMessage(response.data.message);
+      dispatch(toggleLogin());
+      dispatch(changeMsg('Registration successful!'));
+      navigate('/profile');
     } catch (error) {
-      setMessage(error.response.data.message)
+      console.error(error.response.data);
+      setMessage(error.response.data.message);
+    }
+  };
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setAvatar(file);
     }
   };
 
   return (
-    <form
-      className="max-w-sm mx-auto mt-2 border rounded-lg border-blue-700 p-4 px-5"
-      onSubmit={handleSubmit}
-    >
-      <div className="mb-5">
-        <label
-          htmlFor="fullName"
-          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >
-          Your Full Name
-        </label>
-        <input
-          id="fullName"
-          type="text"
-          name="fullName"
-          value={formData.fullName}
-          onChange={handleChange}
-          placeholder="John Doe"
-          className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-          required
-        />
-      </div>
+    <section className="dark:bg-gray-900 px-4 md:px-0 md:ml-64 md:mt-10">
+      <div className="flex justify-center items-center h-screen">
+        <div className="w-full lg:max-w-xl p-6 space-y-8 sm:p-8 bg-white rounded-lg shadow-xl dark:bg-gray-800">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Create your account
+          </h2>
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Your Username
+              </label>
+              <input
+                type="text"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="johnDoe"
+                required
+              />
+            </div>
 
-      <div className="mb-5">
-        <label
-          htmlFor="userName"
-          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >
-          Your username
-        </label>
-        <input
-          id="userName"
-          type="text"
-          name="userName"
-          value={formData.userName}
-          onChange={handleChange}
-          placeholder="johnDoe"
-          className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-          required
-        />
-      </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Your Full Name
+              </label>
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="John Doe"
+                required
+              />
+            </div>
 
-      <div className="mb-5">
-        <label
-          htmlFor="email"
-          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >
-          Your Email
-        </label>
-        <input
-          id="email"
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="name@flowbite.com"
-          className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-          required
-        />
-      </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Your Email
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="youremail@example.com"
+                required
+              />
+            </div>
 
-      <div className="mb-5">
-        <label
-          htmlFor="password"
-          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >
-          Your Password
-        </label>
-        <input
-          id="password"
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-          required
-        />
-      </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Your Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="••••••••"
+                required
+              />
+            </div>
 
-      <div className="mb-5">
-        <label
-          htmlFor="confirmPassword"
-          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >
-          Repeat Password
-        </label>
-        <input
-          id="confirmPassword"
-          type="password"
-          name="confirmPassword"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-          required
-        />
-      </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="••••••••"
+                required
+              />
+            </div>
 
-      <div className="flex items-start mb-5">
-        <div className="flex items-center h-5">
-          <input
-            id="terms"
-            type="checkbox"
-            name="termsAccepted"
-            checked={formData.termsAccepted}
-            onChange={handleChange}
-            className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-            required
-          />
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Avatar (Required)
+              </label>
+              <input
+                type="file"
+                onChange={handleAvatarChange}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                accept="image/*"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+              Register
+            </button>
+
+            {message && <div className="text-red-700 font-normal text-center">{message}</div>}
+
+            <div className="text-sm font-medium text-gray-900 dark:text-white">
+              Already have an account?{' '}
+              <Link to="/login" className="text-blue-600 hover:underline dark:text-blue-500">
+                Sign In
+              </Link>
+            </div>
+          </form>
         </div>
-        <label
-          htmlFor="terms"
-          className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-        >
-          I agree with the{' '}
-          <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
-            terms and conditions
-          </a>
-        </label>
       </div>
-      {
-        message && <div className='text-blue-700 text-center mb-4'>{message}</div>
-      }
-      <button
-        type="submit"
-        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-      >
-        Register new account
-      </button>
-      <div className="text-sm font-medium text-gray-900 dark:text-white mt-2">
-        Already Have a Account?{' '}
-        <Link to="/login" className="text-blue-600 hover:underline dark:text-blue-500">
-          Log In
-        </Link>
-      </div>
-    </form>
+    </section>
   );
 }
 

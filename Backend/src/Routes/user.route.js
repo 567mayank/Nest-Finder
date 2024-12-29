@@ -16,7 +16,7 @@ import {
 const router = Router()
 
 router.route("/login").post(login)
-router.route("/register").post(registerUser)
+router.route("/register").post(upload.single("avatar"),registerUser)
 router.route("/logout").post(verifyJwt,logout)
 router.route("/userInfo").get(verifyJwt,userInfo)
 router.route("/isLoggedin").get(isLoggedin)

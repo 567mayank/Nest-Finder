@@ -61,7 +61,7 @@ function Login() {
   },[userName,password])
 
   return (
-    <section className="bg-gray-50 dark:bg-gray-900 md:ml-64">
+    <section className="dark:bg-gray-900 md:ml-64 mt-28">
       <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 grid lg:grid-cols-2 gap-8 lg:gap-16">
         {/* Left Section */}
         <div className="flex flex-col justify-center">
@@ -71,27 +71,6 @@ function Login() {
           <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
             At NestFinder, we believe in connecting people to their ideal homes. Whether you're buying, selling, or renting, we offer a seamless experience powered by technology, innovation, and a commitment to making real estate simple and accessible for everyone.
           </p>
-          <Link
-            to="#"
-            className="text-blue-600 dark:text-blue-500 hover:underline font-medium text-lg inline-flex items-center"
-          >
-            Read more about our app
-            <svg
-              className="w-3.5 h-3.5 ms-2 rtl:rotate-180"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 14 10"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M1 5h12m0 0L9 1m4 4L9 9"
-              />
-            </svg>
-          </Link>
         </div>
 
         {/* Right Section (Sign In Form) */}
@@ -154,6 +133,7 @@ function Login() {
         </div>
       </div>
     </section>
+
   );
 }
 

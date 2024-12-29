@@ -132,10 +132,35 @@ const markSeenAllMsg = async (req, res) => {
   }
 };
 
+const unreadMsg = async (req, res) => {
+  const userId = req?.user?._id;
+  if (!userId) {
+    return res.status(401).json({message : "Unauthorized access"})
+  }
+
+  try {
+    const message = await Message.find({
+      reciever : userId,
+      status : 'Sent'
+    })
+
+    return res.status(200).json(
+      {
+        message : "Fetched Unread messages Successfully",
+        unreadCount : message.length
+      }
+    )
+  } catch (error) {
+    console.error("Error in fetching unread messages", error)
+    return res.status(500).json({message : "Internal server error in fetching unread message"})
+  }
+}
+
 
 export {
   userAllChats,
   getAllMsg,
   markSeen,
-  markSeenAllMsg
+  markSeenAllMsg,
+  unreadMsg
 }

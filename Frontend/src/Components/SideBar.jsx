@@ -1,8 +1,8 @@
-import React, {  } from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react';
 import {Link, useNavigate} from "react-router-dom"
 import axios from 'axios';
-import { isLoggedin } from '../Helper';
+import { backend, isLoggedin } from '../Helper';
 import {useDispatch, useSelector} from 'react-redux'
 import { toggleSideBar, toggleChatOpen } from '../Redux/userSlice';
 import { FaThList } from "react-icons/fa";
@@ -12,6 +12,9 @@ function Sidebar() {
   const sidebarOpen = useSelector((state) => state.user.sidebarOpen)
   const [selectOpen,setSelectOpen] = useState(false)
   const dispatch = useDispatch()
+  const [unreadMsg, setUnreadMsg] = useState(0)
+  const isLogin = useSelector((state) => state.user.isLogin)
+  const contactRedux = useSelector((state) => state.chat.contacts)
 
   const toggleSidebar = () => {
     dispatch(toggleSideBar())
@@ -27,6 +30,25 @@ function Sidebar() {
     dispatch(toggleChatOpen())
     toggleSideBar()
   }
+
+  useEffect(() => {
+    if (!isLoggedin() && !isLogin) {
+      return
+    }
+    const retrieveMsg = async() => {
+      try {
+        const response = await axios.get(
+          `${backend}/chat/unreadMsg`,
+          {withCredentials : true}
+        )
+        setUnreadMsg(response.data.unreadCount)
+      } catch (error) {
+        console.error("Error in fetching Unread msg")
+      }
+    }
+
+    retrieveMsg()
+  }, [isLogin, isLoggedin, contactRedux])
   
   return (
     <div className=''>
@@ -153,7 +175,7 @@ function Sidebar() {
                         <path d="m17.418 3.623-.018-.008a6.713 6.713 0 0 0-2.4-.569V2h1a1 1 0 1 0 0-2h-2a1 1 0 0 0-1 1v2H9.89A6.977 6.977 0 0 1 12 8v5h-2V8A5 5 0 1 0 0 8v6a1 1 0 0 0 1 1h8v4a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-4h6a1 1 0 0 0 1-1V8a5 5 0 0 0-2.582-4.377ZM6 12H4a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2Z"/>
                     </svg>
                     <span className="flex-1 ms-3 whitespace-nowrap">Inbox</span>
-                    <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span>
+                    {unreadMsg != 0 && <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">{unreadMsg}</span>}
                   </Link>
               </li>
 
@@ -164,7 +186,7 @@ function Sidebar() {
                         <path d="m17.418 3.623-.018-.008a6.713 6.713 0 0 0-2.4-.569V2h1a1 1 0 1 0 0-2h-2a1 1 0 0 0-1 1v2H9.89A6.977 6.977 0 0 1 12 8v5h-2V8A5 5 0 1 0 0 8v6a1 1 0 0 0 1 1h8v4a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-4h6a1 1 0 0 0 1-1V8a5 5 0 0 0-2.582-4.377ZM6 12H4a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2Z"/>
                     </svg>
                     <span className="flex-1 ms-3 whitespace-nowrap">Inbox</span>
-                    <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span>
+                    {unreadMsg && <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">{unreadMsg}</span>}
                   </Link>
               </li>
                             

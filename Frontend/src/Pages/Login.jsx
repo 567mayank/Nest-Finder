@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { backend ,isLoggedin } from '../Helper';
 import axios from "axios"
 import { SocketContext } from "../SocketContext"
+import { useDispatch } from 'react-redux';
+import { toggleLogin } from '../Redux/userSlice';
 
 function Login() {
   const [userName, setUserName] = useState('');
@@ -10,6 +12,7 @@ function Login() {
   const [message,setMessage] = useState("")
   const navigate = useNavigate()
   const {socket} = useContext(SocketContext)
+  const dispatch = useDispatch()
 
   useEffect(()=>{
     if(isLoggedin()) navigate("/")
@@ -34,6 +37,7 @@ function Login() {
         }
       )
       localStorage.setItem("email",JSON.stringify(response.data.user.email))
+      dispatch(toggleLogin())
       try {
         await axios.put(
           `${backend}/user/updateSocketId`,

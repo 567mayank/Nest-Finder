@@ -3,11 +3,14 @@ import { IoIosAddCircle } from "react-icons/io";
 import { FaPencilAlt } from "react-icons/fa";
 import axios from 'axios';
 import {backend} from '../../Helper';
+import {useDispatch} from 'react-redux'
+import {changeMsg} from '../../Redux/userSlice'
 
 function Media({ data }) {
   const [index, setIndex] = useState("");
   const [media, setMedia] = useState(data.media); 
   const fileInputRef = useRef()
+  const dispatch = useDispatch()
 
   const handleClick = (indexImage) => {
     setIndex(indexImage)
@@ -21,6 +24,7 @@ function Media({ data }) {
       const formData = new FormData()
       formData.append("image",file)
       formData.append("index",index)
+      dispatch(changeMsg("Updating media..."))
       try {
         const response = await axios.patch(
           `${backend}/property/editImageInfo/${data._id}`,

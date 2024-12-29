@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import {useDispatch} from 'react-redux'
+import {changeMsg} from "../Redux/userSlice"
 
 function Register() {
   // State to store form data
@@ -13,6 +15,7 @@ function Register() {
     termsAccepted: false
   });
   const [message,setMessage] = useState("")
+  const dispatch = useDispatch()
 
   // Handle input changes
   const handleChange = (e) => {
@@ -38,6 +41,7 @@ function Register() {
     try {
       const response = await axios.post('http://localhost:8000/user/register',formData,{withCredentials:true})
       setMessage(response.data.message)
+      dispatch(changeMsg("Registered Successfully!!"))
     } catch (error) {
       setMessage(error.response.data.message)
     }

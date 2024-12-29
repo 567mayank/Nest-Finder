@@ -2,12 +2,16 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { backend, isLoggedin } from '../Helper';
 import { useNavigate } from 'react-router-dom';
+import {useDispatch} from 'react-redux'
+import {changeMsg} from '../Redux/userSlice'
+import { toggleChatOpen } from '../Redux/userSlice';
 
 function Request() {
   const [current, setCurrent] = useState("Received");
   const navigate = useNavigate()
   const [sentRequests, setSentRequests] = useState([]);
   const [receivedRequests, setRecievedRequest] = useState([]);
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if(!isLoggedin()) {
@@ -100,6 +104,7 @@ function Request() {
 
   const handleAccept = async(id, senderId, propertyId) => {
     try {
+      dispatch(changeMsg("Request granted!!"))
       const response = await axios.post(
         `${backend}/request/accept`,
         {
@@ -109,6 +114,7 @@ function Request() {
         },
         {withCredentials : true}
       )
+      dispatch(toggleChatOpen())
     } catch (error) {
       console.error("error in accepting request", error)
     }
@@ -116,6 +122,7 @@ function Request() {
 
   const handleReject = async(id, senderId) => {
     try {
+      dispatch(changeMsg("Request rejected!!"))
       const response = await axios.post(
         `${backend}/request/reject`,
         {requestId : id},

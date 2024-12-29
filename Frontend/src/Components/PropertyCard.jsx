@@ -9,6 +9,8 @@ import {useDispatch} from 'react-redux'
 import { addFavProperty, removeFavProperty } from '../Redux/favouriteSlice';
 import { editLikedProp } from '../Redux/dataSlice';
 import InitialMsgBox from './InitialMsgBox';
+import { isLoggedin, backend } from '../Helper';
+import {changeMsg} from "../Redux/userSlice"
 
 function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
   const navigate = useNavigate();
@@ -28,6 +30,11 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
   };
 
   const handleFavChange = async() => {
+    if(!isLoggedin()) {
+      dispatch(changeMsg("Login Required!!!"))
+      return
+    }
+
     if(isFav) {
       dispatch(removeFavProperty(property._id))
     }
@@ -38,13 +45,17 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
     dispatch(editLikedProp(property._id))
     setIsFav(!isFav)
     try {
-      const response = await axios.put(`http://localhost:${import.meta.env.VITE_APP_PORT}/favourite/update/${property._id}`,{},{ withCredentials: true })
+      const response = await axios.put(`${backend}/favourite/update/${property._id}`,{},{ withCredentials: true })
     } catch (error) {
       console.error("error in updating favourite",error)
     }
   }
 
   const handleMessage = () => {
+    if(!isLoggedin()) {
+      dispatch(changeMsg("Login Required!!!"))
+      return
+    }
     setDialogBoxOpen(true)
   }
 
@@ -206,18 +217,12 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
                 <div>{property?.favourite}</div>
               </div>
 
-              
-              <button
-                onClick={() => alert('Contact clicked')}
-                className="text-blue-600 hover:text-blue-800"
-              >
-                <FaPhoneAlt size={20} />
-              </button>
               <button
                 onClick={() => handleMessage()}
-                className="text-blue-600 hover:text-blue-800"
+                className="flex items-center justify-center text-white bg-blue-600 hover:bg-blue-700 p-2 rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
               >
-                <FaRegEnvelope size={20} />
+                <FaRegEnvelope size={24} className="mr-2" />
+                <span className="hidden md:inline">Message Owner</span>
               </button>
             </div>
           </div>}

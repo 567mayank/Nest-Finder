@@ -7,6 +7,8 @@ import Confirmation from '../Components/ListProperty/Confirmation';
 import axios from 'axios';
 import {isLoggedin, backend} from '../Helper'
 import{useNavigate} from 'react-router-dom'
+import {useDispatch} from 'react-redux'
+import {changeMsg} from '../Redux/userSlice'
 
 const StepNavigation = () => {
   const [activeStep, setActiveStep] = useState(1);
@@ -40,6 +42,7 @@ const StepNavigation = () => {
   });
   const [maxPage, setMaxPage] = useState(1)
   const naivgate = useNavigate()
+  const dispatch = useDispatch()
 
   useEffect(()=>{
     const local = JSON.parse(sessionStorage.getItem("ListItem"))
@@ -97,8 +100,10 @@ const StepNavigation = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if(activeStep===5){
+      dispatch(changeMsg("Listing Your Property..."))
       try {
         const response = await axios.post(`${backend}/property/listProperty`,property,{withCredentials:true})
+        dispatch(changeMsg("Your property has been listed!!!"));
       } catch (error) {
         console.error(error)
       }

@@ -37,6 +37,7 @@ function Pricing({ data }) {
       setMessage("All Fields are required")
       return
     }
+    setMessage("Applying Changes")
     try {
       const response = await axios.patch(
         `${backend}/property/editPricingInfo/${data._id}`,

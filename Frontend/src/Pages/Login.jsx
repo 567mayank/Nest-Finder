@@ -4,7 +4,7 @@ import { backend ,isLoggedin } from '../Helper';
 import axios from "axios"
 import { SocketContext } from "../SocketContext"
 import { useDispatch } from 'react-redux';
-import { toggleLogin } from '../Redux/userSlice';
+import { toggleLogin, changeMsg } from '../Redux/userSlice';
 
 function Login() {
   const [userName, setUserName] = useState('');
@@ -38,6 +38,7 @@ function Login() {
       )
       localStorage.setItem("email",JSON.stringify(response.data.user.email))
       dispatch(toggleLogin())
+      dispatch(changeMsg("Login Successfull!!!"))
       try {
         await axios.put(
           `${backend}/user/updateSocketId`,

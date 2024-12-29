@@ -3,7 +3,7 @@ import {useNavigate} from 'react-router-dom'
 import axios from 'axios';
 import { backend, isLoggedin } from '../Helper';
 import { FaPencilAlt } from "react-icons/fa";
-import {addUserSaleProp, addUserRentedProp, addProfile, changeUserAvatar} from "../Redux/userSlice"
+import {addUserSaleProp, addUserRentedProp, addProfile, changeUserAvatar, changeMsg} from "../Redux/userSlice"
 import {useDispatch, useSelector} from 'react-redux'
 
 function Profile() {
@@ -54,6 +54,7 @@ function Profile() {
         setMessage("All Field Required")
         return
       }
+      setIsEditing(!isEditing)
       try {
         const response = await axios.patch(
           `${backend}/user/updatePersonalInfo`,
@@ -70,8 +71,9 @@ function Profile() {
         setMessage(error.response.data.message)
         console.error(error.response.data.message,error)
       }
+    } else {
+      setIsEditing(!isEditing);
     }
-    setIsEditing(!isEditing);
   };
 
   useEffect(()=>{
@@ -126,6 +128,7 @@ function Profile() {
       const formData = new FormData()
       formData.append('avatar',file)
       formData.append('prevImage',data.avatar)
+      dispatch(changeMsg("Updating Avatar"))
       try {
         const response = await axios.patch(`${backend}/user/updateAvatar`,formData,{withCredentials:true})
         dispatch(changeUserAvatar(response.data.avatar))

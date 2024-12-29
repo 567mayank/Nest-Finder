@@ -35,6 +35,7 @@ function Details({ data }) {
       setMessage("All Fields are Required")
       return
     }
+    setMessage("Applying Changes")
     try {
       const response = await axios.patch(
         `${backend}/property/editDetailsInfo/${data._id}`,

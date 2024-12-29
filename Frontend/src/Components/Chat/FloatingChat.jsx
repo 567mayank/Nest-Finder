@@ -25,8 +25,8 @@ function FloatingChat() {
   const [dimensions, setDimensions] = useState({
     width: 400,
     height: 650,
-    x: window.innerWidth - 440, 
-    y: window.innerHeight - 800, 
+    x: window.innerWidth - 418, 
+    y: window.innerHeight - 713, 
   });
 
   useEffect(() => {

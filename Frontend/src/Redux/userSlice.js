@@ -6,7 +6,8 @@ const initialState = {
   userSaleProp : [],
   sidebarOpen : false,
   chatOpen : false,
-  isLogin : false
+  isLogin : false,
+  message : ""
 }
 
 export const userSlice = createSlice({
@@ -33,10 +34,13 @@ export const userSlice = createSlice({
     },
     toggleLogin : (state, action) => {
       state.isLogin = !state.isLogin
+    },
+    changeMsg : (state, action) => {
+      state.message = action.payload
     }
   }
 })
 
-export const {addProfile, addUserRentedProp, addUserSaleProp, changeUserAvatar, toggleSideBar, toggleChatOpen, toggleLogin} = userSlice.actions
+export const {addProfile, addUserRentedProp, addUserSaleProp, changeUserAvatar, toggleSideBar, toggleChatOpen, toggleLogin, changeMsg} = userSlice.actions
 
 export default userSlice.reducer

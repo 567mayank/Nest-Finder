@@ -6,7 +6,7 @@ const userAllChats = async (req, res) => {
   const userId = req?.user?._id;
 
   if (!userId) {
-    return res.status(400).json({ Message: "Unauthorized Access" });
+    return res.status(401).json({ Message: "Unauthorized Access" });
   }
 
   try {
@@ -78,7 +78,7 @@ const getAllMsg = async(req,res) => {
 const markSeen = async(req,res) => {
   const userId = req?.user?._id
   if(!userId) {
-    return res.status(400).json({Message : "Unauthorised Access"})
+    return res.status(401).json({Message : "Unauthorized Access"})
   }
   const {messageId} = req?.params
   if(!messageId) {
@@ -101,7 +101,7 @@ const markSeenAllMsg = async (req, res) => {
   const userId = req?.user?._id;
   
   if (!userId) {
-    return res.status(400).json({ Message: "Unauthorized Access" });
+    return res.status(401).json({ Message: "Unauthorized Access" });
   }
 
   const { recieverId } = req?.params;

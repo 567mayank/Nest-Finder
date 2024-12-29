@@ -2,11 +2,15 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { IoIosCloseCircle } from "react-icons/io";
 import { backend } from '../Helper';
+import { useDispatch, useSelector } from 'react-redux';
+import { changeMsg } from '../Redux/userSlice';
 
 function InitialMsgBox({ data, setOpen }) {
   const [input, setInput] = useState("");
   const [approval, setApproval] = useState(false);
   const [message, setMessage] = useState("");
+  const dispatch = useDispatch()
+  const user = useSelector((state) => state.user.profile)
 
   const handleSubmit = async () => {
     if (!approval || !input) {
@@ -14,7 +18,12 @@ function InitialMsgBox({ data, setOpen }) {
       return;
     }
 
-    setMessage("Sending message...");
+    if (user.userName == data.owner.userName) {
+      setMessage("You are the owner of this property");
+      return
+    }
+
+    setMessage("Sending request...");
     try {
       const response = await axios.post(
         `${backend}/request/sendRequest/${data.owner._id}`,
@@ -24,11 +33,11 @@ function InitialMsgBox({ data, setOpen }) {
         },
         { withCredentials: true }
       );
-      setMessage("Sent Message!");
+      dispatch(changeMsg("Request Sent!!!"))
       setOpen(false);
     } catch (error) {
       console.error("Error in sending request", error);
-      setMessage(error?.response?.data?.message || "Error sending message.!!")
+      setMessage(error?.response?.data?.message || "Error in sending request.!!")
     }
   };
 

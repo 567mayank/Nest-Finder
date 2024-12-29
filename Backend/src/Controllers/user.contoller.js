@@ -242,7 +242,7 @@ const upadteUserAvatar = async(req, res) => {
       avatar : user.avatar
     })
   } catch (error) {
-    console.log("Internal Server Error in updating avatar", error)
+    console.error("Internal Server Error in updating avatar", error)
     return res.status(500).json({message : "Ineternal Server Error in updating avatar of User"})
   }
 }
@@ -271,7 +271,6 @@ const updateSocketId = async(req,res) => {
 }
 
 const removeSocketId = async(req,res) => {
-  console.log("success")
   const userId = req?.user?._id
   if(!userId){
     return res.status(400).json({message : "Unathorised Access"})

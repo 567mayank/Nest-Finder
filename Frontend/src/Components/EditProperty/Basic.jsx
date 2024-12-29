@@ -29,7 +29,6 @@ function Basic({ data }) {
         setMessage("All Fields are Required")
         return
       }
-      console.log("hi")
       try {
         const response = await axios.patch(
           `http://localhost:${import.meta.env.VITE_APP_PORT}/property/editBasicInfo/${data._id}`,
@@ -40,10 +39,9 @@ function Basic({ data }) {
             withCredentials : true
           }
         )
-        console.log(response.data)
         setMessage(response.data.message)
       } catch (error) {
-        console.log(error)
+        console.error(error)
         setMessage(error?.response?.data?.message)
       } 
     }

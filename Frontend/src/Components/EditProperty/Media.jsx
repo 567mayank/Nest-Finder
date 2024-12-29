@@ -21,7 +21,6 @@ function Media({ data }) {
       const formData = new FormData()
       formData.append("image",file)
       formData.append("index",index)
-      // console.log(file,index)
       try {
         const response = await axios.patch(
           `${backend}/property/editImageInfo/${data._id}`,
@@ -30,7 +29,7 @@ function Media({ data }) {
         )
         setMedia(response.data.media)
       } catch (error) {
-        console.log("error in updating image",error)
+        console.error("error in updating image",error)
       }
     }
   };

@@ -63,9 +63,7 @@ export default function setupSocketIO(server) {
         return
       }
       socket.to(recieverData.socketId).emit("msg-backend",{msg,msgId})
-       
-      console.log("message sent")
-      
+             
     })
     
     
@@ -76,12 +74,6 @@ export default function setupSocketIO(server) {
           { socketId: null, isActive: false }, 
           { new: true } 
         );
-    
-        if (user) {
-          console.log(`User disconnected: ${socket.id}`);
-        } else {
-          console.log(`No user found with socketId: ${socket.id}`);
-        }
 
       } catch (error) {
         if (error.code === 'ECONNRESET') {

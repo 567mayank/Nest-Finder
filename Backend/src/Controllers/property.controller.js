@@ -411,7 +411,7 @@ const editImageProperty = async (req, res) => {
       media : updatedProperty.media
     })
   } catch (error) {
-    console.log("Error in updating image of property")
+    console.error("Error in updating image of property")
     return res.status(500).json({message : "Internal Server Error in Updating Image"})
   }
 }
@@ -448,7 +448,7 @@ const editContactProperty = async (req, res) => {
 
     return res.status(200).json({ message: "Contact info updated successfully", updatedProperty });
   } catch (error) {
-    console.log("Error in upadating contact info",error)
+    console.error("Error in upadating contact info",error)
     return res.status(500).json({message : "Inernal Server Error in updating contact info"})
   }
 }

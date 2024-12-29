@@ -41,7 +41,6 @@ function Register() {
     } catch (error) {
       setMessage(error.response.data.message)
     }
-    console.log('Form submitted:', formData);
   };
 
   return (

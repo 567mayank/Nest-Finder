@@ -66,7 +66,7 @@ function Confirmation({data}) {
       )
       setMessage("Details Updated Successfully")
     } catch (error) {
-      console.log("Error in Updating Pricng of property",error)
+      console.error("Error in Updating Pricng of property",error)
       setMessage(error?.response?.data?.message || "Error in Updating Details")
     }
   }

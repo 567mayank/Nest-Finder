@@ -130,7 +130,7 @@ function Profile() {
         const response = await axios.patch(`${backend}/user/updateAvatar`,formData,{withCredentials:true})
         dispatch(changeUserAvatar(response.data.avatar))
       } catch (error) {
-        console.log("error in updating profile/avatar", error)
+        console.error("error in updating profile/avatar", error)
       }
     }
   }

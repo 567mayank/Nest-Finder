@@ -50,7 +50,7 @@ function Login() {
       setMessage(response.data.message)
       navigate("/profile")
     } catch (error) {
-      console.log(error.response.data)
+      console.error(error.response.data)
       setMessage(error.response.data.message)
     }
   };

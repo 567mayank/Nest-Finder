@@ -10,7 +10,6 @@ function Media({ handleSubmit,setProperty,property }) {
   // Handle file input change
   const handleFileChange = async (e) => {
     const selectedFiles = Array.from(e.target.files);
-    console.log(selectedFiles)
     setLoading(true);
     try {
       const uploadedFiles = await Promise.all(

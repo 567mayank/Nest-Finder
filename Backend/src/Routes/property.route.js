@@ -9,6 +9,7 @@ import {
   editDetailProperty,
   editImageProperty,
   editPricingProperty,
+  filterProperty,
   listAllProperty, 
   listProperty, 
   listRentedProperty, 
@@ -23,6 +24,7 @@ router.route("/listSingleProperty/:propertyId").get(listSingleProperty)
 router.route("/listRentedProperty").get(verifyJwt,listRentedProperty)
 router.route("/listSaleProperty").get(verifyJwt,listSaleProperty)
 router.route("/delete/:propertyId").delete(verifyJwt,deleteProperty)
+router.route("/filterProperty").get(filterProperty)
 
 
 // Editing Property Information

@@ -513,6 +513,50 @@ const deleteProperty = async (req, res) => {
   }
 };
 
+const filterProperty = async (req, res) => {
+  try {
+    const { 
+      bedrooms, 
+      minArea, 
+      maxArea, 
+      listingType, 
+      furnishingStatus, 
+      minAmount, 
+      maxAmount 
+    } = req.query;
+
+    let query = {};
+
+    if (bedrooms) {
+      query.bedrooms = bedrooms; 
+    }
+    if (minArea || maxArea) {
+      query.area = {}; 
+      if (minArea) query.area.$gte = minArea; 
+      if (maxArea) query.area.$lte = maxArea; 
+    }
+    if (listingType && listingType !== 'all') {
+      query.listingType = listingType; 
+    }
+    if (furnishingStatus) {
+      query.furnishingStatus = furnishingStatus; 
+    }
+    if (minAmount || maxAmount) {
+      query.amount = {}; 
+      if (minAmount) query.amount.$gte = minAmount; 
+      if (maxAmount) query.amount.$lte = maxAmount; 
+    }
+
+    const properties = await Property.find(query).populate("owner","fullName userName avatar");
+
+    res.status(200).json({message : "Filtered Properties fteched Successfully", properties});
+  } catch (error) {
+    console.error("Error fetching properties:", error);
+    res.status(500).json({ message: 'Error fetching properties' });
+  }
+};
+
+
 export {
   listProperty,
   listAllProperty,
@@ -524,5 +568,6 @@ export {
   editPricingProperty,
   editImageProperty,
   editContactProperty,
-  deleteProperty
+  deleteProperty,
+  filterProperty
 }

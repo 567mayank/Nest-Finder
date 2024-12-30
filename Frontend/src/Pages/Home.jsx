@@ -15,6 +15,8 @@ function Home() {
   const dataLikesRedux = useSelector((state) =>  state.data.homePropertiesWithUserLikes)
   const [search, setSearch] = useState("")
   const [filteredData, setFilteredData] = useState([])
+  const [lastId, setLastId] = useState(null)
+  const [hasLeft, setHasLeft] = useState(true)
 
   // Fetching Properties Data
   const retrieveProperties = async (api, variable) => {
@@ -22,6 +24,7 @@ function Home() {
       const response = await axios.get(api,{withCredentials : true})
       setData(response.data.properties)
       dispatch(variable(response.data.properties))
+      setLastId(response.data.nextId)
     } catch (error) {
       console.error("error in fetching properties data",error)
     }
@@ -36,7 +39,7 @@ function Home() {
     } else {
       setData(dataFromRedux[0])
     }
-  },[dispatch, data, dataFromRedux])
+  },[dispatch, dataFromRedux])
 
   // with login
   useEffect(() => {
@@ -48,6 +51,21 @@ function Home() {
       setData(dataLikesRedux[0]);
     }
   },[dispatch, data, dataLikesRedux])
+
+
+  const handleLoadMore = async() => {
+    try {
+      const response = await axios.get(
+        `${backend}/property/listAllProperty?lastId=${lastId}`,
+        {withCredentials : true}
+      )
+      setData((prev) => [...prev, ...response.data.properties])
+      setLastId(response.data.nextId)
+    } catch (error) {
+      setHasLeft(false)
+      console.error("error in fetching properties data",error)
+    }
+  }
 
   // Toggle dropdown visibility
   const toggleDropdown = () => {
@@ -180,6 +198,12 @@ function Home() {
           )
         }
       </div>
+
+      {hasLeft &&
+        <div className='border border-black max-w-fit rounded-md p-2 mx-auto cursor-pointer' onClick={handleLoadMore}>
+          Load More
+        </div>
+      }
     </div>
   );
 }

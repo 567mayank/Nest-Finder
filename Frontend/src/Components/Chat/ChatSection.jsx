@@ -7,6 +7,7 @@ import Messages from './Messages';
 import { useSelector, useDispatch } from 'react-redux';
 import { addNotification } from '../../Redux/chatSlice';
 import { toggleChatIsOpen } from '../../Redux/msgSlice';
+import { changeMsg } from '../../Redux/userSlice';
 
 function ChatSection() {
   const dispatch = useDispatch();
@@ -121,12 +122,38 @@ function ChatSection() {
     setMessageInput('');
   };
 
+  const handleCloseDeal = async() => {
+    try {
+      dispatch(changeMsg("Closing this deal..."))
+      const response = await axios.delete(
+        `${backend}/property/delete/${reciever.property._id}`,
+        {withCredentials : true}
+      )
+      window.location.reload()
+    } catch (error) {
+      console.error("Error in deleting property", error)
+    }
+  }
+
+  const notInterested = async() => {
+    try {
+      dispatch(changeMsg("Making this deal uninterested..."))
+      const response = await axios.delete(
+        `${backend}/chat/notInterested/${reciever.chatId}`,
+        {withCredentials : true}
+      )
+      window.location.reload()
+    } catch (error) {
+      console.error("Error in making this deal uninterested", error) 
+    }
+  }
+
   return (
     <div className="h-full w-full bg-[#392a35] flex flex-col md:rounded-xl md:rounded-br-none">
-      {isOpen ? (
+      {isOpen && (
         <>
           {/* Header */}
-          <div className="bg-[#1A1A1D] text-white p-4 flex items-center space-x-3 border-b border-zinc-500 rounded-t-xl">
+          <div className="bg-[#1A1A1D] text-white p-4 flex items-center space-x-3 border-b border-zinc-500 rounded-t-xl ">
             <button
               className="text-white hover:text-gray-400 mr-4"
               onClick={() => dispatch(toggleChatIsOpen())}
@@ -144,13 +171,23 @@ function ChatSection() {
             </div>
           </div>
 
+          <div className="bg-gray-100 mt-1 p-1 rounded-lg shadow-lg flex justify-between items-center w-fit gap-x-3 max-w-xs mx-auto opacity-90">
+            {user?._id == reciever?.property?.owner && <button className="px-6 py-1 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400" onClick={handleCloseDeal}>
+              Close Deal
+            </button>}
+            <button className="px-6 py-1 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400" onClick={notInterested}>
+              Not Interested
+            </button>
+          </div>
+
+
           {/* Messages Section */}
           <Messages messages={messages} user={user} />
 
           {/* Input Section */}
           <form
             onSubmit={handleSendMessage}
-            className="bg-[#1A1A1D] p-4 flex items-center space-x-3 border-t border-zinc-600 rounded-b-xl"
+            className="bg-[#1A1A1D] p-4 flex items-center space-x-3 border-t border-zinc-600 rounded-b-xl fixed w-full bottom-0"
           >
             <input
               type="text"
@@ -167,18 +204,6 @@ function ChatSection() {
             </button>
           </form>
         </>
-      ) : (
-        <div className="flex flex-col items-center justify-center h-full bg-[#392a35] text-white">
-          <div className="text-4xl font-semibold text-center mb-6">
-            Start Your Chat
-          </div>
-          <div className="text-lg text-center mb-4">
-            Connect with friends and start chatting now!
-          </div>
-          <div className="bg-[#e782b5] text-[#392a35] px-6 py-3 rounded-full text-xl hover:bg-[#e965a7] transition-all">
-            Get Started
-          </div>
-        </div>
       )}
     </div>
   );

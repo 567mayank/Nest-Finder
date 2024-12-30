@@ -59,6 +59,19 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
     setDialogBoxOpen(true)
   }
 
+  const handleDelete = async() => {
+    try {
+      dispatch(changeMsg("Deleting your property..."))
+      const response = await axios.delete(
+        `${backend}/property/delete/${property._id}`,
+        {withCredentials : true}
+      )
+      window.location.reload()
+    } catch (error) {
+      console.error("Error in deleting property", error)
+    }
+  }
+
   return (
     <div className="max-w-full w-full bg-white shadow-md rounded-md overflow-hidden border border-gray-300">
       <div className="lg:grid lg:grid-cols-2 p-4">
@@ -236,7 +249,7 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
               <button className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-all duration-300" onClick={()=>(navigate(`/edit/${property._id}`))}>
                 Edit
               </button>
-              <button className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all duration-300">
+              <button className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all duration-300" onClick={handleDelete}>
                 Delete
               </button>
             </div>

@@ -3,6 +3,7 @@ import verifyJwt from "../Middlewares/verifyJwt.middleware.js"
 import upload from "../Middlewares/multer.middleware.js"
 
 import { 
+  deleteProperty,
   editBasicProperty,
   editContactProperty,
   editDetailProperty,
@@ -21,6 +22,7 @@ router.route("/listAllProperty").get(listAllProperty)
 router.route("/listSingleProperty/:propertyId").get(listSingleProperty)
 router.route("/listRentedProperty").get(verifyJwt,listRentedProperty)
 router.route("/listSaleProperty").get(verifyJwt,listSaleProperty)
+router.route("/delete/:propertyId").delete(verifyJwt,deleteProperty)
 
 
 // Editing Property Information

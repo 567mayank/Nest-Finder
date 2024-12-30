@@ -41,7 +41,7 @@ function Contact() {
         <h1 className="text-xl font-semibold flex items-center">
           <div>Inbox</div>
         </h1>
-        <div className=' cursor-pointer' onClick={() => dispatch(toggleChatOpen())}><ImCross /></div>
+        <div className=' cursor-pointer hidden md:block' onClick={() => dispatch(toggleChatOpen())}><ImCross /></div>
       </div>
 
 

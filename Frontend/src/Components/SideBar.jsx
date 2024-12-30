@@ -24,6 +24,7 @@ function Sidebar() {
     localStorage.clear()
     await axios.post(`http://localhost:${8000}/user/logout`,{},{withCredentials:true})
     navigate("/")
+    window.location.reload()
   }
 
   const handleInboxClick = () => {

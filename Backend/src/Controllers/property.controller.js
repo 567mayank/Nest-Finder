@@ -1,5 +1,9 @@
 import Property from "../Models/Property.model.js";
-import User from "../Models/User.model.js";``
+import User from "../Models/User.model.js";
+import Favourite from "../Models/Favourite.model.js"
+import Request from "../Models/Request.model.js"
+import Message from "../Models/message.model.js"
+import Chat from "../Models/chat.model.js"
 import { uploadOnCloudinary } from "../Utils/cloudinary.utils.js";
 
 const listProperty = async (req, res) => {
@@ -103,22 +107,42 @@ const listProperty = async (req, res) => {
 
 const listAllProperty = async (req, res) => {
   try {
-    const properties = await Property.
-                      find().
-                      select("-zip -msgThroughPhone -msgThroughEmail -msgThroughApp -email -phone -description -createdAt -updatedAt -__v").
-                      populate({
-                        path : "owner",
-                        select : "avatar fullName userName"
-                      })
+    const { limit = 10, lastId = null } = req.query;
+
+    const limitNumber = parseInt(limit);
+    
+    if (isNaN(limitNumber) || limitNumber <= 0) {
+      return res.status(400).json({ message: "Invalid limit parameter" });
+    }
+
+    let query = {};
+
+    if (lastId) {
+      query = { _id: { $gt: lastId } };
+    }
+
+    
+    const properties = await Property.find(query)
+      .select("-zip -msgThroughPhone -msgThroughEmail -msgThroughApp -email -phone -description -createdAt -updatedAt -__v")
+      .populate({
+        path: "owner",
+        select: "avatar fullName userName",
+      })
+      .limit(limitNumber)
+      .sort({ _id: 1 }); 
 
     if (!properties || properties.length === 0) {
       return res.status(404).json({ message: "No properties found" });
     }
 
+    const nextId = properties[properties.length - 1]._id;
+
     return res.status(200).json({
       message: "Properties fetched successfully",
-      properties
+      properties,
+      nextId: nextId.toString(), 
     });
+
   } catch (error) {
     console.error("Error fetching properties:", error);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -453,6 +477,42 @@ const editContactProperty = async (req, res) => {
   }
 }
 
+const deleteProperty = async (req, res) => {
+  const userId = req?.user?._id;
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized Access" });
+  }
+
+  try {
+    const propertyId = req?.params.propertyId;
+    if (!propertyId) {
+      return res.status(400).json({ message: "Property Id not provided" });
+    }
+
+    await Favourite.deleteMany({ property: propertyId });
+    await Request.deleteMany({ property: propertyId });
+
+    const chatsToDelete = await Chat.find({ property: propertyId });
+
+    if (chatsToDelete.length > 0) {
+      const messageIds = chatsToDelete.reduce((acc, chat) => {
+        return [...acc, ...chat.messages]; 
+      }, []);
+
+      await Message.deleteMany({ _id: { $in: messageIds } });
+
+      await Chat.deleteMany({ property: propertyId });
+    }
+
+    await Property.deleteOne({ _id: propertyId });
+
+    return res.status(200).json({ message: "Property Data Deleted Successfully" });
+  } catch (error) {
+    console.error("Error in deleting property", error);
+    return res.status(500).json({ message: "Internal server error in deleting property" });
+  }
+};
+
 export {
   listProperty,
   listAllProperty,
@@ -463,5 +523,6 @@ export {
   editDetailProperty,
   editPricingProperty,
   editImageProperty,
-  editContactProperty
+  editContactProperty,
+  deleteProperty
 }

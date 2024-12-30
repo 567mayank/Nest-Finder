@@ -3,6 +3,7 @@ import { GiBirdHouse } from 'react-icons/gi';
 import { Link, NavLink } from 'react-router-dom';
 import {useDispatch} from 'react-redux'
 import { toggleSideBar } from '../Redux/userSlice';
+import { FaBuilding } from "react-icons/fa";
 
 function Header() {
   // State to track whether the menu is open or closed on small screens
@@ -50,6 +51,24 @@ function Header() {
           NestFinder
           </span>
         </Link>
+
+        <div className='hidden lg:flex items-end ml-[800px]'>
+          <FaBuilding size={10} />
+          <FaBuilding size={12} />
+          <FaBuilding size={14} />
+          <FaBuilding size={16} />
+          <FaBuilding size={18} />
+          <FaBuilding size={20} />
+          <FaBuilding size={22} />
+          <FaBuilding size={25} />
+          <FaBuilding size={22} />
+          <FaBuilding size={20} />
+          <FaBuilding size={18} />
+          <FaBuilding size={16} />
+          <FaBuilding size={14} />
+          <FaBuilding size={12} />
+          <FaBuilding size={10} />
+        </div>
         
       </div>
     </nav>

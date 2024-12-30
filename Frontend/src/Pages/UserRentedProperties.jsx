@@ -55,7 +55,7 @@ function UserRentedProperties() {
     <div className='md:ml-64 px-2 md:px-20 py-5 flex flex-col gap-y-5'>
       {/* Heading and Search Bar */}
       <div>
-        <h1 className="text-4xl font-bold dark:text-white">Your Listed Properties For Rent &rarr;</h1>
+        <h1 className="text-2xl lg:text-4xl font-bold dark:text-white">Your Listed Properties For Rent &rarr;</h1>
         <div className="relative mt-4">
             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">

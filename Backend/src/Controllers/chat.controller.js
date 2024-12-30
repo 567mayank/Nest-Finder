@@ -15,7 +15,7 @@ const userAllChats = async (req, res) => {
     })
       .select("-createdAt -messages -__v")
       .populate("participants", "-password -__v -socketId")
-      .populate("property","media title _id");
+      .populate("property","media title _id owner");
 
     // Remove  user from  participants list
     conversations.forEach((conversation) => {
@@ -153,11 +153,35 @@ const unreadMsg = async (req, res) => {
   }
 }
 
+const notInterested = async(req, res) => {
+  const userId = req?.user?._id
+  if (!userId) {
+    return res.status(401).json({message : "Unauthorized Access"})
+  }
+
+  try {
+    const chatId = req?.params?.chatId 
+    if (!chatId) {
+      return res.status(400).json({message : "Chat Id not propvided"})
+    }
+
+    await Message.deleteMany({conversationId : chatId})
+
+    await Chat.deleteOne({_id : chatId})
+
+    return res.status(200).json({message : "Made chat uninterested successfully"})
+  } catch (error) {
+    console.error("Error in making chat uninterested", error)
+    return res.status(500).json({message : "Internal server erorr in making chat uninterested"})
+  }
+}
+
 
 export {
   userAllChats,
   getAllMsg,
   markSeen,
   markSeenAllMsg,
-  unreadMsg
+  unreadMsg,
+  notInterested
 }

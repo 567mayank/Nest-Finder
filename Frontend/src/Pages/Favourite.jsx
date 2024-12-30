@@ -45,7 +45,7 @@ function Favourite() {
       <div className='flex flex-col gap-y-5'>
         {
           data && [...data].reverse().map((prop)=>(
-            <PropertyCard key={prop._id} property={ prop } isFv={true}/>
+            <PropertyCard key={prop?._id} property={ prop } isFv={true}/>
           ))
         }
         {

@@ -4,6 +4,7 @@ import axios from "axios"
 import { backend, isLoggedin } from '../Helper';
 import {useSelector, useDispatch} from "react-redux"
 import { addProperties, addHomePropertiesWithUserLikes } from '../Redux/dataSlice';
+import Filters from '../Components/Filters';
 
 function Home() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -12,6 +13,8 @@ function Home() {
   const dispatch = useDispatch()
   const dataFromRedux = useSelector((state) => state.data.homeProperties);   // fetching from redux store
   const dataLikesRedux = useSelector((state) =>  state.data.homePropertiesWithUserLikes)
+  const [search, setSearch] = useState("")
+  const [filteredData, setFilteredData] = useState([])
 
   // Fetching Properties Data
   const retrieveProperties = async (api, variable) => {
@@ -24,6 +27,7 @@ function Home() {
     }
   }
 
+  // without login
   useEffect(() => {
     if(isLoggedin()) 
       return
@@ -34,7 +38,7 @@ function Home() {
     }
   },[dispatch, data, dataFromRedux])
 
-
+  // with login
   useEffect(() => {
     if (!isLoggedin()) 
       return 
@@ -45,24 +49,10 @@ function Home() {
     }
   },[dispatch, data, dataLikesRedux])
 
-  // Close dropdown when clicking outside
-  const dropdownRef = useRef(null);
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
   // Toggle dropdown visibility
-  const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prev) => !prev);
+  }
 
   // Filters --->
   
@@ -70,7 +60,29 @@ function Home() {
   const handlePropType = (str) => {
     setPropType(str)
     setIsDropdownOpen(false)
+    if (!filteredData) {
+      return
+    }
+    if (str === "All Categories") {
+      setFilteredData(data)
+      return
+    }
+    const filter = filteredData.filter((item) => str.includes(item.listingType))
+    setFilteredData(filter)
   }
+
+  useEffect(() => {
+    setFilteredData(data)
+    if (!data || !search)
+      return
+    const filterData = data.filter((item) =>
+      Object.values(item).some(value =>
+        String(value).toLowerCase().includes(search.toLowerCase())  
+      )
+    );
+    setFilteredData(filterData)
+  }, [search, data])
+
 
   return (
     <div className='md:ml-64 px-2 md:px-20 py-5 flex flex-col gap-y-5'>
@@ -105,7 +117,6 @@ function Home() {
           {/* Dropdown menu */}
           {isDropdownOpen && (
             <div
-              ref={dropdownRef}
               id="dropdown"
               className="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700 cursor-pointer"
               style={{
@@ -148,19 +159,25 @@ function Home() {
               type="search"
               id="search-dropdown"
               className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg rounded-s-gray-100 rounded-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
-              placeholder="Search"
+              placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)}
             />
           </div>
 
         </div>
       </div>
 
+      {/* <Filters/> */}
+
       {/* Cards  */}
       <div className='flex flex-col gap-y-5'>
-        { data &&
-          data.map((property,index)=>(
+        { filteredData && filteredData.length !== 0 ?
+          (filteredData.map((property,index)=>(
             <PropertyCard key={property._id} property={property} />
-          ))
+          ))) : (
+            <p className="mx-auto p-6 mt-10 text-xl text-center bg-blue-100 border border-blue-500 text-blue-700 rounded-lg shadow-lg max-w-md">
+              No properties found matching your search.
+            </p>
+          )
         }
       </div>
     </div>

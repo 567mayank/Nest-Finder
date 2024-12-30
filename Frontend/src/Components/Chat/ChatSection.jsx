@@ -7,7 +7,6 @@ import Messages from './Messages';
 import { useSelector, useDispatch } from 'react-redux';
 import { addNotification } from '../../Redux/chatSlice';
 import { toggleChatIsOpen } from '../../Redux/msgSlice';
-import { ImCross } from "react-icons/im";
 
 function ChatSection() {
   const dispatch = useDispatch();
@@ -48,7 +47,7 @@ function ChatSection() {
     const retrieveMsg = async () => {
       try {
         const response = await axios.get(
-          `${backend}/chat/getAllMsg/${reciever._id}`,
+          `${backend}/chat/getAllMsg/${reciever.chatId}`,
           { withCredentials: true }
         );
 
@@ -135,11 +134,14 @@ function ChatSection() {
               <FaArrowLeft size={20} />
             </button>
             <img
-              src={reciever?.avatar}
+              src={reciever?.property.media[0]}
               alt={reciever?.userName}
               className="rounded-full w-12 h-12 object-cover"
             />
-            <h3 className="text-lg font-semibold">{reciever?.fullName}</h3>
+            <div>
+              <h3 className="text-lg font-semibold">{reciever?.property.title}</h3>
+              <h1>Sender: {reciever?.fullName}</h1>
+            </div>
           </div>
 
           {/* Messages Section */}

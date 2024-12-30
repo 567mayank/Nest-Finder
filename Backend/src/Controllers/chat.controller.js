@@ -14,7 +14,8 @@ const userAllChats = async (req, res) => {
       participants: userId,
     })
       .select("-createdAt -messages -__v")
-      .populate("participants", "-password -__v -socketId");
+      .populate("participants", "-password -__v -socketId")
+      .populate("property","media title _id");
 
     // Remove  user from  participants list
     conversations.forEach((conversation) => {
@@ -54,16 +55,12 @@ const getAllMsg = async(req,res) => {
   if(!userId) {
     return res.status(400).json({Message : "Unathorized Access"})
   }
-  const friendId = req.params?.friendId
-  if(!friendId) {
+  const chatId = req.params?.friendId
+  if(!chatId) {
     return res.status(400).json({Message : "Friend Id not provided"})
   }
   try {
-    const chat = await Chat.findOne(
-      {
-        participants: { $all: [userId, friendId] },
-      }
-    ).select("-__v -createdAt -updatedAt -participants").populate("messages")
+    const chat = await Chat.findById(chatId).select("-__v -createdAt -updatedAt -participants").populate("messages")
 
     return res.status(200).json({
       Message : "User-Friend Message Fetched Successfully",

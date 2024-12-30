@@ -61,7 +61,7 @@ function Contact() {
         <div className="space-y-3">
           {filteredContacts && filteredContacts.length > 0 ? (
             filteredContacts.map((chat, index) => (
-              <ContactProfile key={index} data={chat.participants[0]} chat={chat} unreadCount={chat?.unreadCount} />
+              <ContactProfile key={index} data={chat.participants[0]} property={chat.property} chat={chat} unreadCount={chat?.unreadCount} />
             ))
           ) : (
             <div className="text-white text-center border p-2 rounded-md">No contacts found</div>

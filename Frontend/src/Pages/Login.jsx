@@ -25,6 +25,7 @@ function Login() {
       setMessage("All Fields Required")
       return
     }
+    setMessage("Processing your login request...")
     try {
       const response = await axios.post(
         `${backend}/user/login`,

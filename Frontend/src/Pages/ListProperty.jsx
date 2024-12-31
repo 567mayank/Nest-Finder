@@ -9,6 +9,7 @@ import {isLoggedin, backend} from '../Helper'
 import{useNavigate} from 'react-router-dom'
 import {useDispatch} from 'react-redux'
 import {changeMsg} from '../Redux/userSlice'
+import LoadingComponent from '../Components/LoadingComponent'
 
 const StepNavigation = () => {
   const [activeStep, setActiveStep] = useState(1);
@@ -44,6 +45,8 @@ const StepNavigation = () => {
   const [maxPage, setMaxPage] = useState(1)
   const naivgate = useNavigate()
   const dispatch = useDispatch()
+  const [loading, setLoading] = useState(false)
+
 
   useEffect(()=>{
     const local = JSON.parse(sessionStorage.getItem("ListItem"))
@@ -102,6 +105,7 @@ const StepNavigation = () => {
     e.preventDefault();
     if(activeStep===5){
       dispatch(changeMsg("Listing Your Property..."))
+      setLoading(true)
       try {
         const response = await axios.post(`${backend}/property/listProperty`,property,{withCredentials:true})
         
@@ -125,7 +129,10 @@ const StepNavigation = () => {
         naivgate("/")
         window.location.reload()
       } catch (error) {
+        alert("Error")
         console.error(error)
+      } finally{
+        setLoading(false)
       }
     }
     else{
@@ -224,6 +231,8 @@ const StepNavigation = () => {
       {
         activeStep===5 && <Confirmation property={property} handleChange={handleChange} handleSubmit={handleSubmit} />
       }
+
+      {loading && <LoadingComponent/>}    
     </>
   );
 };

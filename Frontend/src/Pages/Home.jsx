@@ -5,6 +5,7 @@ import { backend, isLoggedin } from '../Helper';
 import {useSelector, useDispatch} from "react-redux"
 import { addProperties, addHomePropertiesWithUserLikes } from '../Redux/dataSlice';
 import Filters from '../Components/Filters';
+import LoadingComponent from '../Components/LoadingComponent';
 
 function Home() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -197,24 +198,31 @@ function Home() {
 
       {/* Cards  */}
       <div className='flex flex-col gap-y-5'>
-        { filteredData && filteredData.length !== 0 ?
+        {
+          !filteredData &&
+          <LoadingComponent/>
+        }
+        { filteredData && filteredData.length !== 0 &&
           ([...filteredData].reverse().map((property,index)=>(
             <PropertyCard key={property._id} property={property} />
-          ))) : (
-            <p className="mx-auto p-6 mt-10 text-xl text-center bg-blue-100 border border-blue-500 text-blue-700 rounded-lg shadow-lg max-w-md">
-              No properties found matching your search.
-            </p>
-          )
+          )))
+        } 
+        {
+          filteredData && filteredData.length === 0 && 
+          <p className="mx-auto p-6 mt-10 text-xl text-center bg-blue-100 border border-blue-500 text-blue-700 rounded-lg shadow-lg max-w-md">
+            No properties found matching your search.
+          </p>
         }
+          
       </div>
 
       {hasLeft && data && data.length > 10 &&
         <div
-        className="bg-blue-600 text-white rounded-md py-2 px-6 mx-auto cursor-pointer transition-all duration-300 ease-in-out transform hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 shadow-md hover:shadow-lg"
-        onClick={handleLoadMore}
-      >
-        Load More
-      </div>
+          className="bg-blue-600 text-white rounded-md py-2 px-6 mx-auto cursor-pointer transition-all duration-300 ease-in-out transform hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 shadow-md hover:shadow-lg"
+          onClick={handleLoadMore}
+        >
+          Load More
+        </div>
       }
     </div>
   );

@@ -43,6 +43,7 @@ function Details({ data }) {
         {withCredentials : true}
       )
       setMessage("Details Updated Successfully")
+      window.location.reload()
     } catch (error) {
       setMessage(error?.response?.data?.message || "Error in Updating Details")
     }

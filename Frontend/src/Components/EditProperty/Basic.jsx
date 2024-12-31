@@ -42,6 +42,7 @@ function Basic({ data }) {
           }
         )
         setMessage(response.data.message)
+        window.location.reload()
       } catch (error) {
         console.error(error)
         setMessage(error?.response?.data?.message)

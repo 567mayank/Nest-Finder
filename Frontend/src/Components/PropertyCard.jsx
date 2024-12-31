@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FaHeart, FaPhoneAlt, FaRegEnvelope, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaHeart, FaRegEnvelope, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { CiHeart } from "react-icons/ci";
 import { FaParking } from "react-icons/fa";
 import { GiSofa } from "react-icons/gi";
@@ -11,6 +11,7 @@ import { editLikedProp } from '../Redux/dataSlice';
 import InitialMsgBox from './InitialMsgBox';
 import { isLoggedin, backend } from '../Helper';
 import {changeMsg} from "../Redux/userSlice"
+import LoadingComponent from '../Components/LoadingComponent'
 
 function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
   const [isFav,setIsFav] = useState(property?.isLiked || isFv)
   const dispatch = useDispatch()
   const [dialogBoxOpen, setDialogBoxOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+
 
   const nextImage = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % property.media.length);
@@ -61,6 +64,7 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
 
   const handleDelete = async() => {
     try {
+      setLoading(true)
       dispatch(changeMsg("Deleting your property..."))
       const response = await axios.delete(
         `${backend}/property/delete/${property._id}`,
@@ -69,6 +73,8 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
       window.location.reload()
     } catch (error) {
       console.error("Error in deleting property", error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -261,6 +267,7 @@ function PropertyCard({ property, Edit=false, userFav=null, isFv = false }) {
           <InitialMsgBox data={property} setOpen={setDialogBoxOpen}/>
         }
       </div>
+      {loading && <LoadingComponent/>}
     </div>
   );
 }

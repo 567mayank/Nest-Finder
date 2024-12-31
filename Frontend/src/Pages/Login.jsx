@@ -5,6 +5,7 @@ import axios from "axios"
 import { SocketContext } from "../SocketContext"
 import { useDispatch } from 'react-redux';
 import { toggleLogin, changeMsg } from '../Redux/userSlice';
+import LoadingComponent from '../Components/LoadingComponent';
 
 function Login() {
   const [userName, setUserName] = useState('');
@@ -13,6 +14,7 @@ function Login() {
   const navigate = useNavigate()
   const {socket} = useContext(SocketContext)
   const dispatch = useDispatch()
+  const [loading, setLoading] = useState(false)
 
   useEffect(()=>{
     if(isLoggedin()) navigate("/")
@@ -25,6 +27,7 @@ function Login() {
       setMessage("All Fields Required")
       return
     }
+    setLoading(true)
     setMessage("Processing your login request...")
     try {
       const response = await axios.post(
@@ -54,6 +57,8 @@ function Login() {
     } catch (error) {
       console.error(error.response.data)
       setMessage(error.response.data.message)
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -128,6 +133,7 @@ function Login() {
           </div>
         </div>
       </div>
+      {loading && <LoadingComponent/>}
     </section>
 
   );

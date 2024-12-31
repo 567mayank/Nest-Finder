@@ -66,6 +66,7 @@ function Confirmation({data}) {
         {withCredentials : true}
       )
       setMessage("Details Updated Successfully")
+      window.location.reload()
     } catch (error) {
       console.error("Error in Updating Pricng of property",error)
       setMessage(error?.response?.data?.message || "Error in Updating Details")

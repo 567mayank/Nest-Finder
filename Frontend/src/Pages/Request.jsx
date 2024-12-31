@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import {useDispatch} from 'react-redux'
 import {changeMsg} from '../Redux/userSlice'
 import { toggleChatOpen } from '../Redux/userSlice';
+import LoadingComponent from '../Components/LoadingComponent'
 
 function Request() {
   const [current, setCurrent] = useState("Received");
@@ -12,14 +13,19 @@ function Request() {
   const [sentRequests, setSentRequests] = useState([]);
   const [receivedRequests, setRecievedRequest] = useState([]);
   const dispatch = useDispatch()
+  const [loading, setLoading] = useState(false)
+
 
   const dataRetriever = async() => {
     try {
+      setLoading(true)
       const response = await axios.get(`${backend}/request/getRequest`,{withCredentials : true})
       setRecievedRequest(response.data.requestReceived)
       setSentRequests(response.data.requestSent)
     } catch (error) {
       console.error(error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -176,6 +182,7 @@ function Request() {
       <div className="mt-6">
         {renderRequests(current)}
       </div>
+      {loading && <LoadingComponent/>}
     </div>
   );
 }

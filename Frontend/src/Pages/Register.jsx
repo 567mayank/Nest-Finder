@@ -4,6 +4,7 @@ import { backend } from '../Helper';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { toggleLogin, changeMsg } from '../Redux/userSlice';
+import LoadingComponent from '../Components/LoadingComponent';
 
 function Register() {
   const [userName, setUserName] = useState('');
@@ -15,6 +16,8 @@ function Register() {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false)
+  
 
   useEffect(() => {
     setMessage('');
@@ -42,6 +45,7 @@ function Register() {
       setMessage('Avatar is required.');
       return;
     }
+    setLoading(true)
     setMessage("Registering...")
     try {
       const formData = new FormData();
@@ -64,6 +68,8 @@ function Register() {
     } catch (error) {
       console.error(error.response.data);
       setMessage(error.response.data.message);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -183,6 +189,7 @@ function Register() {
           </form>
         </div>
       </div>
+      {loading && <LoadingComponent/>}
     </section>
   );
 }

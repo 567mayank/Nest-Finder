@@ -3,6 +3,7 @@ import { FaHeart, FaPhoneAlt, FaRegEnvelope, FaEnvelope, FaComment } from 'react
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { backend } from '../Helper';
+import Map from '../Components/Map';
 
 function PropertyDetail() {
   const [property,setProperty] = useState(null)
@@ -70,7 +71,7 @@ function PropertyDetail() {
                   key={index}
                   src={image}
                   alt="Thumbnail"
-                  className={`w-20 h-20 object-cover rounded-lg cursor-pointer mx-2 ${index===currentIndex?"scale-110":""}`}
+                  className={`w-10 h-10 md:w-20 md:h-20 object-cover rounded-lg cursor-pointer mx-2 ${index===currentIndex?"scale-110":""}`}
                   onClick={() => setCurrentIndex(index)}
                 />
               ))}
@@ -114,7 +115,7 @@ function PropertyDetail() {
         </div>
         
         {/* Sticky Section */}
-        <div className="w-full border border-blue-300 bg-gray-100 text-black py-6 px-4 sm:px-6 lg:px-8 rounded-xl shadow-lg sticky top-20 mt-4 z-10">
+        <div className="w-full border border-blue-300 bg-gray-100 text-black py-6 px-4 sm:px-6 lg:px-8 rounded-xl shadow-lg sticky top-20 mt-4 z-30">
           {/* Title */}
           <h2 className="text-xl sm:text-2xl font-semibold mb-0">Price & Payment Details</h2>
 
@@ -278,40 +279,10 @@ function PropertyDetail() {
           </div>
         </div>
 
-        {/* Map and Location */}
-        {/* <div className="mt-12">
-          <h2 className="text-2xl font-semibold text-gray-800">Map & Location</h2>
-          <p className="mt-2 text-gray-600">{property?.address}, {property?.city}, {property?.state} {property?.zip}</p>
-          <div className="mt-4">
-            <iframe
-              src={`https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${encodeURIComponent(property?.address + ', ' + property?.city + ', ' + property?.state)}`}
-              width="100%"
-              height="400"
-              frameBorder="0"
-              style={{ border: 0 }}
-              allowFullScreen=""
-              aria-hidden="false"
-              tabIndex="0"
-            ></iframe>
-          </div>
-        </div> */}
-
-        {/* Similar Listings */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-semibold text-gray-800">Similar Listings</h2>
-          <div className="flex overflow-x-scroll mt-4 space-x-4">
-            {/* Sample similar listings (can replace with real data) */}
-            {[1, 2, 3, 4].map((item) => (
-              <div key={item} className="w-60 h-72 bg-gray-100 rounded-lg shadow-md">
-                <img src={`https://via.placeholder.com/300x200?text=Property+${item}`} alt="Similar Property" className="w-full h-40 object-cover rounded-t-lg" />
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-800">Sample Property {item}</h3>
-                  <p className="text-sm text-gray-600">$2000/month</p>
-                </div>
-              </div>
-            ))}
-          </div>
+        <div className='mt-10 border border-black rounded-md mx-4 md:w-fit md:mx-auto shadow-gray-400 shadow-md'>
+          <Map property={property} />
         </div>
+        
       </div>}
     </div>
   );

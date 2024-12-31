@@ -13,7 +13,7 @@ function Details({
         <div className="mb-6">
           <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Area (in sq ft)</label>
           <input
-            type="text"
+            type="Number"
             id="area"
             name="area"
             value={property.area || ''}
@@ -29,7 +29,7 @@ function Details({
         <div className="mb-6">
           <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bedrooms</label>
           <input
-            type="text"
+            type="Number"
             id="bedrooms"
             name="bedrooms"
             value={property.bedrooms || ''}
@@ -45,7 +45,7 @@ function Details({
         <div className="mb-6">
           <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Floor Number</label>
           <input
-            type="text"
+            type="Number"
             id="floor"
             name="floor"
             value={property.floor || ''}
@@ -91,7 +91,7 @@ function Details({
         <div className="mb-6">
           <label htmlFor="propAge" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Property Age (in years)</label>
           <input
-            type="text"
+            type="Number"
             id="propAge"
             name="propAge"
             value={property.propAge || ''}

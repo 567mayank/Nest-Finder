@@ -22,6 +22,7 @@ function Sidebar() {
 
   const handleLogout = async() => {
     localStorage.clear()
+    sessionStorage.clear()
     await axios.post(`${backend}/user/logout`,{},{withCredentials:true})
     navigate("/")
     window.location.reload()

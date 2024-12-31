@@ -198,7 +198,7 @@ function Home() {
       {/* Cards  */}
       <div className='flex flex-col gap-y-5'>
         { filteredData && filteredData.length !== 0 ?
-          (filteredData.map((property,index)=>(
+          ([...filteredData].reverse().map((property,index)=>(
             <PropertyCard key={property._id} property={property} />
           ))) : (
             <p className="mx-auto p-6 mt-10 text-xl text-center bg-blue-100 border border-blue-500 text-blue-700 rounded-lg shadow-lg max-w-md">

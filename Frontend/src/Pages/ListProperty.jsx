@@ -38,12 +38,12 @@ const StepNavigation = () => {
     msgThroughEmail:false,
     phone:'',
     email:'',
-    media:''
+    // media:''
   });
+  const [propImage, setPropimage] = useState()
   const [maxPage, setMaxPage] = useState(1)
   const naivgate = useNavigate()
   const dispatch = useDispatch()
-  const [type, setType] = useState("sale")
 
   useEffect(()=>{
     const local = JSON.parse(sessionStorage.getItem("ListItem"))
@@ -101,15 +101,29 @@ const StepNavigation = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if(activeStep===5){
-      if (property.listingType === "Rent")
-        setType('rent')
       dispatch(changeMsg("Listing Your Property..."))
       try {
         const response = await axios.post(`${backend}/property/listProperty`,property,{withCredentials:true})
+        
+        if(propImage) {
+          const formData = new FormData()
+          formData.append("image",propImage)
+          formData.append("index",0)
+          try {
+            await axios.patch(
+              `${backend}/property/editImageInfo/${response.data.property._id}`,
+              formData,
+              {withCredentials:true}
+            )
+            setMedia(response.data.media)
+          } catch (error) {
+            console.error("error in updating image",error)
+          }
+        }
         dispatch(changeMsg("Your property has been listed!!!"));
         sessionStorage.clear()
-        window.location.reload()
         naivgate("/")
+        window.location.reload()
       } catch (error) {
         console.error(error)
       }
@@ -202,7 +216,7 @@ const StepNavigation = () => {
         activeStep===2 && <Details property={property} handleChange={handleChange} handleSubmit={handleSubmit} />
       }
       {
-        activeStep===3 && <Media property={property} handleChange={handleChange} handleSubmit={handleSubmit} setProperty={setProperty} />
+        activeStep===3 && <Media property={propImage} handleChange={handleChange} handleSubmit={handleSubmit} setProperty={setPropimage} />
       }
       {
         activeStep===4 && <Pricing property={property} handleChange={handleChange} handleSubmit={handleSubmit}/>

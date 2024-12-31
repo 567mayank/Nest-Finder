@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import { backend } from '../../Helper';
 
 function Basic({ data }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -32,7 +33,7 @@ function Basic({ data }) {
       setMessage("Applying Changes")
       try {
         const response = await axios.patch(
-          `http://localhost:${import.meta.env.VITE_APP_PORT}/property/editBasicInfo/${data._id}`,
+          `${backend}/property/editBasicInfo/${data._id}`,
           {
            formData
           },

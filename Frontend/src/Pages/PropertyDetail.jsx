@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FaHeart, FaPhoneAlt, FaRegEnvelope, FaEnvelope, FaComment } from 'react-icons/fa'; // Icons for heart and contact
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { backend } from '../Helper';
 
 function PropertyDetail() {
   const [property,setProperty] = useState(null)
@@ -24,7 +25,7 @@ function PropertyDetail() {
   useEffect(()=>{
     const retrievePropertyData = async () => {
       try {
-        const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/property/listSingleProperty/${propertyId}`)
+        const response = await axios.get(`${backend}/property/listSingleProperty/${propertyId}`)
         setProperty(response.data.property)
       } catch (error) {
         console.error(error)

@@ -41,13 +41,13 @@ const login = async(req,res) => {
 
     user = user.toObject();  
     delete user.password;
-    // delete user.
-
 
     const options = {
-      httpOnly : true,
-      secure: false, 
-    }
+      httpOnly: true,  
+      secure: process.env.NODE_ENV === 'production',  
+      sameSite: 'none', 
+      maxAge: 60 * 60 * 24 * 7 * 1000, 
+    };
 
 
     return res

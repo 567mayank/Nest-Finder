@@ -6,6 +6,7 @@ import Details from '../Components/EditProperty/Details'
 import Media from '../Components/EditProperty/Media'
 import Pricing from '../Components/EditProperty/Pricing'
 import Confirmation from '../Components/EditProperty/Confirmation'
+import { backend } from '../Helper'
 
 function Edit() {
   const [data,setData] = useState(null)
@@ -15,7 +16,7 @@ function Edit() {
   useEffect(()=>{
     const retrievePropertyData = async () => {
       try {
-        const response = await axios.get(`http://localhost:${import.meta.env.VITE_APP_PORT}/property/listSingleProperty/${propertyId}`)
+        const response = await axios.get(`${backend}/property/listSingleProperty/${propertyId}`)
         setData(response.data.property)
       } catch (error) {
         console.error(error)

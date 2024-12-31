@@ -43,6 +43,7 @@ const StepNavigation = () => {
   const [maxPage, setMaxPage] = useState(1)
   const naivgate = useNavigate()
   const dispatch = useDispatch()
+  const [type, setType] = useState("sale")
 
   useEffect(()=>{
     const local = JSON.parse(sessionStorage.getItem("ListItem"))
@@ -100,10 +101,15 @@ const StepNavigation = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if(activeStep===5){
+      if (property.listingType === "Rent")
+        setType('rent')
       dispatch(changeMsg("Listing Your Property..."))
       try {
         const response = await axios.post(`${backend}/property/listProperty`,property,{withCredentials:true})
         dispatch(changeMsg("Your property has been listed!!!"));
+        sessionStorage.clear()
+        window.location.reload()
+        naivgate("/")
       } catch (error) {
         console.error(error)
       }

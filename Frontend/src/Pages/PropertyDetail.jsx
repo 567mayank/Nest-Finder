@@ -279,9 +279,9 @@ function PropertyDetail() {
           </div>
         </div>
 
-        <div className='mt-10 border border-black rounded-md mx-4 md:w-fit md:mx-auto shadow-gray-400 shadow-md'>
+        {/* <div className='mt-10 border border-black rounded-md mx-4 md:w-fit md:mx-auto shadow-gray-400 shadow-md'>
           <Map property={property} />
-        </div>
+        </div> */}
         
       </div>}
     </div>

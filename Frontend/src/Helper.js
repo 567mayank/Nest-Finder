@@ -4,4 +4,4 @@ export const isLoggedin = () => {
   else return false
 }
 
-export const backend = "http://localhost:8000"
+export const backend = "https://nest-finder-nbfq.onrender.com"
